@@ -98,7 +98,7 @@ const Dashboard: FC = () => {
 
     useEffect(() => {
         setData(delegationData)
-    }, [delegationData])
+    }, [])
     const [isLoading, setLoading] = useState<boolean>(false)
 
     return (
