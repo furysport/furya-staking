@@ -1,6 +1,6 @@
-import {Button, HStack, Text, VStack} from "@chakra-ui/react";
+import {Button, HStack, Text} from "@chakra-ui/react";
 import Loader from "components/Loader";
-import {FC} from "react";
+import React, {FC} from "react";
 import {ActionType} from "components/Pages/Delegations/Dashboard";
 import {useRouter} from "next/router";
 
@@ -17,6 +17,10 @@ const ValidatorCard: FC<ValidatorCardProps> = ({name,isLoading, voting_power, co
     const onClick = async(action: ActionType)=>{
         await  router.push(`/${ActionType[action]}`)
     }
+    const hasFunds = true
+    const hasActiveDelegations = false
+    const hasActiveUndelegations = true
+
     return <HStack
         background={"#1C1C1C"}
         borderRadius={"30px"}
@@ -42,12 +46,51 @@ const ValidatorCard: FC<ValidatorCardProps> = ({name,isLoading, voting_power, co
                 <Loader/>
             </HStack> :
                 <><Text>{name}</Text>
-                    <Text>{voting_power}</Text>
-                    <Text>{commission}</Text>
-                    <HStack>
-                    <Button onClick={()=>onClick(ActionType.delegate)}>Delegate</Button>
-                    <Button onClick={()=>onClick(ActionType.undelegate)}>Redelegate</Button>
-                    <Button onClick={()=>onClick(ActionType.redelegate)}>Undelegate</Button>
+                    <Text>{`${voting_power}%`}</Text>
+                    <Text>{`${commission}%`}</Text>
+                    <HStack spacing={5}>
+                        <Button
+                            alignSelf="center"
+                            borderRadius="full"
+                            width="100%"
+                            disabled={!hasFunds}
+                            minWidth={130}
+                            isLoading={false}
+                            onClick={()=>onClick(ActionType.delegate)}
+                            bg="transparent"
+                            borderWidth="2px"
+                            borderColor="white"
+                            color="white">
+                            Delegate
+                        </Button>
+                        <Button
+                            alignSelf="center"
+                            borderRadius="full"
+                            width="100%"
+                            disabled={true}
+                            minWidth={130}
+                            isLoading={false}
+                            onClick={()=>onClick(ActionType.undelegate)}
+                            bg="transparent"
+                            borderWidth="2px"
+                            borderColor="white"
+                            color="white">
+                            Redelegate
+                        </Button>
+                        <Button
+                            alignSelf="center"
+                            borderRadius="full"
+                            width="100%"
+                            disabled={true}
+                            minWidth={130}
+                            isLoading={false}
+                            onClick={()=>onClick(ActionType.redelegate)}
+                            bg="transparent"
+                            borderWidth="2px"
+                            borderColor="white"
+                            color="white">
+                            Undelegate
+                        </Button>
                     </HStack>
                 </>
         }

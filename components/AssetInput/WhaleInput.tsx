@@ -16,6 +16,8 @@ import FallbackImage from 'components/FallbackImage'
 //import { useTokenList } from 'hooks/useTokenList'
 
 import AssetSelectModal from './AssetSelectModal'
+import {useTokenList} from "hooks/useTokenList";
+import {getTokenInfoFromTokenList} from "hooks/useTokenInfo";
 
 interface AssetInputProps {
   image?: boolean
@@ -92,9 +94,12 @@ const AssetInput: FC<AssetInputProps> = forwardRef(
     },
     ref
   ) => {
-    //const tokenInfo = useTokenInfo(token?.tokenSymbol)
 
-    // const [tokenList] = useTokenList()
+
+    const {tokenInfoList} = useTokenList()
+
+      const tokenInfo = getTokenInfoFromTokenList(token?.tokenSymbol,tokenInfoList)
+
     // useMultipleTokenBalance(tokenList?.tokens?.map(({ symbol }) => symbol))
 
     return (
@@ -143,16 +148,16 @@ const AssetInput: FC<AssetInputProps> = forwardRef(
           <HStack flex={1}>
             <AssetSelectModal
               onChange={onChange}
-              currentToken={["WHALE"]}//[tokenInfo?.symbol || hideToken]
+              currentTokenSymbol={hideToken}
               edgeTokenList={edgeTokenList}
               disabled={disabled || !showList}
               amount={token?.amount}
             >
-              {/*<AssetSelectTrigger*/}
-              {/*  tokenInfo={tokenInfo}*/}
-              {/*  showIcon={image}*/}
-              {/*  symbol={token?.tokenSymbol}*/}
-              {/*/>*/}
+              <AssetSelectTrigger
+                tokenInfo={tokenInfo}
+                showIcon={image}
+                symbol={token?.tokenSymbol}
+              />
 
               {showList && (
                 <IconButton

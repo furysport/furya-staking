@@ -1,20 +1,13 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 
 import { SearchIcon } from '@chakra-ui/icons'
 import { HStack, Input } from '@chakra-ui/react'
-//import useDebounceValue from 'hooks/useDebounceValue'
 
 interface Props {
   onChange?: (value: string) => void
 }
 
 const SearchInput: FC<Props> = ({ onChange }) => {
-  const [search, setSearch] = useState<string>('')
-  //const token = useDebounceValue(search, 200)
-  //
-  // useEffect(() => {
-  //   onChange?.(token)
-  // }, [token])
 
   return (
     <HStack paddingX={6} width="full">
@@ -29,7 +22,9 @@ const SearchInput: FC<Props> = ({ onChange }) => {
           placeholder="Search Token"
           variant="unstyled"
           color="brand.500"
-          onChange={({ target: { value } }) => setSearch(value)}
+          onChange={({ target: { value } }) => {
+              onChange(value)
+          }}
         />
         <SearchIcon color="green.500" />
       </HStack>

@@ -1,9 +1,6 @@
 import { FC, ReactNode } from 'react'
 import {
-  BrowserView,
-  isBrowser,
   isMobile,
-  MobileView,
 } from 'react-device-detect'
 
 import { Flex, useMediaQuery } from '@chakra-ui/react'
@@ -14,6 +11,7 @@ import { walletState } from 'state/atoms/walletAtoms'
 import MobileNotSupportedModal from '../Wallet/Modal/MobileNotSupportedModal'
 import RadialGradient from './RadialGradient'
 import Header from "components/Header/Header";
+import Status from "components/Status";
 
 // import { useRouter } from "next/router";
 interface Props {
@@ -22,12 +20,6 @@ interface Props {
 const AppLayout: FC<Props> = ({ children }) => {
   const { chainId } = useRecoilValue(walletState)
   const [isMobileView] = useMediaQuery('(max-width: 480px)')
-
-  // const router = useRouter()
-
-  // useEffect(() => {
-  //   router.replace("/swap")
-  // },[chainId])
 
   return (
     <>
@@ -52,7 +44,7 @@ const AppLayout: FC<Props> = ({ children }) => {
           {children}
         </Flex>
         <Flex paddingY={10} paddingX={6} alignSelf="flex-end">
-          {/*<Status />*/}
+          <Status />
         </Flex>
       </Flex>
     </>

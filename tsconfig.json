@@ -24,7 +24,7 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
-      "../*": ["./*"]
+      "": ["./*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

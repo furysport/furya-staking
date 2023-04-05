@@ -1,14 +1,19 @@
+import connectedWallet from "../components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/ConnectedWallet";
+
 const chainInfoQueryKey = '@chain-info'
 // import chainInfo from "components/Wallet/chainInfo.json"
 import { useMemo } from 'react'
 
 import { ChainInfo } from '@keplr-wallet/types'
-import mainnetChainInfo from '../public/mainnet/chain_info.json'
+import mainnetChainInfo from 'public/mainnet/chain_info.json'
 import testnetChainInfo from '../public/testnet/chain_info.json'
 import { useRecoilValue } from 'recoil'
-import { walletState } from '../state/atoms/walletAtoms'
+import { walletState } from 'state/atoms/walletAtoms'
+import { Coin,LCDClientConfig, LCDClient, MsgAllianceDelegate, MsgAllianceRedelegate, MsgAllianceUndelegate } from '@terra-money/feather.js';
 
-import { queryClient } from '../services/queryClient'
+import { queryClient } from 'services/queryClient'
+import {Coins} from "@terra-money/feather.js/dist/core/Coins";
+import {Numeric} from "@terra-money/feather.js/dist/core/numeric";
 
 interface CustomChainType extends ChainInfo {
     label: string

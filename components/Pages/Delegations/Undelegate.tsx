@@ -1,24 +1,19 @@
-import React, {useEffect, useState} from 'react'
-import {VStack} from '@chakra-ui/react'
+import React, {FC, useEffect} from 'react'
+import {Text, VStack} from '@chakra-ui/react'
 import AssetInput from '../../AssetInput'
 import {useRecoilState} from "recoil";
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms";
 import {Controller, useForm} from "react-hook-form";
 import {delegationAtom, TokenItemState} from "state/atoms/delegationAtoms";
+import ValidatorInput from "components/ValidatorInput/ValidatorInput";
+import {ActionProps, TokenPriceBalance} from "components/Pages/Delegations/Delegate";
 
-const Undelegate = ()  => {
+const Undelegate : FC<ActionProps> = ({tokens})  => {
 
     const [{status}, _] = useRecoilState(walletState)
     const [currentBondState, setCurrentBondState] = useRecoilState<TokenItemState>(delegationAtom)
 
     const isWalletConnected = status === WalletStatusType.connected
-
-    //const {bondingConfig} = useBondingConfig(client)
-    // const unbondingPeriodInNano = Number(bondingConfig?.unbonding_period)*1_000_000_000 ?? 60*1_000_000_000
-
-    //const {unbondingAmpWhale, unbondingBWhale} = useUnbonding(client, address)
-    //const [tokenBalances, setLSDTokenBalances] = useState<LSDTokenBalances>(null)
-
     const onInputChange = ( tokenSymbol: string | null , amount: number) => {
 
         if(tokenSymbol){
@@ -43,10 +38,15 @@ const Undelegate = ()  => {
             currentBondState
         },
     })
-
+    const currentToken : TokenPriceBalance = tokens?.find(e=>e.tokenSymbol===currentBondState.tokenSymbol)
     return <VStack
         px={7}
-        width="full">
+        width="full"
+    alignItems="flex-start"
+        marginBottom={5}>
+        <Text>From</Text>
+        <ValidatorInput value={1} onChange={()=>{}} showList={true}/>
+        <Text pt={5}>Amount</Text>
         <Controller
             name="currentBondState"
             control={control}
@@ -56,8 +56,8 @@ const Undelegate = ()  => {
                     hideToken={currentBondState.tokenSymbol}
                     {...field}
                     token={currentBondState}
-                    whalePrice={0.02}
-                    balance={0}
+                    whalePrice={currentToken?.price }
+                    balance={currentToken?.balance}
                     minMax={false}
                     disabled={false}
                     onChange={(value, isTokenChange) => {
