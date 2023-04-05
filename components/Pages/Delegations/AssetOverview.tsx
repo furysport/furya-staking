@@ -5,8 +5,12 @@ import {Cell, Pie, PieChart} from 'recharts'
 import Loader from '../../Loader'
 
 
-export enum WhaleType {
-    ampWHALE, bWHALE, WHALE
+export enum Token {
+    ampLUNA, bLUNA, WHALE
+}
+
+export enum TokenType {
+    liquid, delegated, undelegated, rewards
 }
 
 const AssetOverview = ({
@@ -16,13 +20,13 @@ const AssetOverview = ({
                          }) => {
 
     const borderRadius = "30px"
-    const TokenBox = ({whaleType}) => {
-        const {color} = data.find(e => e.whaleType === whaleType)
+    const TokenBox = ({token}) => {
+        const {color} = data.find(e => e.token === token)
 
         return (
             <HStack
                 mr="10"
-                paddingBottom={6}>
+                paddingBottom={4}>
                 <Box
                     bg={color}
                     w="4"
@@ -30,13 +34,12 @@ const AssetOverview = ({
                     borderRadius="50%"
                     mr="2">
                 </Box>
-                <Text >{WhaleType[whaleType]}</Text>
+                <Text >{Token[token]}</Text>
             </HStack>
         );
     };
 
     let aggregatedAssets = data?.reduce((acc, e) =>  acc + (e?.value ?? 0), 0);
-
     return <VStack
         width="full"
         background={"#1C1C1C"}
@@ -63,7 +66,7 @@ const AssetOverview = ({
             </HStack> :
             <HStack
                 alignItems="center"
-                justifyContent="flex-start"
+                justifyContent="space-between"
                 pl={8}
                 pt={5}
                 spacing={70}>
@@ -76,24 +79,29 @@ const AssetOverview = ({
                         Tokens
                     </Text>
                     {data?.map(e =>
-                        (<TokenBox key={`tokenBox-${e.actionType}`} whaleType={e.whaleType}/>)
+                        (<TokenBox key={`tokenBox-${e.token}`} token={e.token}/>)
                     )}
                 </VStack>
                 <VStack
                     alignItems="start"
-                    alignSelf="center"
-                spacing={8}
-                pb={3}>
+                    alignSelf="start"
+                    paddingTop={16}
+
+                spacing={6}
+                pb={3}
+                w={93}>
                     {data?.map(e =>
-                        (<Text key={e.color}>{`$${(e.value).toLocaleString()}`}</Text>)
-                    )}
+                        (<Text key={e.color}>
+                                {isWalletConnected ? `$${(e.value).toLocaleString()}` : "n/a"}
+                            </Text>
+                    ))}
                 </VStack>
                 <PieChart
                     style={{pointerEvents: 'none'}}
                     width={250}
                     height={275}>
                     <Pie
-                        data={data}//
+                        data={data}
                         cx="50%"
                         cy="45%"
                         innerRadius={95}
@@ -101,11 +109,9 @@ const AssetOverview = ({
                         dataKey="value"
                         stroke="none">
                         {isWalletConnected ?
-                            data?.map((_entry: any, index: number) =>
-                                (<Cell
-                                        key={`cell-${index}`}
-                                        fill={data[index].color}/>
-                                )) :
+                            data?.map((_entry: any, index: number) => (<Cell
+                                    key={`cell-${index}`}
+                                    fill={data[index].color}/>)) :
                             <Cell
                                 key={"cell-${index}"}
                                 fill="grey"/>}

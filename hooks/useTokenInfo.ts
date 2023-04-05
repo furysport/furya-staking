@@ -1,8 +1,3 @@
-import { useCallback, useMemo } from 'react'
-
-//import { useTokenList } from './useTokenList'
-
-
 export type TokenInfo = {
   id: string
   chain_id: string

@@ -1,0 +1,35 @@
+[
+  {
+    "chainId": "migaloo-1",
+    "token_address": "uwhale",
+    "symbol": "WHALE",
+    "name" : "Whale",
+    "decimals": 6,
+    "logoURI": "/logos/whale.svg",
+    "tags": [],
+    "denom": "uwhale",
+    "native": true
+  },
+  {
+    "chainId": "migaloo-1",
+    "token_address": "",
+    "symbol": "ampLUNA",
+    "name" : "ampLuna",
+    "decimals": 6,
+    "logoURI": "/logos/ampLuna.png",
+    "tags": [],
+    "denom": "ibc/",
+    "native": true
+  },
+  {
+    "chainId": "migaloo-1",
+    "token_address": "",
+    "symbol": "bLUNA",
+    "name" : "bLuna",
+    "decimals": 6,
+    "logoURI": "/logos/bLuna.png",
+    "tags": [],
+    "denom": "ibc",
+    "native": true
+  }
+]

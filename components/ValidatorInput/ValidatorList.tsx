@@ -1,51 +1,49 @@
-import {FC, useMemo} from 'react'
+import { FC, useMemo } from 'react'
 
-import {Box, Button, HStack, Image, Text} from '@chakra-ui/react'
+import { background, Box, Button, HStack, Image, Text } from '@chakra-ui/react'
 import FallbackImage from 'components/FallbackImage'
-import {useTokenList} from "hooks/useTokenList";
-import useFilter from "hooks/useFilter";
-import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 //import useFilter from 'hooks/useFilter'
 //import { useMultipleTokenBalance } from 'hooks/useTokenBalance'
 //import { useTokenList } from 'hooks/useTokenList'
 
-type AssetListProps = {
+type ValidatorListProps = {
     // assetList?: Asset[];
     onChange: (token: any, isTokenChange?: boolean) => void
     search: string
-    currentTokenSymbol: string
-    edgeTokenList: string[]
+    currentValidator: string
+    validatorList: string[]
     amount?: number
 }
 
-const AssetList: FC<AssetListProps> = ({
+const ValidatorList: FC<ValidatorListProps> = ({
                                            onChange,
                                            search,
-                                           currentTokenSymbol,
+                                           currentValidator = [],
                                            amount,
-                                           edgeTokenList = [],
+                                           validatorList = [],
                                        }) => {
-    const {tokenInfoList} = useTokenList()
+    // const [tokenList] = useTokenList()
 
-    const {data: tokenBalance= []} = useMultipleTokenBalance(
-       tokenInfoList?.map(({ symbol }) => symbol))
+    // const [tokenBalance = []] = useMultipleTokenBalance(
+    //   tokenList?.tokens?.map(({ symbol }) => symbol)
+    // )
 
-    const tokensWithBalance = useMemo(() => {
-        if (tokenBalance.length == 0) return tokenInfoList.filter(({symbol}) => currentTokenSymbol !== symbol)
-
-        return tokenInfoList
-            ?.map((token, index) => ({
-                ...token,
-                balance: tokenBalance?.[index],
-            }))
-            .filter(({symbol}) =>
-                edgeTokenList?.length > 0
-                    ? edgeTokenList.includes(symbol)
-                    : currentTokenSymbol !== symbol
-            )
-    }, [tokenInfoList, tokenBalance])
-
-    const filterAssets = useFilter<any>(tokensWithBalance, 'symbol', search === undefined ? "" : search)
+    // const tokensWithBalance = useMemo(() => {
+    //   if (tokenBalance.length == 0) return tokenList?.tokens
+    //
+    //   return tokenList?.tokens
+    //     ?.map((token, index) => ({
+    //       ...token,
+    //       balance: tokenBalance?.[index],
+    //     }))
+    //     .filter(({ symbol }) =>
+    //       edgeTokenList?.length > 0
+    //         ? edgeTokenList.includes(symbol)
+    //         : !currentToken?.includes(symbol)
+    //     )
+    // }, [tokenList, tokenBalance])
+    //
+    const filterAssets =[] // useFilter<any>(tokensWithBalance, 'symbol', search)
 
     return (
         <Box
@@ -99,7 +97,7 @@ const AssetList: FC<AssetListProps> = ({
                             width="auto"
                             maxW="1.5rem"
                             maxH="1.5rem"
-                            fallback={<FallbackImage/>}
+                            fallback={<FallbackImage />}
                         />
                         <Text fontSize="18" fontWeight="400">
                             {item?.symbol}
@@ -120,7 +118,7 @@ const AssetList: FC<AssetListProps> = ({
                     paddingX={4}
                 >
                     <Text fontSize="18" fontWeight="400">
-                        No asset found
+                        No validators found
                     </Text>
                 </HStack>
             )}
@@ -128,4 +126,4 @@ const AssetList: FC<AssetListProps> = ({
     )
 }
 
-export default AssetList
+export default ValidatorList

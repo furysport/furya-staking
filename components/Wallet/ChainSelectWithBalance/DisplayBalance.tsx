@@ -2,10 +2,8 @@ import React from 'react'
 
 import { Spinner, Text } from '@chakra-ui/react'
 import { useTokenBalance } from 'hooks/useTokenBalance'
-//import { useBaseTokenInfo } from 'hooks/useTokenInfo'
 
 function DisplayBalance() {
-  //const baseToken = useBaseTokenInfo()
   const { balance, isLoading } = useTokenBalance("WHALE")
 
   return (

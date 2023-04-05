@@ -1,10 +1,9 @@
 import {ArrowBackIcon} from "@chakra-ui/icons"
 import {Box, Button, HStack, IconButton, Text, useDisclosure, VStack} from "@chakra-ui/react"
 import {useRecoilState} from "recoil"
-import {useChains} from "hooks/useChainInfo"
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms"
 import Redelegate from "./Redelegate"
-import Delegate from "./Delegate"
+import Delegate, {TokenPriceBalance} from "./Delegate"
 import {useRouter} from 'next/router'
 
 import {delegationAtom, TokenItemState} from "state/atoms/delegationAtoms";
@@ -15,6 +14,8 @@ import Loader from "../../Loader";
 import {useWhalePrice} from "queries/useGetTokenDollarValueQuery";
 import {ActionType} from "components/Pages/Delegations/Dashboard";
 import Undelegate from "components/Pages/Delegations/Undelegate";
+import {useTokenList} from "hooks/useTokenList";
+import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 
 export enum TxStep {
     /**
@@ -48,7 +49,7 @@ export enum TxStep {
 }
 const ActionsComponent = ({globalAction}) => {
 
-    const [{chainId,client, address, status, network },_] = useRecoilState(walletState)
+    const [{chainId, status },_] = useRecoilState(walletState)
     const isWalletConnected: boolean = status === WalletStatusType.connected
     const {
         isOpen: isOpenModal,
@@ -61,17 +62,26 @@ const ActionsComponent = ({globalAction}) => {
 
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<TokenItemState>(delegationAtom)
 
-
+    const {tokenInfoList}  = useTokenList()
     const whalePrice = useWhalePrice()
+
+    const {data: balances} = useMultipleTokenBalance(tokenInfoList?.map(e=>e.symbol) ?? [])
+
+    const liquidTokenPriceBalances : TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index)=> ({
+        price: whalePrice, balance:balances?.[index] , tokenSymbol: tokenInfo.symbol
+    })) ?? []
+    const delegatedTokenPriceBalances : TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index)=> ({
+        price: whalePrice, balance:balances?.[index] , tokenSymbol: tokenInfo.symbol
+    })) ?? []
+    const rewardsTokenPriceBalances : TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index)=> ({
+        price: whalePrice, balance:balances?.[index] , tokenSymbol: tokenInfo.symbol
+    })) ?? []
 
     const txStep = TxStep.Idle
 
-
-
     const buttonLabel = useMemo(() => {
         if (!isWalletConnected) return "Connect Wallet"
-        else if (currentDelegationState?.amount === 0 && globalAction !== ActionType.delegate) return "Enter Amount"
-        else if( globalAction === ActionType.redelegate) return "No Withdraws"
+        else if (currentDelegationState?.amount === 0) return "Enter Amount"
         else return ActionType[globalAction]
     }, [isWalletConnected, currentDelegationState, globalAction])
 
@@ -82,6 +92,7 @@ const ActionsComponent = ({globalAction}) => {
     const DelegationActionButton = ({action}) => {
 
         const actionString = ActionType[action].toString()
+
         const onClick = async () => {
             setCurrentDelegationState({...currentDelegationState, amount:0})
             await router.push(`/${actionString}`)
@@ -192,15 +203,11 @@ const ActionsComponent = ({globalAction}) => {
                     {(() => {
                         switch (globalAction) {
                             case ActionType.delegate:
-                                return <Delegate
-                                />;
+                                return <Delegate tokens={liquidTokenPriceBalances}/>;
                             case ActionType.redelegate:
-                                return <Redelegate
-
-                                />;
+                                return <Redelegate tokens={rewardsTokenPriceBalances}/>;
                             case ActionType.undelegate:
-                                return <Undelegate
-                                />;
+                                return <Undelegate tokens={delegatedTokenPriceBalances}/>;
                         }
                     })()}
                 </Box>

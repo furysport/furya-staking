@@ -1,30 +1,19 @@
 import {Box, Divider, HStack, Text, VStack, Tooltip} from "@chakra-ui/react";
 import React from "react";
 import {useEffect, useRef, useState} from "react";
-import {WhaleType} from "./AssetOverview";
-import {StakingData} from "./types/StakingData";
+import {Token} from "./AssetOverview";
+import {TokenData} from "components/Pages/Delegations/Dashboard";
 
 export interface TooltipProps {
-    data: StakingData[];
-    withdrawableAmpWhale?: number;
-    withdrawableBWhale?: number;
+    data: TokenData[];
     label: string;
     isWalletConnected: boolean;
 }
 
-export const CustomTooltip = ({data, label, isWalletConnected, tokenType,
-                                 withdrawableAmpWhale, withdrawableBWhale
+export const CustomTooltip = ({data, label, isWalletConnected,
                              }: TooltipProps) => {
-    const { whale = null, ampWhale = null, bWhale = null} = data?.find(e => e.tokenType == tokenType) || {}
 
-    const lsdTokenDetails = [{
-        type: WhaleType.bWHALE,
-        value:withdrawableBWhale ?? bWhale}, {
-        type: WhaleType.ampWHALE,
-        value:withdrawableAmpWhale ?? ampWhale
-    }].sort((a, b) => b.value - a.value);
-
-    const TokenDetail = ({whaleType, value}) => {
+    const TokenDetail = ({tokenType, value}) => {
         return <HStack
             justify="space-between"
             direction="row"
@@ -33,7 +22,7 @@ export const CustomTooltip = ({data, label, isWalletConnected, tokenType,
             <Text
                 color="whiteAlpha.600"
                 fontSize={14}>
-                {WhaleType[whaleType]}
+                {Token[tokenType]}
             </Text>
             <Text
                 fontSize={14}>
@@ -46,7 +35,7 @@ export const CustomTooltip = ({data, label, isWalletConnected, tokenType,
 
     useEffect(() => {
         setTextWidth(textRef.current.offsetWidth);
-    }, [whale, ampWhale, bWhale]);
+    }, []);
 
     return <Tooltip
         sx={{boxShadow: "none"}}
@@ -62,25 +51,12 @@ export const CustomTooltip = ({data, label, isWalletConnected, tokenType,
                 border="none"
                 justifyContent="center"
                 alignItems="center">
-                {ampWhale === null && withdrawableAmpWhale == null ?
-                    <Text>
-                       </Text> :
-                    <>{tokenType === TokenType.liquid ?
-                        <> <TokenDetail
-                            whaleType={WhaleType.WHALE}
-                            value={whale}/>
-                            <Divider
-                                width="93%"
-                                borderWidth="0.1px"
-                                color="whiteAlpha.300"/>
-                        </> : null
-                    }
-                        {lsdTokenDetails.map((e, index) => {
-                            return <React.Fragment key={e.type}>
+                        {data.map((e, index) => {
+                            return <React.Fragment key={e.token}>
                                 <TokenDetail
-                                    whaleType={e.type}
+                                    tokenType={e.token}
                                     value={e.value}/>
-                                {index === 0 &&
+                                {index !== data.length - 1 &&
                                     <Divider
                                         width="93%"
                                         borderWidth="0.1px"
@@ -89,12 +65,12 @@ export const CustomTooltip = ({data, label, isWalletConnected, tokenType,
                             </React.Fragment>
                         })
                         }
-                    </>
-                }
             </VStack>}
         bg="transparent">
         <VStack alignItems="flex-start" minW={100}>
             <Text
+                fontSize={27}
+                fontWeight={"bold"}
                 ref={textRef}
                 mb="-0.3rem"
                 color="white">

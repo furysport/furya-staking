@@ -18,7 +18,7 @@ import SearchInput from './SearchInput'
 
 interface AssetSelectModalProps {
   children: ReactNode
-  currentToken: string[]
+  currentTokenSymbol: string
   edgeTokenList: string[]
   onChange: (asset: Asset, isTokenChange?: boolean) => void
   disabled: boolean
@@ -28,7 +28,7 @@ interface AssetSelectModalProps {
 const AssetSelectModal: FC<AssetSelectModalProps> = ({
   children,
   onChange,
-  currentToken = [],
+  currentTokenSymbol ,
   edgeTokenList = [],
   disabled,
   amount,
@@ -76,7 +76,7 @@ const AssetSelectModal: FC<AssetSelectModalProps> = ({
               onChange={onAssetChange}
               search={search}
               edgeTokenList={edgeTokenList}
-              currentToken={currentToken}
+              currentTokenSymbol={currentTokenSymbol}
             />
           </ModalBody>
         </ModalContent>

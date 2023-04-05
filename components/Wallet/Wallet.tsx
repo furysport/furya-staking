@@ -24,7 +24,6 @@ const Wallet: any = ({ connected, onDisconnect, onOpenModal }) => {
     useRecoilState(walletState)
 
   const router = useRouter()
-  const chainIdParam = router.query.chainId as string
 
   const connectedWallet = useConnectedWallet()
   const [chainInfo] = useChainInfo(currentWalletState.chainId)
