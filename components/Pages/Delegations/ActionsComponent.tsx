@@ -16,6 +16,14 @@ import {ActionType} from "components/Pages/Delegations/Dashboard";
 import Undelegate from "components/Pages/Delegations/Undelegate";
 import {useTokenList} from "hooks/useTokenList";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
+import { useAllianceDelegate } from "./hooks/useDelegate"
+import { useAllianceReDelegate } from "./hooks/useRedelegate"
+import { useAllianceUnDelegate } from "./hooks/useUndelegate"
+
+import { useTerraStation } from "../../../hooks/useTerraStation"
+import { ConnectType, useConnectedWallet } from "@terra-money/wallet-provider"
+import { TerraStationWallet } from "../../../util/wallet-adapters/terraStationWallet"
+import { LCDClient } from '@terra-money/feather.js'
 
 export enum TxStep {
     /**
@@ -49,7 +57,48 @@ export enum TxStep {
 }
 const ActionsComponent = ({globalAction}) => {
 
-    const [{chainId, status },_] = useRecoilState(walletState)
+    const [{chainId, status, client },_] = useRecoilState(walletState)
+    const connectedWallet = useConnectedWallet()
+    // TODO: Improve this, maybe its fine as is 
+    // It comes from useTerraStation, instead of importing it we just use what we need
+    const mainnet = new LCDClient({
+        'juno-1':{
+          lcd: 'https://ww-juno-rest.polkachu.com',
+          chainID: 'juno-1',
+          gasAdjustment: 0.004,
+          gasPrices: { ujuno: 0.0025 },
+          prefix: 'juno',
+        },
+        'phoenix-1':{
+          lcd: 'https://ww-terra-rest.polkachu.com',
+          chainID: 'phoenix-1',
+          gasAdjustment: 1.75,
+          gasPrices: { uluna: 0.015 },
+          prefix: 'terra',
+        },
+        'chihuahua-1':{
+          lcd: 'https://ww-chihuahua-rest.polkachu.com',
+          chainID: 'chihuahua-1',
+          gasAdjustment: 5,
+          gasPrices: { uhuahua: 1 },
+          prefix: 'chihuahua',
+        },
+        'migaloo-1': {
+          lcd: 'https://ww-migaloo-rest.polkachu.com/',
+          chainID: 'migaloo-1',
+          gasAdjustment: 0.1,
+          gasPrices: { uwhale: 0.05 },
+          prefix: 'migaloo',
+        }
+      })
+    //   We need a connectedWallet and a LCDClient to create a TerraStationWallet, its an abstraction which has Keplr friendly function names BUT underneath is using Feather js and supports alliance 
+    const tsWall =  new TerraStationWallet(
+        connectedWallet,
+        mainnet,
+        'mainnet',
+        'migaloo-1'
+      )
+
     const isWalletConnected: boolean = status === WalletStatusType.connected
     const {
         isOpen: isOpenModal,
@@ -58,7 +107,6 @@ const ActionsComponent = ({globalAction}) => {
     } = useDisclosure()
 
     const router = useRouter()
-
 
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<TokenItemState>(delegationAtom)
 
@@ -221,7 +269,25 @@ const ActionsComponent = ({globalAction}) => {
                     maxWidth={570}
                     isLoading={false}
                     onClick={async () => {
-                        if(isWalletConnected){}
+                        if(isWalletConnected){
+                            //TODO: Fix this to be more dynamic and not hardcoded 
+
+                            switch (globalAction) {
+                                case ActionType.delegate:
+                                    // Currently delegates to WindPowerStake an ampLuna
+                                    useAllianceDelegate(tsWall, 'migaloo-1', 'migaloovaloper1esv20mwvedun93ysekdeyk3x5ckeqcnjdjql4w', 1, "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A")
+                                    return 
+                                case ActionType.redelegate:
+                                    // Currently redelegates from WindPowerStake to Notional an ampLuna
+                                    useAllianceReDelegate(tsWall, 'migaloo-1', 'migaloovaloper1esv20mwvedun93ysekdeyk3x5ckeqcnjdjql4w', 'migaloovaloper1rqvctgdpafvc0k9fx4ng8ckt94x723zmp3g0jv', 1, "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A")
+                                    return 
+                                case ActionType.undelegate:
+                                    // Currently undelegates from WindPowerStake an ampLuna
+                                    useAllianceUnDelegate(tsWall, 'migaloo-1', 'migaloovaloper1esv20mwvedun93ysekdeyk3x5ckeqcnjdjql4w', 1, "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A")
+                                    return 
+                            }
+
+                        }
                         else{
                             onOpenModal()
                         }
