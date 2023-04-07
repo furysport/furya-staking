@@ -96,9 +96,9 @@ const AssetInput: FC<AssetInputProps> = forwardRef(
   ) => {
 
 
-    const {tokenInfoList} = useTokenList()
+    const {tokens} = useTokenList()
 
-      const tokenInfo = getTokenInfoFromTokenList(token?.tokenSymbol,tokenInfoList)
+      const tokenInfo = getTokenInfoFromTokenList(token?.tokenSymbol,tokens)
 
     // useMultipleTokenBalance(tokenList?.tokens?.map(({ symbol }) => symbol))
 

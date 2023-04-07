@@ -1,11 +1,22 @@
 import { Button, Text, HStack, VStack, Box} from '@chakra-ui/react'
-import { createColumnHelper, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, useReactTable, getPaginationRowModel } from '@tanstack/react-table'
+import {
+    createColumnHelper,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    useReactTable,
+    getPaginationRowModel,
+    ColumnDef
+} from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 import useValidators from 'hooks/useValidators';
 import useDelegations from 'hooks/useDelegations';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {ActionType} from "components/Pages/Delegations/Dashboard";
 import {useRouter} from "next/router";
+import {Validator} from "@terra-money/feather.js";
+import Commission = Validator.Commission;
 
 type Props = {
     columnFilters: any;
@@ -13,44 +24,53 @@ type Props = {
 
     setColumnFilters: void
 }
-
 type TableProps = {
     name: string;
-    votingPower: string;
-    commission: string;
+    votingPower: any;
+    commission: Commission;
     status: string;
     actionButtons: JSX.Element;
-}
+};
 
 
 const columnHelper = createColumnHelper<TableProps>()
 
-const columns = [
+const columns: ColumnDef<TableProps,any>[] = [
     columnHelper.accessor('name', {
-        header: () => <Text as="span" color="brand.50" flex={1} fontSize="sm" textTransform="capitalize">Name</Text>,
+        header: () => (
+            <Text as="span" color="brand.50" flex={1} fontSize="sm" textTransform="capitalize">
+                Name
+            </Text>
+        ),
         cell: (info) => info.getValue(),
-        
     }),
     columnHelper.accessor('votingPower', {
-        header: () => (<Text as="span" color="brand.50" minW="200px" fontSize="sm" textTransform="capitalize">Voting Power</Text>),
-        cell: (info) => info.getValue() + "%",
-        
-
+        header: () => (
+            <Text as="span" color="brand.50" minW="200px" fontSize="sm" textTransform="capitalize">
+                Voting Power
+            </Text>
+        ),
+        cell: (info) => info.getValue() + '%',
     }),
     columnHelper.accessor('commission', {
-        header: () => (<Text as="span" color="brand.50" minW="200px" fontSize="sm" textTransform="capitalize">Commission</Text>),
-        cell: (info) => info.getValue() + "%",
-        
+        header: () => (
+            <Text as="span" color="brand.50" minW="200px" fontSize="sm" textTransform="capitalize">
+                Commission
+            </Text>
+        ),
+        cell: (info) => info.getValue() + '%',
     }),
     columnHelper.accessor('actionButtons', {
-        header: () => (<Text as="span" color="brand.50" flex={1} fontSize="sm" textTransform="capitalize">Action</Text>),
+        header: () => (
+            <Text as="span" color="brand.50" flex={1} fontSize="sm" textTransform="capitalize">
+                Action
+            </Text>
+        ),
         cell: (info) => info.getValue(),
-        
-
     }),
     columnHelper.accessor('status', {}),
+];
 
-]
 
 const ValidatorTable = ({ columnFilters, setColumnFilters, address }: Props) => {
 
@@ -70,9 +90,12 @@ const router = useRouter()
 
         if (!validators?.length) return []
 
-        const onClick = async(action: ActionType)=>{
-            await router.push(`/${ActionType[action]}`)
-        }
+        const onClick = async (action: ActionType, validatorAddress: string) => {
+            await router.push({
+                pathname: `/${ActionType[action]}`,
+                query: { validatorAddress },
+            });
+        };
         const getIsActive = (validator) => {
             const delegation = delegations.find(({ delegation }) => delegation.validator_address === validator.validator_addr)
             return !!delegation ? "active" : "all"
@@ -83,9 +106,9 @@ const router = useRouter()
             commission: validator.commission,
             status: getIsActive(validator),
             actionButtons:   <HStack spacing={5}>
-                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.delegate)} >Delegate</Button>
-                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.redelegate)}  >Redelegate</Button>
-                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.undelegate)}  >Undelegate</Button>
+                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.delegate,validator.operator_address)} >Delegate</Button>
+                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.redelegate,validator.operator_address)}  >Redelegate</Button>
+                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.undelegate,validator.operator_address)}  >Undelegate</Button>
             </HStack>
         }))
 

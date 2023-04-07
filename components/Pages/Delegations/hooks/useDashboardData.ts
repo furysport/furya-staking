@@ -11,8 +11,6 @@ export interface ValidatorData {
 
 const fetchValidators = async (client: LCDClient, chainId: string, address: string) => {
     const validators = await client.staking.validators(chainId);
-    console.log("herere validators")
-    console.log(validators)
     const allianceValidatorData = await Promise.all(validators[0].map(async v => ({
         validator: v,
         delegationResponse: (await fetchValidatorDelegations(client, address, v.operator_address)).delegations,

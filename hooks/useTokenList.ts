@@ -22,5 +22,5 @@ export const useTokenList = () => {
 
 
 
-    return { tokenInfoList, isLoading }
+    return { tokens: tokenInfoList, isLoading }
 }

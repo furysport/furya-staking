@@ -18,9 +18,7 @@ const CardComponent: FC<CardComponentProps> = ({title, tokenData,isLoading, isWa
            return  total + item.value * (item?.dollarValue !== undefined ? item?.dollarValue ?? 0 : 0);
         }, 0);
 
-    console.log(tokenData)
     const summedAndMultipliedValues = isWalletConnected ? `$${sumAndMultiplyValues()?.toLocaleString()}` : "n/a";
-    console.log(summedAndMultipliedValues)
     return (
         <VStack
             width="full"

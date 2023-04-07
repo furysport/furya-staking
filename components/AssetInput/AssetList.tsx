@@ -25,15 +25,15 @@ const AssetList: FC<AssetListProps> = ({
                                            amount,
                                            edgeTokenList = [],
                                        }) => {
-    const {tokenInfoList} = useTokenList()
+    const {tokens} = useTokenList()
 
     const {data: tokenBalance= []} = useMultipleTokenBalance(
-       tokenInfoList?.map(({ symbol }) => symbol))
+       tokens?.map(({ symbol }) => symbol))
 
     const tokensWithBalance = useMemo(() => {
-        if (tokenBalance.length == 0) return tokenInfoList.filter(({symbol}) => currentTokenSymbol !== symbol)
+        if (tokenBalance.length == 0) return tokens.filter(({symbol}) => currentTokenSymbol !== symbol)
 
-        return tokenInfoList
+        return tokens
             ?.map((token, index) => ({
                 ...token,
                 balance: tokenBalance?.[index],
@@ -43,7 +43,7 @@ const AssetList: FC<AssetListProps> = ({
                     ? edgeTokenList.includes(symbol)
                     : currentTokenSymbol !== symbol
             )
-    }, [tokenInfoList, tokenBalance])
+    }, [tokens, tokenBalance])
 
     const filterAssets = useFilter<any>(tokensWithBalance, 'symbol', search === undefined ? "" : search)
 
@@ -95,7 +95,6 @@ const AssetList: FC<AssetListProps> = ({
                         <Image
                             src={item?.logoURI}
                             alt="logo-small"
-                            // boxSize="2rem"
                             width="auto"
                             maxW="1.5rem"
                             maxH="1.5rem"

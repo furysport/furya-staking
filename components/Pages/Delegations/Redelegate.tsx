@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react'
+import React, {FC, useEffect, useMemo} from 'react'
 import {Text, VStack} from '@chakra-ui/react'
 import AssetInput from '../../AssetInput'
 import {useRecoilState} from "recoil";
@@ -8,13 +8,19 @@ import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
 import ValidatorInput from "components/ValidatorInput/ValidatorInput";
 import {ActionProps, TokenPriceBalance} from "components/Pages/Delegations/Delegate";
 import tokenList from "public/mainnet/white_listed_token_info.json";
+import useValidators from "hooks/useValidators";
 
-const Redelegate: FC<ActionProps> = ({tokens}) => {
+const Redelegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
 
-    const [{status}, _] = useRecoilState(walletState)
+    const [{status, address}, _] = useRecoilState(walletState)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
 
     const isWalletConnected = status === WalletStatusType.connected
+
+    const {data: {validators = []} = {}} = useValidators({address})
+
+    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress])
+
     const onInputChange = (tokenSymbol: string | null, amount: number) => {
 
         if (tokenSymbol) {
@@ -26,13 +32,16 @@ const Redelegate: FC<ActionProps> = ({tokens}) => {
 
     useEffect(() => {
         const newState: DelegationState = {
-            denom: null, validatorDestAddress: null, validatorSrcAddress: null,
-            tokenSymbol: "WHALE",
             amount: 0,
+            denom: null,
+            validatorSrcAddress: null,
+            tokenSymbol: "WHALE",
+            validatorDestAddress: chosenValidator?.operator_address,
+            validatorDestName: chosenValidator?.description.moniker,
             decimals: 6
         }
         setCurrentDelegationState(newState)
-    }, [isWalletConnected])
+    }, [isWalletConnected, chosenValidator])
 
 
     const {control} = useForm({
@@ -60,8 +69,6 @@ const Redelegate: FC<ActionProps> = ({tokens}) => {
                     delegatedOnly={false}
                     validatorName={currentDelegationState.validatorSrcName}
                     onChange={(validator) => {
-                        console.log("validator")
-                        console.log(validator)
                         field.onChange(validator)
                         setCurrentDelegationState({
                             ...currentDelegationState,
