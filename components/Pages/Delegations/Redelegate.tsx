@@ -4,85 +4,124 @@ import AssetInput from '../../AssetInput'
 import {useRecoilState} from "recoil";
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms";
 import {Controller, useForm} from "react-hook-form";
-import {delegationAtom, TokenItemState} from "state/atoms/delegationAtoms";
+import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
 import ValidatorInput from "components/ValidatorInput/ValidatorInput";
 import {ActionProps, TokenPriceBalance} from "components/Pages/Delegations/Delegate";
+import tokenList from "public/mainnet/white_listed_token_info.json";
 
-const Redelegate :FC<ActionProps> = ({tokens})  => {
+const Redelegate: FC<ActionProps> = ({tokens}) => {
 
-  const [{status}, _] = useRecoilState(walletState)
-  const [currentBondState, setCurrentBondState] = useRecoilState<TokenItemState>(delegationAtom)
+    const [{status}, _] = useRecoilState(walletState)
+    const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
 
-  const isWalletConnected = status === WalletStatusType.connected
+    const isWalletConnected = status === WalletStatusType.connected
+    const onInputChange = (tokenSymbol: string | null, amount: number) => {
 
-  //const {bondingConfig} = useBondingConfig(client)
-  // const unbondingPeriodInNano = Number(bondingConfig?.unbonding_period)*1_000_000_000 ?? 60*1_000_000_000
-
-  //const {unbondingAmpWhale, unbondingBWhale} = useUnbonding(client, address)
-
-  const onInputChange = ( tokenSymbol: string | null , amount: number) => {
-
-    if(tokenSymbol){
-      setCurrentBondState({...currentBondState, tokenSymbol:tokenSymbol, amount:Number(amount)})}else{
-      setCurrentBondState({...currentBondState,amount:Number(amount)})
+        if (tokenSymbol) {
+            setCurrentDelegationState({...currentDelegationState, tokenSymbol: tokenSymbol, amount: Number(amount)})
+        } else {
+            setCurrentDelegationState({...currentDelegationState, amount: Number(amount)})
+        }
     }
-  }
 
-  useEffect(() => {
-    const newState: TokenItemState = {
-      tokenSymbol: "WHALE",
-      amount: 0,
-      decimals: 6,
-    }
-    setCurrentBondState(newState)
-  }, [isWalletConnected])
+    useEffect(() => {
+        const newState: DelegationState = {
+            denom: null, validatorDestAddress: null, validatorSrcAddress: null,
+            tokenSymbol: "WHALE",
+            amount: 0,
+            decimals: 6
+        }
+        setCurrentDelegationState(newState)
+    }, [isWalletConnected])
 
 
-  const { control } = useForm({
-    mode: 'onChange',
-    defaultValues: {
-      currentBondState
-    },
-  })
+    const {control} = useForm({
+        mode: 'onChange',
+        defaultValues: {
+            currentDelegationState
+        },
+    })
 
-    const currentToken : TokenPriceBalance = tokens?.find(e=>e.tokenSymbol===currentBondState.tokenSymbol)
+    const currentToken: TokenPriceBalance = tokens?.find(e => e.tokenSymbol === currentDelegationState.tokenSymbol)
 
-  return <VStack
-      px={7}
-      width="full"
-      alignItems="flex-start"
-      marginBottom={5}>
-      <Text>From</Text>
-      <ValidatorInput value={1} onChange={()=>{}} showList={true}/>
-      <Text pt={5}>To</Text>
-      <ValidatorInput value={1} onChange={()=>{}} showList={true}/>
-      <Text pt={5}>Amount</Text>
-    <Controller
-        name="currentBondState"
-        control={control}
-        rules={{ required: true }}
-        render={({ field }) => (
-            <AssetInput
-                hideToken={currentBondState.tokenSymbol}
-                {...field}
-                token={currentBondState}
-                whalePrice={currentToken?.price }
-                balance={currentToken?.balance}
-                minMax={false}
-                disabled={false}
-                onChange={(value, isTokenChange) => {
-                  onInputChange(value, 0)
-                  field.onChange(value)
-                  if(isTokenChange){
-                    setCurrentBondState({...currentBondState, tokenSymbol: value.tokenSymbol,amount: value.amount })}
-                  else{
-                    setCurrentBondState({...currentBondState, amount: value.amount})
-                  }
-                }}
-            />
-        )}
-    />
-  </VStack>
+    return <VStack
+        px={7}
+        width="full"
+        alignItems="flex-start"
+        marginBottom={5}>
+        <Text>From</Text>
+        <Controller
+            name="currentDelegationState"
+            control={control}
+            rules={{required: true}}
+            render={({field}) => (
+                <ValidatorInput
+                    value={1}
+                    delegatedOnly={false}
+                    validatorName={currentDelegationState.validatorSrcName}
+                    onChange={(validator) => {
+                        console.log("validator")
+                        console.log(validator)
+                        field.onChange(validator)
+                        setCurrentDelegationState({
+                            ...currentDelegationState,
+                            validatorSrcAddress: validator.operator_address,
+                            validatorSrcName: validator.description.moniker
+                        })
+                    }}
+                    showList={true}/>)}/>
+        <Text pt={5}>To</Text>
+        <Controller
+            name="currentDelegationState"
+            control={control}
+            rules={{required: true}}
+            render={({field}) => (
+                <ValidatorInput
+                    value={1}
+                    delegatedOnly={false}
+                    validatorName={currentDelegationState.validatorDestName}
+                    onChange={(validator) => {
+                        field.onChange(validator)
+                        setCurrentDelegationState({
+                            ...currentDelegationState,
+                            validatorDestAddress: validator.operator_address,
+                            validatorDestName: validator.description.moniker
+                        })
+                    }}
+                    showList={true}/>)}/>
+        <Text pt={5}>Amount</Text>
+        <Controller
+            name="currentDelegationState"
+            control={control}
+            rules={{required: true}}
+            render={({field}) => (
+                <AssetInput
+                    hideToken={currentDelegationState.tokenSymbol}
+                    {...field}
+                    token={currentDelegationState}
+                    whalePrice={currentToken?.price}
+                    balance={currentToken?.balance}
+                    minMax={false}
+                    disabled={false}
+                    onChange={(value, isTokenChange) => {
+                        onInputChange(value, 0)
+                        field.onChange(value)
+                        if (isTokenChange) {
+                            const denom = tokenList.find(t=>t.symbol === value.tokenSymbol).denom
+                            setCurrentDelegationState({
+                                ...currentDelegationState,
+                                tokenSymbol: value.tokenSymbol,
+                                amount: value.amount,
+                                denom: denom
+                            })
+                        } else {
+                            setCurrentDelegationState({...currentDelegationState, amount: value.amount})
+                        }
+                    }}
+                />
+            )}
+        />
+    </VStack>
 
 }
 

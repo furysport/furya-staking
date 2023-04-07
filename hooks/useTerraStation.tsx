@@ -95,7 +95,6 @@ export const useTerraStation = (onCloseModal) => {
     if (currentWalletState?.activeWallet !== 'station') {
       return
     }
-
     setCurrentWalletState({
       key: null,
       status: connectedWallet? WalletStatusType.connected : WalletStatusType.disconnected,

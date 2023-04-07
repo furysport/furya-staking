@@ -51,7 +51,7 @@ export const CustomTooltip = ({data, label, isWalletConnected,
                 border="none"
                 justifyContent="center"
                 alignItems="center">
-                        {data.map((e, index) => {
+                        {data?.map((e, index) => {
                             return <React.Fragment key={e.token}>
                                 <TokenDetail
                                     tokenType={e.token}

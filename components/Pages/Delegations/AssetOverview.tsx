@@ -6,7 +6,7 @@ import Loader from '../../Loader'
 
 
 export enum Token {
-    ampLUNA, bLUNA, WHALE
+     WHALE, ampLUNA, bLUNA
 }
 
 export enum TokenType {
@@ -38,7 +38,8 @@ const AssetOverview = ({
             </HStack>
         );
     };
-
+console.log("data datat")
+console.log(data)
     let aggregatedAssets = data?.reduce((acc, e) =>  acc + (e?.value ?? 0), 0);
     return <VStack
         width="full"
@@ -76,7 +77,7 @@ const AssetOverview = ({
                     <Text
                         paddingBottom={8}
                         color="whiteAlpha.600">
-                        Tokens
+                        Assets
                     </Text>
                     {data?.map(e =>
                         (<TokenBox key={`tokenBox-${e.token}`} token={e.token}/>)
@@ -92,7 +93,7 @@ const AssetOverview = ({
                 w={93}>
                     {data?.map(e =>
                         (<Text key={e.color}>
-                                {isWalletConnected ? `$${(e.value).toLocaleString()}` : "n/a"}
+                                {isWalletConnected ? `$${(e.value)?.toLocaleString()}` : "n/a"}
                             </Text>
                     ))}
                 </VStack>
@@ -101,7 +102,7 @@ const AssetOverview = ({
                     width={250}
                     height={275}>
                     <Pie
-                        data={data}
+                        data={isWalletConnected && aggregatedAssets !== 0? data : [{value: 1}]}
                         cx="50%"
                         cy="45%"
                         innerRadius={95}

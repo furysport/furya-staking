@@ -1,19 +1,20 @@
-import {Box, Button, Divider, HStack, Text, useDisclosure, VStack} from "@chakra-ui/react";
+import {Box, Divider, HStack, Text, useDisclosure, VStack} from "@chakra-ui/react";
 import Loader from "components/Loader";
-import {FC, useMemo} from "react";
-import {TxStep} from "components/Pages/Delegations/ActionsComponent";
+import {FC} from "react";
 import {useRecoilState} from "recoil";
 import {walletState} from "state/atoms/walletAtoms";
 import WalletModal from "components/Wallet/Modal/Modal";
 import {TokenData} from "components/Pages/Delegations/Dashboard";
 import {Token} from "components/Pages/Delegations/AssetOverview";
+import ClaimButton from "components/Pages/Delegations/ClaimButton";
 
 interface UndelegationsProps{
     isWalletConnected: boolean,
     isLoading: boolean,
+    address: string,
     data: TokenData[]
 }
-const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,data})=>{
+const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,data, address})=>{
     const [{chainId}, _] = useRecoilState(walletState)
     const {
         isOpen: isOpenModal,
@@ -22,12 +23,6 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
     } = useDisclosure()
 
     const claimableRewards = data?.reduce((acc, e) =>  acc + (e?.value ?? 0), 0) || 0;
-    const txStep = TxStep.Idle
-    const buttonLabel = useMemo(() => {
-        if (!isWalletConnected) return 'Connect Wallet'
-        else if (claimableRewards === 0) return 'No Rewards'
-        else return 'Claim'
-    }, [claimableRewards, isWalletConnected])
 
     return <VStack
         width="full"
@@ -68,34 +63,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                             fontWeight={"bold"}>
                             {isWalletConnected ? `$${claimableRewards.toLocaleString()}`: "n/a"}
                         </Text>
-                        <Button
-                            alignSelf="center"
-                            bg="#6ACA70"
-                            borderRadius="full"
-                            width="100%"
-                            variant="primary"
-                            w={200}
-                            h={45}
-                            disabled={txStep == TxStep.Estimating ||
-                                txStep == TxStep.Posting ||
-                                txStep == TxStep.Broadcasting ||
-                                (isWalletConnected && claimableRewards === 0)}
-                            maxWidth={570}
-                            isLoading={
-                                txStep == TxStep.Estimating ||
-                                txStep == TxStep.Posting ||
-                                txStep == TxStep.Broadcasting}
-                            onClick={async ()=>{
-                                if(isWalletConnected) {
-                                    // await submit(ActionType.claim,null,null)}
-                                }else{
-                                    onOpenModal()
-                                }
-                                }
-                            }
-                            style={{textTransform: "capitalize", transform: "translateY(-10px)"}}>
-                            {buttonLabel}
-                        </Button>
+                        <ClaimButton isWalletConnected={isWalletConnected} onOpenModal={onOpenModal} address={address}/>
                         <WalletModal
                             isOpenModal={isOpenModal}
                             onCloseModal={onCloseModal}
@@ -117,7 +85,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                                     <Text>{isWalletConnected ? tokenData.value: "n/a"}</Text>
                                 </HStack>
                                 <HStack  justifyContent="flex-end" pr={3}>
-                                <Text marginBottom={1} fontSize={11} color={isWalletConnected ? "grey" : "black"}>{`≈$${tokenData.value}`}</Text>
+                                <Text marginBottom={1} fontSize={11} color={isWalletConnected ? "grey" : "black"}>{`≈$${tokenData.dollarValue}`}</Text>
                                 </HStack>
                                     {index < data.length - 1 && <Divider />}
                             </Box>

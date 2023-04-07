@@ -23,7 +23,10 @@ const ValidatorSearchInput: FC<Props> = ({ onChange }) => {
         placeholder="Search Validator"
     variant="unstyled"
     color="brand.500"
-    onChange={({ target: { value } }) => setSearch(value)}
+    onChange={({ target: { value } }) => {
+        console.log(value)
+        setSearch(value)
+    }}
     />
     <SearchIcon color="green.500" />
         </HStack>

@@ -1,18 +1,19 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useEffect, useMemo, useState} from 'react'
 
-import {Button, HStack, Text, VStack} from '@chakra-ui/react'
+import {HStack, Text, VStack} from '@chakra-ui/react'
 
 import {useRecoilState} from "recoil";
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms";
 import {useWhalePrice} from "queries/useGetTokenDollarValueQuery";
 import CardComponent from "components/Pages/Delegations/CardComponent";
 import AssetOverview, {Token, TokenType} from "./AssetOverview";
-import ValidatorCard from "components/Pages/Delegations/ValidatorCard";
 import RewardsComponent from "components/Pages/Delegations/RewardsComponent";
-import TriangleUpIcon from "components/icons/TriangleUpIcon";
-import TriangleDownIcon from "components/icons/TriangleDownIcon";
-
-enum ButtonType {all, active, inactive}
+import useValidators from "hooks/useValidators";
+import Validators from "components/Pages/Delegations/Validators";
+import {useMultipleTokenBalance} from "hooks/useTokenBalance";
+import tokens from "public/mainnet/white_listed_token_info.json"
+import useDelegations from "hooks/useDelegations";
+import usePrice from "hooks/usePrice";
 
 export enum ActionType {
     delegate, redelegate, undelegate, claim
@@ -21,7 +22,7 @@ export enum ActionType {
 export type TokenData = {
     color: string
     value: number
-    price: number
+    dollarValue: number
     token?: Token
     tokenSymbol?: string
 
@@ -29,7 +30,7 @@ export type TokenData = {
 
 interface ValidatorData {
     commission: number,
-    votingPower : number,
+    votingPower: number,
     name: string
 }
 
@@ -41,65 +42,87 @@ export interface DelegationData {
 }
 
 const Dashboard: FC = () => {
-    const [{status}] = useRecoilState(walletState)
+    const [{status, address}] = useRecoilState(walletState)
 
     const isWalletConnected: boolean = status === WalletStatusType.connected
-    //const chains: Array<any> = useChains()
-    //const currentChain = chains.find((row: { chainId: string }) => row.chainId === chainId)
-    //const currentChainName = currentChain?.label.toLowerCase()
 
-    const liquidData: TokenData[] = [{token: Token.WHALE, price: 0.024, value: 10003, color: "#244228"},
-        {token: Token.ampLUNA, value: 39232, price: 1.23, color: "#7CFB7D"},
-        {token: Token.bLUNA, price: 1.23, value: 230, color: "#3273F6"}]
-    const delegatedData: TokenData[] = [{token: Token.WHALE, price: 1.23, value: 5000000, color: "#244228"},
-        {token: Token.ampLUNA, price: 1.23, value: 34232, color: "#7CFB7D"},
-        {token: Token.bLUNA, price: 1.23, value: 131230, color: "#3273F6"}]
-    const undelegatedData: TokenData[] = [{token: Token.WHALE, price: 1.23, value: 0, color: "#244228"},
-        {token: Token.ampLUNA, price: 1.23, value: 0, color: "#7CFB7D"},
-        {token: Token.bLUNA, price: 1.23, value: 0, color: "#3273F6"}]
+    const rawTokenData = useMemo(
+        () =>
+            tokens.map((t, index) => {
+                return {
+                    token: index,
+                    tokenSymbol: Token[index],
+                    dollarValue: null,
+                    value: null,
+                    color: t.color,
+                };
+            }),
+        [tokens]
+    );
+    const [tokenData, setTokenData] = useState<TokenData[]>(rawTokenData)
 
-    const rewardsData: TokenData[] = [{token: Token.WHALE, price: 1.23, value: 0, color: "#244228"},
-        {token: Token.ampLUNA, price: 1.23, value: 0, color: "#7CFB7D"},
-        {token: Token.bLUNA, price: 1.23, value: 0, color: "#3273F6"}]
+    const {data: {validators = []} = {}} = useValidators({address})
 
-    const [updatedData, setData] = useState(null)
-    const [isCommissionAscending, setCommissionAscending] = useState(null)
-    const [isVotingPowerAscending, setVotingPowerAscending] = useState(null)
-    const [activeButton, setActiveButton] = useState(ButtonType.all);
+    const { data: { delegations = [], totalRewards} = {} } = useDelegations({address})
+    const [priceList, timestamp] = usePrice() || []
+    console.log("delegations")
+    console.log(priceList)
+    console.log(delegations)
+    console.log(totalRewards)
 
-    const delegationData: DelegationData = {
-        delegated: delegatedData,
-        undelegated: undelegatedData, liquid: liquidData, rewards: rewardsData
-    }
+    const {data: balances, isLoading: balancesLoading} = useMultipleTokenBalance(tokens.map(e => e.symbol))
 
-    const validatorData : ValidatorData[] = [{name: "VALIDATOR 1", commission: 0.05,votingPower:0.03},{name: "VALIDATOR 2", commission: 0.03,votingPower:0.045},{name: "VALIDATOR 3", commission: 0.01,votingPower:0.023}]
-    const [validators, setValidators] = useState<ValidatorData[]>(validatorData)
-    const handleClick = (buttonNumber) => {
-        setActiveButton(buttonNumber);
-    };
     const whalePrice = useWhalePrice()
 
-    const onCommissionAscending = ()=>{
-        setCommissionAscending(prevState =>prevState === null ? true: !prevState)
-        setValidators(validatorData.sort((a,b)=>a.commission - b.commission))
-    }
-    const onCommissionDescending = ()=>{
-        setCommissionAscending(prevState => !prevState)
-        setValidators(validatorData.sort((a,b)=>b.commission - a.commission))
-    }
-    const onVotingPowerAscending = ()=>{
-        setVotingPowerAscending(prevState =>prevState === null ?true: !prevState)
-        setValidators(validatorData.sort((a,b)=>a.votingPower - b.votingPower))
-    }
-    const onVotingPowerDescending = ()=>{
-        setVotingPowerAscending(prevState => !prevState)
-        setValidators(validatorData.sort((a,b)=>b.votingPower - a.votingPower))
-    }
+    const [updatedData, setData] = useState(null)
 
     useEffect(() => {
+        const liquidData = tokenData.map((token, index) => ({
+            ...token,
+            dollarValue: 1,
+            value: balances?.[index]
+        }))
+        const delegatedData = tokenData.map((tokenData, index) => {
+            const allDelegations = delegations.filter(d=>d.token.symbol === tokenData.tokenSymbol)
+
+            let aggregatedDollarValue = allDelegations?.reduce((acc, e) => acc + Number(e?.token.dollarValue ?? 0), 0).toFixed(6);
+            let aggregatedAmount = allDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
+
+            return {
+            ...tokenData,
+            dollarValue: Number(aggregatedDollarValue),
+            value: Number(aggregatedAmount)
+        }})
+
+        const undelegatedData = tokenData.map((token, index) => ({
+            ...token,
+            dollarValue: 1,
+            value: balances?.[index]
+        }))
+        const rewardsData = tokenData.map((tokenData, index) => {
+            const reward = delegations.find(d=>d.token.symbol === tokenData.tokenSymbol)?.rewards
+            return {
+                ...tokenData,
+                dollarValue: reward?.dollarValue ?? 0,
+                value: reward?.amount ?? 0
+            }
+        })
+
+        const delegationData: DelegationData = {
+            delegated: delegatedData,
+            undelegated: undelegatedData, liquid: liquidData, rewards: rewardsData
+        }
+
         setData(delegationData)
-    }, [])
+    }, [ balances])
+
+
     const [isLoading, setLoading] = useState<boolean>(false)
+
+
+    useEffect(() => {
+        setLoading(balancesLoading)
+    }, [])
 
     return (
         <VStack
@@ -121,133 +144,32 @@ const Dashboard: FC = () => {
                     isWalletConnected={isWalletConnected}
                     isLoading={false}
                     title={"Balances"}
-                    delegationData={delegationData}
-                    tokenType={TokenType.liquid}/>
+                    tokenData={updatedData?.liquid}/>
                 <CardComponent
                     isWalletConnected={isWalletConnected}
                     isLoading={false}
                     title={"Delegations"}
-                    delegationData={delegationData}
-                    tokenType={TokenType.delegated}/>
+                    tokenData={updatedData?.delegated}/>
                 <CardComponent
                     isWalletConnected={isWalletConnected}
                     isLoading={false}
                     title={"Undelegations"}
-                    delegationData={delegationData}
-                    tokenType={TokenType.undelegated}/>
+                    tokenData={updatedData?.undelegated}/>
             </HStack>
             <HStack
                 width="full"
                 spacing={10}>
                 <AssetOverview
                     isLoading={isLoading}
-                    data={updatedData && updatedData[TokenType[TokenType.delegated]]}
+                    data={updatedData && updatedData?.delegated}
                     isWalletConnected={isWalletConnected}/>
                 <RewardsComponent
                     isWalletConnected={isWalletConnected}
                     isLoading={false}
-                    data={updatedData && updatedData[TokenType[TokenType.rewards]]}/>
+                    data={updatedData && updatedData[TokenType[TokenType.rewards]]}
+                address={address}/>
             </HStack>
-            <HStack
-                pt={10}
-                justifyContent="space-between"
-                width="100%">
-                <Text
-                    fontSize={25}
-                    fontWeight={"bold"}>
-                    Validators
-                </Text>
-                <HStack
-                    background={"black"}
-                    borderRadius={"30px"}
-                    py={3}
-                    px={15}
-                    alignItems="center"
-                    verticalAlign="center">
-                    <Button
-                        alignSelf="center"
-                        style={{backgroundColor: activeButton === 0 ? "#6ACA70" : "black", textTransform: "capitalize"}}
-                        borderRadius="full"
-                        width="100%"
-                        variant="primary"
-                        isActive={false}
-                        disabled={activeButton !== 0}
-                        maxWidth={200}
-                        h={30}
-                        isLoading={false}
-                        onClick={() => setActiveButton(0)
-                        }>
-                        {"All"}
-                    </Button>
-                    <Button
-                        alignSelf="center"
-                        style={{backgroundColor: activeButton === 1 ? "#6ACA70" : "black", textTransform: "capitalize"}}
-                        borderRadius="full"
-                        width="100%"
-                        variant="primary"
-                        isActive={true}
-                        disabled={activeButton !== 1}
-                        maxWidth={200}
-                        h={30}
-                        isLoading={false}
-                        onClick={() => setActiveButton(1)
-                        }>
-                        {"Active"}
-                    </Button>
-                    <Button
-                        alignSelf="center"
-                        style={{backgroundColor: activeButton === 2 ? "#6ACA70" : "black", textTransform: "capitalize"}}
-                        borderRadius="full"
-                        width="100%"
-                        variant="primary"
-                        isActive={true}
-                        disabled={activeButton !== 2}
-                        maxWidth={200}
-                        h={30}
-                        isLoading={false}
-                        onClick={() => setActiveButton(2)}>
-                        {"Inactive"}
-                    </Button>
-                </HStack>
-            </HStack>
-            <HStack
-                background={"transparent"}
-                borderRadius={"30px"}
-                px={5}
-                verticalAlign="center"
-                minH={10}
-                spacing={140}
-                width="100%"
-                overflow="hidden"
-                position="relative"
-                display="flex">
-                <Text pr={120}>Name</Text>
-                <HStack pr={1}>
-                    <Text>Voting Power</Text>
-                    <VStack>
-                        {isVotingPowerAscending || isVotingPowerAscending === null?
-                            <TriangleUpIcon onClick={onVotingPowerAscending}
-                                            color={"white"}/> :
-                            <TriangleDownIcon onClick={onVotingPowerDescending}
-                                              color={"white"}/>
-                        }</VStack>
-                </HStack>
-
-                <HStack pr={3}>
-                    <Text>Commission</Text>
-                    <VStack>
-                        {isCommissionAscending || isCommissionAscending === null?
-                            <TriangleUpIcon onClick={onCommissionAscending}
-                                            color={"white"}/> :
-                            <TriangleDownIcon onClick={onCommissionDescending}
-                                              color={"white"}/>
-                        }</VStack>
-                </HStack>
-                <HStack>
-                    <Text>Actions</Text>
-                </HStack>
-            </HStack>
-            {validators.map(data=>(<ValidatorCard key={data.name} name={data.name} isLoading={false} voting_power={data.votingPower} commission={data.commission}/>))}
+            <Validators address={address}/>
         </VStack>
     );
 };

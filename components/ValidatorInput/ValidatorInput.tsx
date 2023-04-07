@@ -2,6 +2,8 @@ import {HStack, IconButton, Text} from "@chakra-ui/react";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import ValidatorSelectModal from "components/ValidatorInput/ValidatorSelectModal";
 import {FC} from "react";
+import {useRecoilState} from "recoil";
+import {walletState} from "state/atoms/walletAtoms";
 
 interface ValidatorInputProps {
     image?: boolean
@@ -10,12 +12,13 @@ interface ValidatorInputProps {
     showList?: boolean
     onInputFocus?: () => void
     disabled?: boolean
-    validatorList?: string[]
+    delegatedOnly: boolean
     ignoreSlack?: boolean
+    validatorName?: string
 }
 
 const ValidatorInput : FC<ValidatorInputProps> = (props)=>{
-
+const [{address},_] = useRecoilState(walletState)
     return <HStack
         width={['full', '510px']}
         border="1px solid rgba(255, 255, 255, 0.1)"
@@ -27,19 +30,16 @@ const ValidatorInput : FC<ValidatorInputProps> = (props)=>{
         <HStack flex={1}>
         <ValidatorSelectModal
             onChange={props.onChange}
+            address={address}
+            delegatedOnly={props.delegatedOnly}
             currentValidator={"Validator"}//[tokenInfo?.symbol || hideToken]
             validatorList={[]}
             disabled={false}
         >
-            {/*<AssetSelectTrigger*/}
-            {/*  tokenInfo={tokenInfo}*/}
-            {/*  showIcon={image}*/}
-            {/*  symbol={token?.tokenSymbol}*/}
-            {/*/>*/}
 
             {props.showList && (
                 <HStack >
-                    <Text pl="4" pr="350" >Validator</Text>
+                    <Text pl="4" >{props.validatorName ?? "Choose Validator"}</Text>
                     <IconButton
                         disabled={props.disabled}
                         variant="unstyled"

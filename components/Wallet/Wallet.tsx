@@ -15,10 +15,11 @@ import { useTerraStation } from 'hooks/useTerraStation'
 import { useRouter } from 'next/router'
 import { useRecoilState } from 'recoil'
 import { walletState } from 'state/atoms/walletAtoms'
+import WalletModal from "components/Wallet/Modal/Modal";
 //import { validChains } from 'util/chain'
 //import { getPathName } from 'util/route'
 
-const Wallet: any = ({ connected, onDisconnect, onOpenModal }) => {
+const Wallet: any = ({ connected, onDisconnect, onOpenModal, isOpenModal ,onCloseModal}) => {
   const [isInitialized, setInitialized] = useState(false)
   const [currentWalletState, setCurrentWalletState] =
     useRecoilState(walletState)
@@ -140,6 +141,11 @@ const Wallet: any = ({ connected, onDisconnect, onOpenModal }) => {
           <WalletIcon />
           Connect wallet
         </Button>
+        <WalletModal
+            isOpenModal={isOpenModal}
+            onCloseModal={onCloseModal}
+            chainId={currentWalletState.chainId}
+        />
       </>
     )
   }

@@ -6,8 +6,8 @@ import Redelegate from "./Redelegate"
 import Delegate, {TokenPriceBalance} from "./Delegate"
 import {useRouter} from 'next/router'
 
-import {delegationAtom, TokenItemState} from "state/atoms/delegationAtoms";
-import React, { useMemo, useState} from "react";
+import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
+import React, {useMemo, useState} from "react";
 import WalletModal from "../../Wallet/Modal/Modal";
 
 import Loader from "../../Loader";
@@ -16,14 +16,7 @@ import {ActionType} from "components/Pages/Delegations/Dashboard";
 import Undelegate from "components/Pages/Delegations/Undelegate";
 import {useTokenList} from "hooks/useTokenList";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
-import { useAllianceDelegate } from "./hooks/useDelegate"
-import { useAllianceReDelegate } from "./hooks/useRedelegate"
-import { useAllianceUnDelegate } from "./hooks/useUndelegate"
-
-import { useTerraStation } from "../../../hooks/useTerraStation"
-import { ConnectType, useConnectedWallet } from "@terra-money/wallet-provider"
-import { TerraStationWallet } from "../../../util/wallet-adapters/terraStationWallet"
-import { LCDClient } from '@terra-money/feather.js'
+import useTransaction from "components/Pages/Delegations/hooks/useTransaction";
 
 export enum TxStep {
     /**
@@ -55,49 +48,10 @@ export enum TxStep {
      */
     Failed = 6,
 }
+
 const ActionsComponent = ({globalAction}) => {
 
-    const [{chainId, status, client },_] = useRecoilState(walletState)
-    const connectedWallet = useConnectedWallet()
-    // TODO: Improve this, maybe its fine as is 
-    // It comes from useTerraStation, instead of importing it we just use what we need
-    const mainnet = new LCDClient({
-        'juno-1':{
-          lcd: 'https://ww-juno-rest.polkachu.com',
-          chainID: 'juno-1',
-          gasAdjustment: 0.004,
-          gasPrices: { ujuno: 0.0025 },
-          prefix: 'juno',
-        },
-        'phoenix-1':{
-          lcd: 'https://ww-terra-rest.polkachu.com',
-          chainID: 'phoenix-1',
-          gasAdjustment: 1.75,
-          gasPrices: { uluna: 0.015 },
-          prefix: 'terra',
-        },
-        'chihuahua-1':{
-          lcd: 'https://ww-chihuahua-rest.polkachu.com',
-          chainID: 'chihuahua-1',
-          gasAdjustment: 5,
-          gasPrices: { uhuahua: 1 },
-          prefix: 'chihuahua',
-        },
-        'migaloo-1': {
-          lcd: 'https://ww-migaloo-rest.polkachu.com/',
-          chainID: 'migaloo-1',
-          gasAdjustment: 0.1,
-          gasPrices: { uwhale: 0.05 },
-          prefix: 'migaloo',
-        }
-      })
-    //   We need a connectedWallet and a LCDClient to create a TerraStationWallet, its an abstraction which has Keplr friendly function names BUT underneath is using Feather js and supports alliance 
-    const tsWall =  new TerraStationWallet(
-        connectedWallet,
-        mainnet,
-        'mainnet',
-        'migaloo-1'
-      )
+    const [{chainId, status, client}, _] = useRecoilState(walletState)
 
     const isWalletConnected: boolean = status === WalletStatusType.connected
     const {
@@ -108,24 +62,25 @@ const ActionsComponent = ({globalAction}) => {
 
     const router = useRouter()
 
-    const [currentDelegationState, setCurrentDelegationState] = useRecoilState<TokenItemState>(delegationAtom)
+    const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
 
-    const {tokenInfoList}  = useTokenList()
+    const {tokenInfoList} = useTokenList()
     const whalePrice = useWhalePrice()
 
-    const {data: balances} = useMultipleTokenBalance(tokenInfoList?.map(e=>e.symbol) ?? [])
+    const {submit, txStep} = useTransaction()
 
-    const liquidTokenPriceBalances : TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index)=> ({
-        price: whalePrice, balance:balances?.[index] , tokenSymbol: tokenInfo.symbol
-    })) ?? []
-    const delegatedTokenPriceBalances : TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index)=> ({
-        price: whalePrice, balance:balances?.[index] , tokenSymbol: tokenInfo.symbol
-    })) ?? []
-    const rewardsTokenPriceBalances : TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index)=> ({
-        price: whalePrice, balance:balances?.[index] , tokenSymbol: tokenInfo.symbol
-    })) ?? []
 
-    const txStep = TxStep.Idle
+    const {data: balances} = useMultipleTokenBalance(tokenInfoList?.map(e => e.symbol) ?? [])
+
+    const liquidTokenPriceBalances: TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index) => ({
+        price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
+    })) ?? []
+    const delegatedTokenPriceBalances: TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index) => ({
+        price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
+    })) ?? []
+    const rewardsTokenPriceBalances: TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index) => ({
+        price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
+    })) ?? []
 
     const buttonLabel = useMemo(() => {
         if (!isWalletConnected) return "Connect Wallet"
@@ -134,7 +89,7 @@ const ActionsComponent = ({globalAction}) => {
     }, [isWalletConnected, currentDelegationState, globalAction])
 
 
-    const [isLoadingSummary , setIsLoadingSummary]= useState<boolean>(false)
+    const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(false)
 
 
     const DelegationActionButton = ({action}) => {
@@ -142,7 +97,7 @@ const ActionsComponent = ({globalAction}) => {
         const actionString = ActionType[action].toString()
 
         const onClick = async () => {
-            setCurrentDelegationState({...currentDelegationState, amount:0})
+            setCurrentDelegationState({...currentDelegationState, amount: 0})
             await router.push(`/${actionString}`)
         }
 
@@ -183,7 +138,12 @@ const ActionsComponent = ({globalAction}) => {
                     icon={<ArrowBackIcon/>}
                     onClick={async () => {
                         await router.push(`/`)
-                        setCurrentDelegationState({...currentDelegationState, amount:0})
+                        setCurrentDelegationState({...currentDelegationState, amount: 0,
+                            validatorDestName: "",
+                            validatorSrcName: "",
+                            validatorSrcAddress: "",
+                            validatorDestAddress: ""
+                        })
                     }}
                 />
                 <Text
@@ -218,7 +178,7 @@ const ActionsComponent = ({globalAction}) => {
                     alignItems="center">
                     <Loader/>
                 </HStack>
-            </VStack>:
+            </VStack> :
             <VStack
                 width="full"
                 background={"#1C1C1C"}
@@ -269,26 +229,13 @@ const ActionsComponent = ({globalAction}) => {
                     maxWidth={570}
                     isLoading={false}
                     onClick={async () => {
-                        if(isWalletConnected){
-                            //TODO: Fix this to be more dynamic and not hardcoded 
-
-                            switch (globalAction) {
-                                case ActionType.delegate:
-                                    // Currently delegates to WindPowerStake an ampLuna
-                                    useAllianceDelegate(tsWall, 'migaloo-1', 'migaloovaloper1esv20mwvedun93ysekdeyk3x5ckeqcnjdjql4w', 1, "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A")
-                                    return 
-                                case ActionType.redelegate:
-                                    // Currently redelegates from WindPowerStake to Notional an ampLuna
-                                    useAllianceReDelegate(tsWall, 'migaloo-1', 'migaloovaloper1esv20mwvedun93ysekdeyk3x5ckeqcnjdjql4w', 'migaloovaloper1rqvctgdpafvc0k9fx4ng8ckt94x723zmp3g0jv', 1, "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A")
-                                    return 
-                                case ActionType.undelegate:
-                                    // Currently undelegates from WindPowerStake an ampLuna
-                                    useAllianceUnDelegate(tsWall, 'migaloo-1', 'migaloovaloper1esv20mwvedun93ysekdeyk3x5ckeqcnjdjql4w', 1, "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A")
-                                    return 
-                            }
-
-                        }
-                        else{
+                        if (isWalletConnected) {
+                            await submit(globalAction,
+                                currentDelegationState.validatorDestAddress,
+                                currentDelegationState.validatorSrcAddress,
+                                currentDelegationState.amount,
+                                currentDelegationState.denom)
+                        } else {
                             onOpenModal()
                         }
                     }}

@@ -11,36 +11,32 @@ import {
     useDisclosure,
     VStack,
 } from '@chakra-ui/react'
-import { Asset } from 'types/blockchain'
-
 import ValidatorList from "components/ValidatorInput/ValidatorList";
-import SearchInput from "components/AssetInput/SearchInput";
 import ValidatorSearchInput from "components/ValidatorInput/ValidatorSearchInput";
 
 interface ValidatorSelectModalProps {
     children: ReactNode
     currentValidator: string,
+    address: string,
     validatorList: string[],
-    onChange: (asset: Asset, isTokenChange?: boolean) => void
+    onChange: (validator: any) => void
     disabled: boolean
+    delegatedOnly: boolean
     amount?: number
 }
 
 const ValidatorSelectModal: FC<ValidatorSelectModalProps> = ({
                                                          children,
                                                          onChange,
-                                                         currentValidator = [],
-                                                         validatorList = [],
+    delegatedOnly,address,
                                                          disabled,
                                                          amount,
                                                      }) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [search, setSearch] = useState<string>('')
 
-    const onAssetChange = (asset, isTokenChange) => {
-        setSearch(asset?.asset)
-        const newAsset = { ...asset, amount }
-        onChange(newAsset, isTokenChange)
+    const onValidatorChange = (validator) => {
+        onChange(validator)
         onClose()
     }
 
@@ -69,15 +65,16 @@ const ValidatorSelectModal: FC<ValidatorSelectModalProps> = ({
                         as={VStack}
                         gap={3}
                         paddingX="unset"
-                        alignItems="flex-start"
-                    >
+                        alignItems="flex-start">
                         <ValidatorSearchInput onChange={setSearch} />
                         <ValidatorList
+                            delegatedOnly={delegatedOnly}
                             amount={amount}
-                            onChange={onAssetChange}
+                            onChange={onValidatorChange}
                             search={search}
                             validatorList={[]}
                             currentValidator={""}
+                            address={address}
                         />
                     </ModalBody>
                 </ModalContent>

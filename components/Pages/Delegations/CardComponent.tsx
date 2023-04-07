@@ -2,25 +2,25 @@ import { HStack, VStack, Text } from "@chakra-ui/react";
 import Loader from "components/Loader";
 import { FC } from "react";
 import { CustomTooltip } from "components/Pages/Delegations/CustomTooltip";
-import {DelegationData} from "components/Pages/Delegations/Dashboard";
-import {TokenType} from "components/Pages/Delegations/AssetOverview";
+import { TokenData} from "components/Pages/Delegations/Dashboard";
 
 interface CardComponentProps {
     title: string
-    delegationData: DelegationData;
-    tokenType: TokenType;
+    tokenData: TokenData[];
     isLoading: boolean;
     isWalletConnected: boolean;
 }
 
-const CardComponent: FC<CardComponentProps> = ({title,tokenType, delegationData,isLoading, isWalletConnected }) => {
-    const sumAndMultiplyValues = (delegationData: DelegationData): number =>
-        delegationData[TokenType[tokenType]].reduce((total, item) => {
-            return total + item.value * item.price;
+const CardComponent: FC<CardComponentProps> = ({title, tokenData,isLoading, isWalletConnected }) => {
+
+    const sumAndMultiplyValues = (): number =>
+        tokenData?.reduce((total, item) => {
+           return  total + item.value * (item?.dollarValue !== undefined ? item?.dollarValue ?? 0 : 0);
         }, 0);
 
-    const summedAndMultipliedValues = isWalletConnected ? `$${sumAndMultiplyValues(delegationData).toLocaleString()}` : "n/a";
-
+    console.log(tokenData)
+    const summedAndMultipliedValues = isWalletConnected ? `$${sumAndMultiplyValues()?.toLocaleString()}` : "n/a";
+    console.log(summedAndMultipliedValues)
     return (
         <VStack
             width="full"
@@ -51,7 +51,7 @@ const CardComponent: FC<CardComponentProps> = ({title,tokenType, delegationData,
             ) : (<><Text color={"grey"}>{title}</Text>
                 <CustomTooltip
                     isWalletConnected={isWalletConnected}
-                    data={delegationData[TokenType[tokenType]]}
+                    data={tokenData}
                     label={`${summedAndMultipliedValues}`}/>
             </>)}
         </VStack>

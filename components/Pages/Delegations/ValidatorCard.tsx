@@ -8,14 +8,14 @@ interface ValidatorCardProps{
     name: string,
     isLoading: boolean,
     voting_power: number,
-commission: number
+    commission: number
 }
 const ValidatorCard: FC<ValidatorCardProps> = ({name,isLoading, voting_power, commission})=>{
 
     const router = useRouter()
 
     const onClick = async(action: ActionType)=>{
-        await  router.push(`/${ActionType[action]}`)
+        await router.push(`/${ActionType[action]}`)
     }
     const hasFunds = true
     const hasActiveDelegations = false
@@ -60,7 +60,11 @@ const ValidatorCard: FC<ValidatorCardProps> = ({name,isLoading, voting_power, co
                             bg="transparent"
                             borderWidth="2px"
                             borderColor="white"
-                            color="white">
+                            color="white"
+                            _hover={{
+                                borderColor: "#7CFB7D",
+                                color: "#7CFB7D"
+                            }}>
                             Delegate
                         </Button>
                         <Button
@@ -74,7 +78,11 @@ const ValidatorCard: FC<ValidatorCardProps> = ({name,isLoading, voting_power, co
                             bg="transparent"
                             borderWidth="2px"
                             borderColor="white"
-                            color="white">
+                            color="white"
+                            _hover={{
+                                borderColor: "#7CFB7D",
+                                color: "#7CFB7D"
+                            }}>
                             Redelegate
                         </Button>
                         <Button
@@ -88,7 +96,11 @@ const ValidatorCard: FC<ValidatorCardProps> = ({name,isLoading, voting_power, co
                             bg="transparent"
                             borderWidth="2px"
                             borderColor="white"
-                            color="white">
+                            color="white"
+                            _hover={{
+                                borderColor: "#7CFB7D",
+                                color: "#7CFB7D"
+                            }}>
                             Undelegate
                         </Button>
                     </HStack>

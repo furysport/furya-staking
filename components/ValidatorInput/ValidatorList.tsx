@@ -1,49 +1,46 @@
-import { FC, useMemo } from 'react'
+import {FC, useMemo} from 'react'
 
-import { background, Box, Button, HStack, Image, Text } from '@chakra-ui/react'
-import FallbackImage from 'components/FallbackImage'
-//import useFilter from 'hooks/useFilter'
-//import { useMultipleTokenBalance } from 'hooks/useTokenBalance'
-//import { useTokenList } from 'hooks/useTokenList'
+import { Box, Button, HStack, Text} from '@chakra-ui/react'
+import useValidators from "hooks/useValidators";
 
 type ValidatorListProps = {
     // assetList?: Asset[];
-    onChange: (token: any, isTokenChange?: boolean) => void
+    onChange: (validator) => void
     search: string
+    address: string
     currentValidator: string
     validatorList: string[]
     amount?: number
+    delegatedOnly: boolean
+
 }
 
 const ValidatorList: FC<ValidatorListProps> = ({
-                                           onChange,
-                                           search,
-                                           currentValidator = [],
-                                           amount,
-                                           validatorList = [],
-                                       }) => {
-    // const [tokenList] = useTokenList()
+                                                   onChange,
+                                                   search,
+                                                   delegatedOnly = false,
+                                                   address
+                                               }) => {
+    const {data: {validators = []} = {}} = useValidators({address})
 
-    // const [tokenBalance = []] = useMultipleTokenBalance(
-    //   tokenList?.tokens?.map(({ symbol }) => symbol)
-    // )
+    const validatorsWithDelegation = useMemo(() => {
 
-    // const tokensWithBalance = useMemo(() => {
-    //   if (tokenBalance.length == 0) return tokenList?.tokens
-    //
-    //   return tokenList?.tokens
-    //     ?.map((token, index) => ({
-    //       ...token,
-    //       balance: tokenBalance?.[index],
-    //     }))
-    //     .filter(({ symbol }) =>
-    //       edgeTokenList?.length > 0
-    //         ? edgeTokenList.includes(symbol)
-    //         : !currentToken?.includes(symbol)
-    //     )
-    // }, [tokenList, tokenBalance])
-    //
-    const filterAssets =[] // useFilter<any>(tokensWithBalance, 'symbol', search)
+        if (!validators?.length) return []
+
+
+        return validators?.map((validator) => ({
+            ...validator,
+        })).filter((v) => delegatedOnly ? v.delegated : true)
+
+    }, [validators])
+
+    const filteredValidators = useMemo(() => {
+        if (!!!search) return validatorsWithDelegation
+
+        return validatorsWithDelegation.filter(({description}) => description?.moniker.toLowerCase().includes(search.toLowerCase()))
+    }, [search, validatorsWithDelegation])
+
+    //// useFilter<any>(tokensWithBalance, 'symbol', search)
 
     return (
         <Box
@@ -65,9 +62,9 @@ const ValidatorList: FC<ValidatorListProps> = ({
                 },
             }}
         >
-            {filterAssets.map((item, index) => (
+            {filteredValidators.map((validator, index) => (
                 <HStack
-                    key={item?.name}
+                    key={validator?.operator_address}
                     as={Button}
                     variant="unstyled"
                     width="full"
@@ -75,40 +72,23 @@ const ValidatorList: FC<ValidatorListProps> = ({
                     paddingY={4}
                     paddingX={4}
                     borderBottom={
-                        index == filterAssets?.length - 1
+                        index == filteredValidators?.length - 1
                             ? 'unset'
                             : '1px solid rgba(0, 0, 0, 0.5)'
                     }
-                    onClick={() =>
-                        onChange(
-                            {
-                                tokenSymbol: item?.symbol,
-                                amount: amount,
-                            },
-                            true
-                        )
-                    }
+                    onClick={() => onChange(validator)}
                 >
                     <HStack>
-                        <Image
-                            src={item?.logoURI}
-                            alt="logo-small"
-                            // boxSize="2rem"
-                            width="auto"
-                            maxW="1.5rem"
-                            maxH="1.5rem"
-                            fallback={<FallbackImage />}
-                        />
                         <Text fontSize="18" fontWeight="400">
-                            {item?.symbol}
+                            {validator?.description.moniker}
                         </Text>
                     </HStack>
                     <Text fontSize="16" fontWeight="400">
-                        {Number(item?.balance || 0).toFixed(2)}
+                        {`${Number(validator?.votingPower || 0)}%`}
                     </Text>
                 </HStack>
             ))}
-            {!filterAssets?.length && (
+            {!filteredValidators?.length && (
                 <HStack
                     as={Button}
                     variant="unstyled"

@@ -45,7 +45,7 @@ function createWalletState<TClient = any, TState = {}>({
             status: WalletStatusType.idle,
             client: null,
             // chainId: 'juno-1',
-            chainId: null,
+            chainId: 'migaloo-1',
             address: '',
             network: 'mainnet',
             activeWallet: '',

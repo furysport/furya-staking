@@ -1,56 +1,76 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useEffect} from 'react'
 import {Text, VStack} from '@chakra-ui/react'
 import {useRecoilState} from "recoil";
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms";
 import {Controller, useForm} from "react-hook-form";
-import {delegationAtom, TokenItemState} from "state/atoms/delegationAtoms";
+import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
 import AssetInput from "components/AssetInput";
 import ValidatorInput from "components/ValidatorInput/ValidatorInput";
-import {TokenInfo} from "hooks/useTokenInfo";
+import tokenList from "public/mainnet/white_listed_token_info.json";
 
-export interface TokenPriceBalance{
+export interface TokenPriceBalance {
     tokenSymbol: string,
     balance: number
     price: number
 }
 
-export interface ActionProps{
+export interface ActionProps {
     tokens: TokenPriceBalance[]
 }
 
-const Delegate :FC<ActionProps> = ({tokens}) => {
+const Delegate: FC<ActionProps> = ({tokens}) => {
 
     const [{status}, _] = useRecoilState(walletState)
-    const [currentBondState, setCurrentBondState] = useRecoilState<TokenItemState>(delegationAtom)
+    const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
 
     const isWalletConnected = status === WalletStatusType.connected
 
-    const onInputChange = (tokenSymbol: string | null, amount: number) => {
+    const onTokenInputChange = (tokenSymbol: string | null, amount: number) => {
 
         if (tokenSymbol) {
-            setCurrentBondState({...currentBondState, tokenSymbol: tokenSymbol, amount: Number(amount)})
+            setCurrentDelegationState({...currentDelegationState, tokenSymbol: tokenSymbol, amount: Number(amount)})
         } else {
-            setCurrentBondState({...currentBondState, amount: Number(amount)})
+            setCurrentDelegationState({...currentDelegationState, amount: Number(amount)})
+        }
+    }
+
+    const onValidatorChange = (validatorDestName: string | null, validatorSrcName: string | null, validatorDestAddress: string | null, validatorSrcAddress: string | null) => {
+
+        if (validatorDestAddress) {
+            setCurrentDelegationState({
+                ...currentDelegationState,
+                validatorDestAddress: validatorDestAddress,
+                validatorDestName: validatorDestName
+            })
+        } else {
+            setCurrentDelegationState({
+                ...currentDelegationState,
+                validatorSrcAddress: validatorSrcAddress,
+                validatorSrcName: validatorSrcName
+            })
         }
     }
 
     useEffect(() => {
-        const newState: TokenItemState = {
+        const newState: DelegationState = {
             tokenSymbol: "WHALE",
             amount: 0,
             decimals: 6,
+            validatorSrcAddress: null,
+            validatorDestAddress: null,
+            denom: null
         }
-        setCurrentBondState(newState)
+        setCurrentDelegationState(newState)
     }, [isWalletConnected])
 
 
     const {control} = useForm({
         mode: 'onChange',
         defaultValues: {
-            currentBondState
+            currentDelegationState
         },
     })
-    const currentToken : TokenPriceBalance = tokens?.find(e=>e.tokenSymbol===currentBondState.tokenSymbol)
+    const currentToken: TokenPriceBalance = tokens?.find(e => e.tokenSymbol === currentDelegationState.tokenSymbol)
 
     return <VStack
         px={7}
@@ -60,38 +80,54 @@ const Delegate :FC<ActionProps> = ({tokens}) => {
         <Text>
             To
         </Text>
-        <ValidatorInput
-            value={1}
-            onChange={() => {}}
-            showList={true}/>
+        <Controller
+            name="currentDelegationState"
+            control={control}
+            rules={{required: true}}
+            render={({field}) => (
+                <ValidatorInput
+                    value={1}
+                    delegatedOnly={false}
+                    validatorName={currentDelegationState.validatorDestName}
+                    onChange={(validator) => {
+                        field.onChange(validator)
+                        setCurrentDelegationState({
+                            ...currentDelegationState,
+                            validatorDestAddress: validator.operator_address,
+                            validatorDestName: validator.description.moniker
+                        })
+                    }}
+                    showList={true}/>)}/>
         <Text
             pt={5}>
             Amount
         </Text>
         <Controller
-            name="currentBondState"
+            name="currentDelegationState"
             control={control}
             rules={{required: true}}
             render={({field}) => (
                 <AssetInput
-                    hideToken={currentBondState.tokenSymbol}
+                    hideToken={currentDelegationState.tokenSymbol}
                     {...field}
-                    token={currentBondState}
+                    token={currentDelegationState}
                     whalePrice={currentToken?.price}
                     balance={currentToken?.balance}
                     minMax={false}
                     disabled={false}
                     onChange={(value, isTokenChange) => {
-                        onInputChange(value, 0)
+                        onTokenInputChange(value, 0)
                         field.onChange(value)
                         if (isTokenChange) {
-                            setCurrentBondState({
-                                ...currentBondState,
+                            const denom = tokenList.find(t=>t.symbol === value.tokenSymbol).denom
+                            setCurrentDelegationState({
+                                ...currentDelegationState,
                                 tokenSymbol: value.tokenSymbol,
-                                amount: value.amount
+                                amount: value.amount,
+                                denom: denom
                             })
                         } else {
-                            setCurrentBondState({...currentBondState, amount: value.amount})
+                            setCurrentDelegationState({...currentDelegationState, amount: value.amount})
                         }
                     }}
                 />
