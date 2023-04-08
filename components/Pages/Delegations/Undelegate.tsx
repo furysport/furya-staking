@@ -21,23 +21,26 @@ const Undelegate  = ({ delegations, validatorAddress})  => {
 
     const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress])
 
-    const onInputChange = ( tokenSymbol: string | null , amount: number) => {
-
-        if(tokenSymbol){
-            setCurrentDelegationState({...currentDelegationState, tokenSymbol:tokenSymbol, amount:Number(amount)})}else{
-            setCurrentDelegationState({...currentDelegationState,amount:Number(amount)})
+    const onInputChange = (tokenSymbol: string | null, amount: number) => {
+        const newState = { ...currentDelegationState, amount: Number(amount) };
+        if (tokenSymbol) {
+            newState.tokenSymbol = tokenSymbol;
         }
-    }
+        setCurrentDelegationState(newState);
+    };
+
 
     useEffect(() => {
+        const token = tokens.find(e=>e.symbol === "ampLUNA")
+
         const newState: DelegationState = {
             validatorDestAddress: null,
-            tokenSymbol: "WHALE",
+            tokenSymbol: token.symbol,
             amount: 0,
             decimals: 6,
             validatorSrcAddress: chosenValidator?.operator_address,
             validatorSrcName: chosenValidator?.description.moniker,
-            denom: null
+            denom: token.denom
         }
         setCurrentDelegationState(newState)
     }, [isWalletConnected, chosenValidator])
@@ -49,12 +52,26 @@ const Undelegate  = ({ delegations, validatorAddress})  => {
              currentDelegationState
         },
     })
-    const allDelegations = delegations.filter(d=>d.token.symbol === currentDelegationState.tokenSymbol).filter(d=>currentDelegationState.validatorDestAddress === null || d.delegation.validator_address === currentDelegationState.validatorDestAddress)
-    let aggregatedAmount = allDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
+    const allSingleTokenDelegations = useMemo(() => {
+        return delegations
+            .filter((d) => d.token.symbol === currentDelegationState.tokenSymbol)
+            .filter(
+                (d) =>
+                    currentDelegationState.validatorSrcAddress === null ||
+                    d.delegation.validator_address ===
+                    currentDelegationState.validatorSrcAddress
+            );
+    }, [delegations, currentDelegationState]);
+
+    const aggregatedAmount = allSingleTokenDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
     const [priceList, timestamp] = usePrice() || []
 
-    const price = useMemo(()=>
-        priceList[tokens?.find(e=>e.symbol===currentDelegationState.tokenSymbol)?.name], [currentDelegationState,priceList])
+    const price = useMemo(
+        () => priceList?.[tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.name],
+        [priceList, currentDelegationState.tokenSymbol]
+    );
+
+
     return <VStack
         px={7}
         width="full"

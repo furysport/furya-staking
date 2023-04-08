@@ -14,6 +14,13 @@ export const redelegate = async (
         validatorDstAddress,
         new Coin(allianceDenom, amount)
     );
+    try {
+        const result = await wallet.client.post({ chainID: destBlockchain, msgs: [handleMsg] });
+        console.log(result);
+        return result
+    } catch (error) {
+        console.error("Error occurred while posting transaction:", error);
+        return
+    }
 
-    return await wallet.client.post({ chainID: destBlockchain, msgs: [handleMsg] });
 };

@@ -8,19 +8,20 @@ import AssetInput from "components/AssetInput";
 import ValidatorInput from "components/ValidatorInput/ValidatorInput";
 import tokenList from "public/mainnet/white_listed_token_info.json";
 import useValidators from "hooks/useValidators";
+import usePrice from "hooks/usePrice";
+import tokens from "public/mainnet/white_listed_token_info.json";
 
-export interface TokenPriceBalance {
+export interface TokenBalance {
     tokenSymbol: string,
     balance: number
-    price: number
 }
 
 export interface ActionProps {
-    tokens: TokenPriceBalance[]
+    balance: TokenBalance[]
     validatorAddress:string
 }
 
-const Delegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
+const Delegate: FC<ActionProps> = ({balance, validatorAddress}) => {
 
     const [{status, address}, _] = useRecoilState(walletState)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
@@ -56,14 +57,15 @@ const Delegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
     }
 
     useEffect(() => {
+        const token = tokens.find(e=>e.symbol === "ampLUNA")
         const newState: DelegationState = {
-            tokenSymbol: "WHALE",
+            tokenSymbol: token.symbol,
             amount: 0,
             decimals: 6,
             validatorSrcAddress: null,
             validatorDestAddress: chosenValidator?.operator_address,
             validatorDestName: chosenValidator?.description.moniker,
-            denom: null
+            denom: token.denom
         }
         setCurrentDelegationState(newState)
     }, [isWalletConnected, chosenValidator])
@@ -75,8 +77,13 @@ const Delegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
             currentDelegationState
         },
     })
-    const currentToken: TokenPriceBalance = tokens?.find(e => e.tokenSymbol === currentDelegationState.tokenSymbol)
+    const currentTokenBalance: TokenBalance = balance?.find(e => e.tokenSymbol === currentDelegationState.tokenSymbol)
+    const [priceList, timestamp] = usePrice() || []
 
+    const price = useMemo(
+        () => priceList?.[tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.name],
+        [priceList, currentDelegationState.tokenSymbol]
+    );
     return <VStack
         px={7}
         width="full"
@@ -116,8 +123,8 @@ const Delegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
                     hideToken={currentDelegationState.tokenSymbol}
                     {...field}
                     token={currentDelegationState}
-                    whalePrice={currentToken?.price}
-                    balance={currentToken?.balance}
+                    whalePrice={price}
+                    balance={currentTokenBalance?.balance}
                     minMax={false}
                     disabled={false}
                     onChange={(value, isTokenChange) => {

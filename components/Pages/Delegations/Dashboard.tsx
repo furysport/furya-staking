@@ -11,6 +11,7 @@ import Validators from "components/Pages/Delegations/Validators";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 import tokens from "public/mainnet/white_listed_token_info.json"
 import useDelegations from "hooks/useDelegations";
+import {TOKENS_TO_EXCLUDE_BY_SYMBOL} from "constants/staking";
 
 export enum ActionType {
     delegate, redelegate, undelegate, claim
@@ -23,12 +24,6 @@ export type TokenData = {
     token?: Token
     tokenSymbol?: string
 
-}
-
-interface ValidatorData {
-    commission: number,
-    votingPower: number,
-    name: string
 }
 
 export interface DelegationData {
@@ -45,21 +40,22 @@ const Dashboard: FC = () => {
 
     const rawTokenData = useMemo(
         () =>
-            tokens.map((t, index) => {
+            tokens.filter(token => !TOKENS_TO_EXCLUDE_BY_SYMBOL.includes(token.symbol)).map((t, index) => {
                 return {
-                    token: index,
-                    tokenSymbol: Token[index],
+                    token: Token[t.symbol],
+                    tokenSymbol: t.symbol,
                     dollarValue: null,
                     value: null,
                     color: t.color,
                 };
             }),
-        [tokens]
+        []
     );
+
     const [tokenData, setTokenData] = useState<TokenData[]>(rawTokenData)
 
-    const { data: { delegations = [], totalRewards} = {},isLoading: isDelegationsLoading } = useDelegations({address})
-
+    const {data: {delegations = []} = {}, isLoading: isDelegationsLoading} = useDelegations({address})
+    //const {} = useUndelegations({address})
     const {data: balances, isLoading: balancesLoading} = useMultipleTokenBalance(tokens.map(e => e.symbol))
 
     const [updatedData, setData] = useState(null)
@@ -70,25 +66,28 @@ const Dashboard: FC = () => {
             dollarValue: 1,
             value: balances?.[index]
         }))
-        const delegatedData = tokenData.map((tokenData, index) => {
-            const allDelegations = delegations.filter(d=>d.token.symbol === tokenData.tokenSymbol)
 
-            let aggregatedDollarValue = allDelegations?.reduce((acc, e) => acc + Number(e?.token.dollarValue ?? 0), 0).toFixed(6);
-            let aggregatedAmount = allDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
+        const delegatedData = tokenData.map((tokenData, _) => {
+
+            const allDelegations = delegations.filter(d => d.token.symbol === tokenData.tokenSymbol)
+            const aggregatedDollarValue = allDelegations?.reduce((acc, e) => acc + Number(e?.token.dollarValue ?? 0), 0).toFixed(6);
+            const aggregatedAmount = allDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
 
             return {
-            ...tokenData,
-            dollarValue: Number(aggregatedDollarValue),
-            value: Number(aggregatedAmount)
-        }})
+                ...tokenData,
+                dollarValue: Number(aggregatedDollarValue),
+                value: Number(aggregatedAmount)
+            }
+        })
+
 
         const undelegatedData = tokenData.map((token, index) => ({
             ...token,
             dollarValue: 1,
             value: balances?.[index]
         }))
-        const rewardsData = tokenData.map((tokenData, index) => {
-            const reward = delegations.find(d=>d.token.symbol === tokenData.tokenSymbol)?.rewards
+        const rewardsData = tokenData.map((tokenData, _) => {
+            const reward = delegations.find(d => d.token.symbol === tokenData.tokenSymbol)?.rewards
             return {
                 ...tokenData,
                 dollarValue: reward?.dollarValue ?? 0,
@@ -155,7 +154,7 @@ const Dashboard: FC = () => {
                     isWalletConnected={isWalletConnected}
                     isLoading={false}
                     data={updatedData && updatedData[TokenType[TokenType.rewards]]}
-                address={address}/>
+                    address={address}/>
             </HStack>
             <Validators address={address}/>
         </VStack>

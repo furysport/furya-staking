@@ -67,19 +67,17 @@ const getDelegation = async (client: LCDClient | null, priceList: any, delegator
     }
     const allianceDelegation = await client?.alliance.alliancesDelegation(delegatorAddress)
 
-    return getRewards(allianceDelegation.delegations)
+    return getRewards(allianceDelegation?.delegations)
         .then((data) => {
-            console.log()
             return data?.map((item) => {
                 const token = tokens.find((token) => token.denom === item.balance?.denom)
                 //delegation amount
                 const amount = token ? num(item.balance?.amount).div(10 ** token.decimals).toNumber() : 0
-
                 const dollarValue = token ? num(amount).times(priceList[token.name]).dp(2).toNumber() : 0
-
                 //rewards amount
                 const rewardsAmount = token ? num(item.rewards?.amount).div(10 ** token.decimals).dp(token.decimals).toNumber() : 0
                 const rewardsDollarValue = token ? num(rewardsAmount).times(priceList[token.name]).dp(2).toNumber() : 0
+
                 return {
                     ...item,
                     rewards: {
@@ -126,7 +124,7 @@ const useDelegations = ({address}) => {
     return useQuery({
         queryKey: ['delegations', priceList, address],
         queryFn: () => getDelegation(client, priceList,address),
-        enabled: !!client && !!address,
+        enabled: !!client && !!address && !!priceList,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
     })

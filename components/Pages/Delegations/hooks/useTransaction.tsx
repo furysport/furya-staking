@@ -120,7 +120,7 @@ export const useTransaction = () => {
     (data: any) => {
       const adjustedAmount = convertDenomToMicroDenom(data.amount, 6)
       if(data.action===ActionType.delegate){
-       return delegate(client,"migaloo-1", data.validatorDestAddress,adjustedAmount, data.denom)
+       return delegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom)
       }else if (data.action===ActionType.undelegate){
         return undelegate(client,"migaloo-1", data.validatorSrcAddress,adjustedAmount, data.denom)
       }else if (data.action===ActionType.redelegate){
@@ -135,6 +135,7 @@ export const useTransaction = () => {
         setTxStep(TxStep.Posting)
       },
       onError: (e) => {
+        console.log("HERE ERRORO")
         let message: any = ''
         console.error(e?.toString())
         setTxStep(TxStep.Failed)
@@ -193,7 +194,14 @@ export const useTransaction = () => {
       },
       onSuccess: (data: any) => {
         setTxStep(TxStep.Broadcasting)
-        setTxHash(data?.transactionHash)
+        setTimeout(()=>{
+          setTxHash(data?.result.txhash)
+        },(2000))
+        console.log("HERE SUCCESS")
+        console.log(data?.result.txhash)
+        console.log(data?.result)
+        console.log(data)
+
         toast({
           title:  (() => {
             switch (bondingAction) {
@@ -211,9 +219,8 @@ export const useTransaction = () => {
           })(),
           description: (
             <Finder
-              txHash={data.transactionHash }
-              chainId={chainId}
-            >
+              txHash={data?.result.txhash}
+              chainId={chainId}>
               {' '}
             </Finder>
           ),
@@ -228,11 +235,11 @@ export const useTransaction = () => {
 
   const { data: txInfo } = useQuery(
     ['txInfo', txHash],
-    () => {
+    async () => {
       if (txHash == null) {
         return
       }
-      return client.getTx(txHash)
+      return await client.getTx(txHash)
     },
     {
       enabled: txHash != null,
@@ -250,9 +257,9 @@ export const useTransaction = () => {
     if (fee == null) {
       return
     }
-    await setBondingAction(bondingAction)
+    await setBondingAction(action)
 
-    mutate({
+     mutate({
       fee,
       action,
       validatorDestAddress,
@@ -260,7 +267,7 @@ export const useTransaction = () => {
       denom,
       amount,
     })
-  }, [bondingAction, fee, mutate])
+  }, [fee, mutate])
 
   useEffect(() => {
     if (txInfo != null && txHash != null) {

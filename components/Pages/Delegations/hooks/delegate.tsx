@@ -5,11 +5,12 @@ export const delegate = async (
     wallet: TerraStationWallet,
     destBlockchain: string,
     valAddress: string,
+    address: string,
     amount: number,
     allianceDenom: string
 ) => {
     const handleMsg = new MsgAllianceDelegate(
-        wallet.client.addresses[destBlockchain],
+        address,
         valAddress,
         new Coin(allianceDenom, amount)
     );

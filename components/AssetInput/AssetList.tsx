@@ -5,12 +5,8 @@ import FallbackImage from 'components/FallbackImage'
 import {useTokenList} from "hooks/useTokenList";
 import useFilter from "hooks/useFilter";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
-//import useFilter from 'hooks/useFilter'
-//import { useMultipleTokenBalance } from 'hooks/useTokenBalance'
-//import { useTokenList } from 'hooks/useTokenList'
 
 type AssetListProps = {
-    // assetList?: Asset[];
     onChange: (token: any, isTokenChange?: boolean) => void
     search: string
     currentTokenSymbol: string
@@ -25,7 +21,7 @@ const AssetList: FC<AssetListProps> = ({
                                            amount,
                                            edgeTokenList = [],
                                        }) => {
-    const {tokens} = useTokenList()
+    const tokens = useTokenList().tokens.filter(t=>t.symbol !== "WHALE")
 
     const {data: tokenBalance= []} = useMultipleTokenBalance(
        tokens?.map(({ symbol }) => symbol))

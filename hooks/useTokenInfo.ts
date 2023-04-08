@@ -16,7 +16,7 @@ export const getBaseTokenFromTokenList = (tokenList): TokenInfo | undefined =>
 
 export const getTokenInfoFromTokenList = (
   tokenSymbol: string,
-  tokensList: Array<TokenInfo>
+  tokensList: any
 ): TokenInfo | undefined => tokensList?.find((x) => x.symbol === tokenSymbol)
 /* /token selector functions */
 
