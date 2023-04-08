@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react'
+import React, {FC, useEffect, useMemo} from 'react'
 import {Text, VStack} from '@chakra-ui/react'
 import {useRecoilState} from "recoil";
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms";
@@ -7,6 +7,7 @@ import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
 import AssetInput from "components/AssetInput";
 import ValidatorInput from "components/ValidatorInput/ValidatorInput";
 import tokenList from "public/mainnet/white_listed_token_info.json";
+import useValidators from "hooks/useValidators";
 
 export interface TokenPriceBalance {
     tokenSymbol: string,
@@ -16,15 +17,18 @@ export interface TokenPriceBalance {
 
 export interface ActionProps {
     tokens: TokenPriceBalance[]
+    validatorAddress:string
 }
 
-const Delegate: FC<ActionProps> = ({tokens}) => {
+const Delegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
 
-    const [{status}, _] = useRecoilState(walletState)
+    const [{status, address}, _] = useRecoilState(walletState)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
 
     const isWalletConnected = status === WalletStatusType.connected
+    const {data: {validators = []} = {}} = useValidators({address})
 
+    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress])
     const onTokenInputChange = (tokenSymbol: string | null, amount: number) => {
 
         if (tokenSymbol) {
@@ -57,11 +61,12 @@ const Delegate: FC<ActionProps> = ({tokens}) => {
             amount: 0,
             decimals: 6,
             validatorSrcAddress: null,
-            validatorDestAddress: null,
+            validatorDestAddress: chosenValidator?.operator_address,
+            validatorDestName: chosenValidator?.description.moniker,
             denom: null
         }
         setCurrentDelegationState(newState)
-    }, [isWalletConnected])
+    }, [isWalletConnected, chosenValidator])
 
 
     const {control} = useForm({

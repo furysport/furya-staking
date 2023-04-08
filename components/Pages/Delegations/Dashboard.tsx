@@ -4,16 +4,13 @@ import {HStack, Text, VStack} from '@chakra-ui/react'
 
 import {useRecoilState} from "recoil";
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms";
-import {useWhalePrice} from "queries/useGetTokenDollarValueQuery";
 import CardComponent from "components/Pages/Delegations/CardComponent";
 import AssetOverview, {Token, TokenType} from "./AssetOverview";
 import RewardsComponent from "components/Pages/Delegations/RewardsComponent";
-import useValidators from "hooks/useValidators";
 import Validators from "components/Pages/Delegations/Validators";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 import tokens from "public/mainnet/white_listed_token_info.json"
 import useDelegations from "hooks/useDelegations";
-import usePrice from "hooks/usePrice";
 
 export enum ActionType {
     delegate, redelegate, undelegate, claim
@@ -61,18 +58,9 @@ const Dashboard: FC = () => {
     );
     const [tokenData, setTokenData] = useState<TokenData[]>(rawTokenData)
 
-    const {data: {validators = []} = {}} = useValidators({address})
-
-    const { data: { delegations = [], totalRewards} = {} } = useDelegations({address})
-    const [priceList, timestamp] = usePrice() || []
-    console.log("delegations")
-    console.log(priceList)
-    console.log(delegations)
-    console.log(totalRewards)
+    const { data: { delegations = [], totalRewards} = {},isLoading: isDelegationsLoading } = useDelegations({address})
 
     const {data: balances, isLoading: balancesLoading} = useMultipleTokenBalance(tokens.map(e => e.symbol))
-
-    const whalePrice = useWhalePrice()
 
     const [updatedData, setData] = useState(null)
 
@@ -114,15 +102,15 @@ const Dashboard: FC = () => {
         }
 
         setData(delegationData)
-    }, [ balances])
+    }, [delegations, balances])
 
 
-    const [isLoading, setLoading] = useState<boolean>(false)
+    const [isLoading, setLoading] = useState<boolean>(true)
 
 
     useEffect(() => {
-        setLoading(balancesLoading)
-    }, [])
+        setLoading(balances === null && isDelegationsLoading)
+    }, [balances, isDelegationsLoading])
 
     return (
         <VStack
@@ -142,17 +130,17 @@ const Dashboard: FC = () => {
                 spacing={10}>
                 <CardComponent
                     isWalletConnected={isWalletConnected}
-                    isLoading={false}
+                    isLoading={isLoading}
                     title={"Balances"}
                     tokenData={updatedData?.liquid}/>
                 <CardComponent
                     isWalletConnected={isWalletConnected}
-                    isLoading={false}
+                    isLoading={isLoading}
                     title={"Delegations"}
                     tokenData={updatedData?.delegated}/>
                 <CardComponent
                     isWalletConnected={isWalletConnected}
-                    isLoading={false}
+                    isLoading={isLoading}
                     title={"Undelegations"}
                     tokenData={updatedData?.undelegated}/>
             </HStack>

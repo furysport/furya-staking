@@ -14,10 +14,10 @@ import Loader from "../../Loader";
 import {useWhalePrice} from "queries/useGetTokenDollarValueQuery";
 import {ActionType} from "components/Pages/Delegations/Dashboard";
 import Undelegate from "components/Pages/Delegations/Undelegate";
-import {useTokenList} from "hooks/useTokenList";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 import useTransaction from "components/Pages/Delegations/hooks/useTransaction";
-
+import tokens from "public/mainnet/white_listed_token_info.json"
+import useDelegations from "hooks/useDelegations";
 export enum TxStep {
     /**
      * Idle
@@ -49,9 +49,9 @@ export enum TxStep {
     Failed = 6,
 }
 
-const ActionsComponent = ({globalAction}) => {
+const ActionsComponent = ({globalAction, validatorAddress}) => {
 
-    const [{chainId, status, client}, _] = useRecoilState(walletState)
+    const [{chainId, status,address}, _] = useRecoilState(walletState)
 
     const isWalletConnected: boolean = status === WalletStatusType.connected
     const {
@@ -64,21 +64,22 @@ const ActionsComponent = ({globalAction}) => {
 
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
 
-    const {tokenInfoList} = useTokenList()
+
     const whalePrice = useWhalePrice()
 
     const {submit, txStep} = useTransaction()
 
+    const { data: { delegations = [], totalRewards} = {} } = useDelegations({address})
 
-    const {data: balances} = useMultipleTokenBalance(tokenInfoList?.map(e => e.symbol) ?? [])
+    const {data: balances} = useMultipleTokenBalance(tokens?.map(e => e.symbol) ?? [])
 
-    const liquidTokenPriceBalances: TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index) => ({
+    const liquidTokenPriceBalances: TokenPriceBalance[] = tokens?.map((tokenInfo, index) => ({
         price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
     })) ?? []
-    const delegatedTokenPriceBalances: TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index) => ({
+    const delegatedTokenPriceBalances: TokenPriceBalance[] = tokens?.map((tokenInfo, index) => ({
         price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
     })) ?? []
-    const rewardsTokenPriceBalances: TokenPriceBalance[] = tokenInfoList?.map((tokenInfo, index) => ({
+    const rewardsTokenPriceBalances: TokenPriceBalance[] = tokens?.map((tokenInfo, index) => ({
         price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
     })) ?? []
 
@@ -95,10 +96,13 @@ const ActionsComponent = ({globalAction}) => {
     const DelegationActionButton = ({action}) => {
 
         const actionString = ActionType[action].toString()
-
         const onClick = async () => {
             setCurrentDelegationState({...currentDelegationState, amount: 0})
-            await router.push(`/${actionString}`)
+            const validatorAddress = currentDelegationState?.validatorDestAddress ?? ""
+            await router.push({
+                pathname: `/${actionString}`,
+                query: { validatorAddress },
+            });
         }
 
         return <Button
@@ -211,11 +215,11 @@ const ActionsComponent = ({globalAction}) => {
                     {(() => {
                         switch (globalAction) {
                             case ActionType.delegate:
-                                return <Delegate tokens={liquidTokenPriceBalances}/>;
+                                return <Delegate tokens={liquidTokenPriceBalances} validatorAddress={validatorAddress}/>;
                             case ActionType.redelegate:
-                                return <Redelegate tokens={rewardsTokenPriceBalances}/>;
+                                return <Redelegate tokens={rewardsTokenPriceBalances} validatorAddress={validatorAddress}/>;
                             case ActionType.undelegate:
-                                return <Undelegate tokens={delegatedTokenPriceBalances}/>;
+                                return <Undelegate delegations={delegations} validatorAddress={validatorAddress}/>;
                         }
                     })()}
                 </Box>

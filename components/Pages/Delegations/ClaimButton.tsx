@@ -25,8 +25,11 @@ const ClaimButton = ({isWalletConnected, onOpenModal, address}) => {
   return (
     <Button
       variant="primary"
-      minW="150px"
-      size="sm"
+      minW="200px"
+      minH="50px"
+      style={{ transform: 'translateY(-10px)' }}
+      size="m"
+      disabled={!isWalletConnected || totalRewards === 0 }
       onClick={isWalletConnected && totalRewards !==0 ? onClaim : onOpenModal}
       isLoading={
         txStep == TxStep.Estimating ||

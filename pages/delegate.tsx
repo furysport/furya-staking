@@ -1,10 +1,12 @@
-import ActionsComponent from "../components/Pages/Delegations/ActionsComponent";
-import {ActionType} from "../components/Pages/Delegations/Dashboard";
+import { useRouter } from 'next/router';
+import ActionsComponent from "components/Pages/Delegations/ActionsComponent";
+import { ActionType } from "components/Pages/Delegations/Dashboard";
 
 const DelegatePage = () => {
+    const router = useRouter();
+    const validatorAddress = router.query.validatorAddress;
 
+    return <ActionsComponent globalAction={ActionType.delegate} validatorAddress={validatorAddress} />;
+};
 
-    return <ActionsComponent globalAction={ActionType.delegate}/>
-}
-
-export default DelegatePage
+export default DelegatePage;

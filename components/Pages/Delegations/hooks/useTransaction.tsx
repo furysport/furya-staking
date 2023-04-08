@@ -122,7 +122,7 @@ export const useTransaction = () => {
       if(data.action===ActionType.delegate){
        return delegate(client,"migaloo-1", data.validatorDestAddress,adjustedAmount, data.denom)
       }else if (data.action===ActionType.undelegate){
-        return undelegate(client,"migaloo-1", data.validatorDestAddress,adjustedAmount, data.denom)
+        return undelegate(client,"migaloo-1", data.validatorSrcAddress,adjustedAmount, data.denom)
       }else if (data.action===ActionType.redelegate){
         return redelegate(client,"migaloo-1", data.validatorSrcAddress,data.validatorDestAddress,adjustedAmount, data.denom)
       }

@@ -38,8 +38,6 @@ const AssetOverview = ({
             </HStack>
         );
     };
-console.log("data datat")
-console.log(data)
     let aggregatedAssets = data?.reduce((acc, e) =>  acc + (e?.value ?? 0), 0);
     return <VStack
         width="full"

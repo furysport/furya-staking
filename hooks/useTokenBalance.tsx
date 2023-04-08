@@ -88,8 +88,8 @@ export const useTokenBalance = (tokenSymbol: string) => {
   //     connectKeplr()
   //   }
   // }
-  const {tokenInfoList} = useTokenList()
-    const tokenInfo = tokenInfoList?.filter(e=>e.symbol===tokenSymbol)[0]
+  const {tokens} = useTokenList()
+    const tokenInfo = tokens?.filter(e=>e.symbol===tokenSymbol)[0]
   //const ibcAssetInfo = useIBCAssetInfo(tokenSymbol)
   const {
     data: balance = 0,
@@ -124,7 +124,7 @@ export const useTokenBalance = (tokenSymbol: string) => {
 export const useMultipleTokenBalance = (tokenSymbols?: Array<string>) => {
   const { address, status, client, chainId, network } =
       useRecoilValue(walletState)
-  const {tokenInfoList}= useTokenList()
+  const {tokens}= useTokenList()
   //const [ibcAssetsList] = useIBCAssetList()
 
   const queryKey = useMemo(
@@ -144,7 +144,7 @@ export const useMultipleTokenBalance = (tokenSymbols?: Array<string>) => {
                         client,
                         address,
                         token:
-                            getTokenInfoFromTokenList(tokenSymbol, tokenInfoList) ||
+                            getTokenInfoFromTokenList(tokenSymbol, tokens) ||
                             // mapIbcTokenToNative(
                             //     getIBCAssetInfoFromList(tokenSymbol, ibcAssetsList?.tokens)
                             // ) ||
@@ -157,7 +157,7 @@ export const useMultipleTokenBalance = (tokenSymbols?: Array<string>) => {
         enabled: Boolean(
             status === WalletStatusType.connected &&
             tokenSymbols?.length &&
-            tokenInfoList
+            tokens
         ),
 
         refetchOnMount: 'always',
