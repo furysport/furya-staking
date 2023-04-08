@@ -22,7 +22,6 @@ type Props = {
     columnFilters: any;
     address: string
 
-    setColumnFilters: void
 }
 type TableProps = {
     name: string;
@@ -72,13 +71,13 @@ const columns: ColumnDef<TableProps,any>[] = [
 ];
 
 
-const ValidatorTable = ({ columnFilters, setColumnFilters, address }: Props) => {
+const ValidatorTable = ({ columnFilters, address }: Props) => {
 
     const [sorting, setSorting] = useState<any>([{
         desc: false,
         id: "status"
     }])
-const router = useRouter()
+    const router = useRouter()
 
     const { data: { validators = [] } = {} } = useValidators({address})
 
@@ -102,7 +101,7 @@ const router = useRouter()
         }
         return validators?.map((validator) => ({
             name: validator?.description?.moniker,
-            votingPower: validator.votingPower,
+            votingPower: "0",
             commission: validator.commission,
             status: getIsActive(validator),
             actionButtons:   <HStack spacing={5}>

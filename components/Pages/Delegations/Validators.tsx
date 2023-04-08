@@ -55,7 +55,7 @@ const Validators = ({address}) => {
     return (
         <VStack width="full">
             <Topbar setColumnFilters={setColumnFilters} />
-            <ValidatorTable columnFilters={columnFilters}  setColumnFilters={setColumnFilters} address={address} />
+            <ValidatorTable columnFilters={columnFilters}  address={address} />
         </VStack>
 
     )
