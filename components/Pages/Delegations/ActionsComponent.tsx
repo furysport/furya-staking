@@ -3,21 +3,21 @@ import {Box, Button, HStack, IconButton, Text, useDisclosure, VStack} from "@cha
 import {useRecoilState} from "recoil"
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms"
 import Redelegate from "./Redelegate"
-import Delegate, {TokenPriceBalance} from "./Delegate"
+import Delegate, {TokenBalance} from "./Delegate"
 import {useRouter} from 'next/router'
 
 import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
-import React, {useMemo, useState} from "react";
+import React, { useMemo, useState} from "react";
 import WalletModal from "../../Wallet/Modal/Modal";
 
 import Loader from "../../Loader";
-import {useWhalePrice} from "queries/useGetTokenDollarValueQuery";
 import {ActionType} from "components/Pages/Delegations/Dashboard";
 import Undelegate from "components/Pages/Delegations/Undelegate";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 import useTransaction from "components/Pages/Delegations/hooks/useTransaction";
 import tokens from "public/mainnet/white_listed_token_info.json"
 import useDelegations from "hooks/useDelegations";
+
 export enum TxStep {
     /**
      * Idle
@@ -49,10 +49,9 @@ export enum TxStep {
     Failed = 6,
 }
 
-const ActionsComponent = ({globalAction, validatorAddress}) => {
+const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUNA"}) => {
 
     const [{chainId, status,address}, _] = useRecoilState(walletState)
-
     const isWalletConnected: boolean = status === WalletStatusType.connected
     const {
         isOpen: isOpenModal,
@@ -64,23 +63,14 @@ const ActionsComponent = ({globalAction, validatorAddress}) => {
 
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
 
-
-    const whalePrice = useWhalePrice()
-
     const {submit, txStep} = useTransaction()
 
     const { data: { delegations = [], totalRewards} = {} } = useDelegations({address})
 
     const {data: balances} = useMultipleTokenBalance(tokens?.map(e => e.symbol) ?? [])
 
-    const liquidTokenPriceBalances: TokenPriceBalance[] = tokens?.map((tokenInfo, index) => ({
-        price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
-    })) ?? []
-    const delegatedTokenPriceBalances: TokenPriceBalance[] = tokens?.map((tokenInfo, index) => ({
-        price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
-    })) ?? []
-    const rewardsTokenPriceBalances: TokenPriceBalance[] = tokens?.map((tokenInfo, index) => ({
-        price: whalePrice, balance: balances?.[index], tokenSymbol: tokenInfo.symbol
+    const liquidTokenPriceBalances: TokenBalance[] = tokens?.map((tokenInfo, index) => ({
+         balance: balances?.[index], tokenSymbol: tokenInfo.symbol
     })) ?? []
 
     const buttonLabel = useMemo(() => {
@@ -92,16 +82,13 @@ const ActionsComponent = ({globalAction, validatorAddress}) => {
 
     const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(false)
 
-
     const DelegationActionButton = ({action}) => {
 
         const actionString = ActionType[action].toString()
         const onClick = async () => {
             setCurrentDelegationState({...currentDelegationState, amount: 0})
-            const validatorAddress = currentDelegationState?.validatorDestAddress ?? ""
             await router.push({
-                pathname: `/${actionString}`,
-                query: { validatorAddress },
+                pathname: `/${actionString}`
             });
         }
 
@@ -215,9 +202,9 @@ const ActionsComponent = ({globalAction, validatorAddress}) => {
                     {(() => {
                         switch (globalAction) {
                             case ActionType.delegate:
-                                return <Delegate tokens={liquidTokenPriceBalances} validatorAddress={validatorAddress}/>;
+                                return <Delegate txStep={txStep} balance={liquidTokenPriceBalances} validatorAddress={validatorAddress} tokenSymbol={tokenSymbol}/>;
                             case ActionType.redelegate:
-                                return <Redelegate tokens={rewardsTokenPriceBalances} validatorAddress={validatorAddress}/>;
+                                return <Redelegate validatorAddress={validatorAddress} delegations={delegations}/>;
                             case ActionType.undelegate:
                                 return <Undelegate delegations={delegations} validatorAddress={validatorAddress}/>;
                         }
@@ -229,10 +216,20 @@ const ActionsComponent = ({globalAction, validatorAddress}) => {
                     borderRadius="full"
                     width="100%"
                     variant="primary"
-                    disabled={!isWalletConnected}
+                    disabled={txStep == TxStep.Estimating ||
+                        txStep == TxStep.Posting ||
+                        txStep == TxStep.Broadcasting ||
+                        (currentDelegationState.amount <= 0) && isWalletConnected}
                     maxWidth={570}
-                    isLoading={false}
+                    isLoading={
+                        txStep == TxStep.Estimating ||
+                        txStep == TxStep.Posting ||
+                        txStep == TxStep.Broadcasting}
                     onClick={async () => {
+                        console.log(txStep == TxStep.Estimating ||
+                            txStep == TxStep.Posting ||
+                            txStep == TxStep.Broadcasting ||
+                            (currentDelegationState.amount <= 0) && isWalletConnected)
                         if (isWalletConnected) {
                             await submit(globalAction,
                                 currentDelegationState.validatorDestAddress,

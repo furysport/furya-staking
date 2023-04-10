@@ -1,4 +1,4 @@
-import { Button, Text, HStack, VStack, Box} from '@chakra-ui/react'
+import {Button, Text, HStack, VStack, Box} from '@chakra-ui/react'
 import {
     createColumnHelper,
     flexRender,
@@ -9,10 +9,10 @@ import {
     getPaginationRowModel,
     ColumnDef
 } from '@tanstack/react-table'
-import React, { useMemo, useState } from 'react'
+import React, {useMemo, useState} from 'react'
 import useValidators from 'hooks/useValidators';
 import useDelegations from 'hooks/useDelegations';
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
+import {TriangleDownIcon, TriangleUpIcon} from '@chakra-ui/icons';
 import {ActionType} from "components/Pages/Delegations/Dashboard";
 import {useRouter} from "next/router";
 import {Validator} from "@terra-money/feather.js";
@@ -34,7 +34,7 @@ type TableProps = {
 
 const columnHelper = createColumnHelper<TableProps>()
 
-const columns: ColumnDef<TableProps,any>[] = [
+const columns: ColumnDef<TableProps, any>[] = [
     columnHelper.accessor('name', {
         header: () => (
             <Text as="span" color="brand.50" flex={1} fontSize="sm" textTransform="capitalize">
@@ -44,6 +44,7 @@ const columns: ColumnDef<TableProps,any>[] = [
         cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('votingPower', {
+        enableSorting: true,
         header: () => (
             <Text as="span" color="brand.50" minW="200px" fontSize="sm" textTransform="capitalize">
                 Voting Power
@@ -52,6 +53,8 @@ const columns: ColumnDef<TableProps,any>[] = [
         cell: (info) => info.getValue() + '%',
     }),
     columnHelper.accessor('commission', {
+        enableSorting: true,
+
         header: () => (
             <Text as="span" color="brand.50" minW="200px" fontSize="sm" textTransform="capitalize">
                 Commission
@@ -70,8 +73,8 @@ const columns: ColumnDef<TableProps,any>[] = [
     columnHelper.accessor('status', {}),
 ];
 
+const ValidatorTable = ({columnFilters, setColumnFilters, address}: Props) => {
 
-const ValidatorTable = ({ columnFilters, address }: Props) => {
 
     const [sorting, setSorting] = useState<any>([{
         desc: false,
@@ -79,10 +82,9 @@ const ValidatorTable = ({ columnFilters, address }: Props) => {
     }])
     const router = useRouter()
 
-    const { data: { validators = [] } = {} } = useValidators({address})
+    const {data: {validators = []} = {}} = useValidators({address})
 
-    const { data: { delegations = [] } = {} } = useDelegations({address})
-
+    const {data: {delegations = []} = {}} = useDelegations({address})
 
 
     const tableData = useMemo(() => {
@@ -90,13 +92,14 @@ const ValidatorTable = ({ columnFilters, address }: Props) => {
         if (!validators?.length) return []
 
         const onClick = async (action: ActionType, validatorAddress: string) => {
+            const tokenSymbol = "ampLUNA"
             await router.push({
                 pathname: `/${ActionType[action]}`,
-                query: { validatorAddress },
+                query: {validatorAddress, tokenSymbol},
             });
         };
         const getIsActive = (validator) => {
-            const delegation = delegations.find(({ delegation }) => delegation.validator_address === validator.validator_addr)
+            const delegation = delegations.find(({delegation}) => delegation.validator_address === validator.validator_addr)
             return !!delegation ? "active" : "all"
         }
         return validators?.map((validator) => ({
@@ -104,17 +107,17 @@ const ValidatorTable = ({ columnFilters, address }: Props) => {
             votingPower: "0",
             commission: validator.commission,
             status: getIsActive(validator),
-            actionButtons:   <HStack spacing={5}>
-                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.delegate,validator.operator_address)} >Delegate</Button>
-                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.redelegate,validator.operator_address)}  >Redelegate</Button>
-                <Button variant="outline" size="sm" onClick={()=>onClick(ActionType.undelegate,validator.operator_address)}  >Undelegate</Button>
+            actionButtons: <HStack spacing={5}>
+                <Button variant="outline" size="sm"
+                        onClick={() => onClick(ActionType.delegate, validator.operator_address)}>Delegate</Button>
+                <Button variant="outline" size="sm"
+                        onClick={() => onClick(ActionType.redelegate, validator.operator_address)}>Redelegate</Button>
+                <Button variant="outline" size="sm"
+                        onClick={() => onClick(ActionType.undelegate, validator.operator_address)}>Undelegate</Button>
             </HStack>
         }))
 
     }, [validators])
-
-
-
 
 
     const table = useReactTable({
@@ -174,8 +177,10 @@ const ValidatorTable = ({ columnFilters, address }: Props) => {
 
                                 {header?.column?.columnDef?.enableSorting && (
                                     <VStack width="fit-content" p="0" m="0" spacing="0">
-                                        <TriangleUpIcon fontSize="8px" color={header.column.getIsSorted() == 'asc' ? "white" : "white"} />
-                                        <TriangleDownIcon fontSize="8px" color={header.column.getIsSorted() === 'desc' ? "white" : "gray"} />
+                                        <TriangleUpIcon fontSize="8px"
+                                                        color={header.column.getIsSorted() == 'asc' ? "white" : "gray"}/>
+                                        <TriangleDownIcon fontSize="8px"
+                                                          color={header.column.getIsSorted() === 'desc' ? "white" : "gray"}/>
                                     </VStack>
                                 )}
                             </HStack>
@@ -186,7 +191,8 @@ const ValidatorTable = ({ columnFilters, address }: Props) => {
             ))}
 
             {table.getRowModel().rows.map((row, index) => (
-                <HStack key={row.id} width="full" borderRadius="30px" backgroundColor="rgba(0, 0, 0, 0.5)" py="5" px="8">
+                <HStack key={row.id} width="full" borderRadius="30px" backgroundColor="rgba(0, 0, 0, 0.5)" py="5"
+                        px="8">
                     {row.getVisibleCells().map((cell, index) => {
                         return (
                             <Text
@@ -209,7 +215,7 @@ const ValidatorTable = ({ columnFilters, address }: Props) => {
             {
                 !!tableData?.length && (
 
-                    <HStack w="full" justifyContent="space-between" pt="3" >
+                    <HStack w="full" justifyContent="space-between" pt="3">
 
                         <Text>
                             Showing {table.getState().pagination.pageIndex + 1} of{' '}
@@ -222,7 +228,7 @@ const ValidatorTable = ({ columnFilters, address }: Props) => {
                                 size="sm"
                                 onClick={() => table.previousPage()}
                                 isDisabled={!table.getCanPreviousPage()}
-                            > Previous  </Button>
+                            > Previous </Button>
                             <Button
                                 variant="outline"
                                 size="sm"

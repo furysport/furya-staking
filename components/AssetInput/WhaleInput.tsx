@@ -11,12 +11,9 @@ import {
   Text
 } from '@chakra-ui/react'
 import FallbackImage from 'components/FallbackImage'
-//import { useMultipleTokenBalance } from 'hooks/useTokenBalance'
-//import { useTokenInfo } from 'hooks/useTokenInfo'
-//import { useTokenList } from 'hooks/useTokenList'
+import tokens from "public/mainnet/white_listed_token_info.json"
 
 import AssetSelectModal from './AssetSelectModal'
-import {useTokenList} from "hooks/useTokenList";
 import {getTokenInfoFromTokenList} from "hooks/useTokenInfo";
 
 interface AssetInputProps {
@@ -95,12 +92,7 @@ const AssetInput: FC<AssetInputProps> = forwardRef(
     ref
   ) => {
 
-
-    const {tokens} = useTokenList()
-
       const tokenInfo = getTokenInfoFromTokenList(token?.tokenSymbol,tokens)
-
-    // useMultipleTokenBalance(tokenList?.tokens?.map(({ symbol }) => symbol))
 
     return (
       <Stack

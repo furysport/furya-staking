@@ -18,7 +18,7 @@ export const delegationAtom = atom<DelegationState>({
             validatorDestAddress: null,
             validatorSrcAddress: null,
             decimals: 6,
-            denom: 'uwhale'
+            denom: null
         },
     effects_UNSTABLE: [
     ],

@@ -35,7 +35,7 @@ export const CustomTooltip = ({data, label, isWalletConnected,
 
     useEffect(() => {
         setTextWidth(textRef.current.offsetWidth);
-    }, []);
+    }, [label]);
 
     return <Tooltip
         sx={{boxShadow: "none"}}

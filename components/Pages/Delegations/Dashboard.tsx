@@ -11,6 +11,8 @@ import Validators from "components/Pages/Delegations/Validators";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 import tokens from "public/mainnet/white_listed_token_info.json"
 import useDelegations from "hooks/useDelegations";
+import {TOKENS_TO_EXCLUDE_BY_SYMBOL} from "constants/staking";
+import usePrice from "hooks/usePrice";
 
 export enum ActionType {
     delegate, redelegate, undelegate, claim
@@ -23,12 +25,6 @@ export type TokenData = {
     token?: Token
     tokenSymbol?: string
 
-}
-
-interface ValidatorData {
-    commission: number,
-    votingPower: number,
-    name: string
 }
 
 export interface DelegationData {
@@ -45,72 +41,89 @@ const Dashboard: FC = () => {
 
     const rawTokenData = useMemo(
         () =>
-            tokens.map((t, index) => {
+            tokens.filter(token => !TOKENS_TO_EXCLUDE_BY_SYMBOL.includes(token.symbol)).map((t, index) => {
                 return {
-                    token: index,
-                    tokenSymbol: Token[index],
+                    token: Token[t.symbol],
+                    tokenSymbol: t.symbol,
+                    name: t.name,
                     dollarValue: null,
                     value: null,
                     color: t.color,
                 };
             }),
-        [tokens]
+        []
     );
-    const [tokenData, setTokenData] = useState<TokenData[]>(rawTokenData)
-
-    const { data: { delegations = [], totalRewards} = {},isLoading: isDelegationsLoading } = useDelegations({address})
-
-    const {data: balances, isLoading: balancesLoading} = useMultipleTokenBalance(tokens.map(e => e.symbol))
-
+    const [priceList] = usePrice() || []
+    // data always gets new refernce
+    const { data, isLoading: isDelegationsLoading } = useDelegations({ address });
+    const delegations = useMemo(() => (data?.delegations || []), [data]);
+    //const {} = useUndelegations({address})
+    const {
+        data: balances,
+        isLoading: balancesLoading
+    } = useMultipleTokenBalance(tokens.filter(token => !TOKENS_TO_EXCLUDE_BY_SYMBOL.includes(token.symbol)).map(e => e.symbol))
     const [updatedData, setData] = useState(null)
 
     useEffect(() => {
-        const liquidData = tokenData.map((token, index) => ({
-            ...token,
-            dollarValue: 1,
-            value: balances?.[index]
-        }))
-        const delegatedData = tokenData.map((tokenData, index) => {
-            const allDelegations = delegations.filter(d=>d.token.symbol === tokenData.tokenSymbol)
+            const liquidData = rawTokenData.map((token, index) => {
+                const balance = balances?.[index] !== undefined ? balances?.[index] : 0
+                return ({
+                    ...token,
+                    dollarValue: priceList && priceList[token.tokenSymbol] ? priceList[token.name] * balance : 0,
+                    value: balance
+                })
+            })
 
-            let aggregatedDollarValue = allDelegations?.reduce((acc, e) => acc + Number(e?.token.dollarValue ?? 0), 0).toFixed(6);
-            let aggregatedAmount = allDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
+            const delegatedData = rawTokenData.map((tokenData, _) => {
 
-            return {
-            ...tokenData,
-            dollarValue: Number(aggregatedDollarValue),
-            value: Number(aggregatedAmount)
-        }})
+                const allDelegations = delegations.filter(d => d.token.symbol === tokenData.tokenSymbol)
+                const aggregatedDollarValue = allDelegations.reduce((acc, e) => acc + Number(e?.token.dollarValue ?? 0), 0);
+                const aggregatedAmount = allDelegations.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0);
+                return {
+                    ...tokenData,
+                    dollarValue: Number(aggregatedDollarValue),
+                    value: Number(aggregatedAmount)
+                }
+            })
 
-        const undelegatedData = tokenData.map((token, index) => ({
-            ...token,
-            dollarValue: 1,
-            value: balances?.[index]
-        }))
-        const rewardsData = tokenData.map((tokenData, index) => {
-            const reward = delegations.find(d=>d.token.symbol === tokenData.tokenSymbol)?.rewards
-            return {
-                ...tokenData,
-                dollarValue: reward?.dollarValue ?? 0,
-                value: reward?.amount ?? 0
+            const undelegatedData = rawTokenData.map((token, index) => ({
+                ...token,
+                dollarValue: 1,
+                value: balances?.[index]
+            }))
+            const rewardsData = rawTokenData.map((tokenData, _) => {
+                const allDelegations = delegations.filter(d => d.token.symbol === tokenData.tokenSymbol)
+                const aggregatedDollarValue = allDelegations?.reduce((acc, e) => acc + Number(e?.rewards.dollarValue ?? 0), 0);
+                const aggregatedAmount = allDelegations?.reduce((acc, e) => (acc + Number(e?.rewards?.amount ?? 0)), 0);
+
+                return {
+                    ...tokenData,
+                    dollarValue: aggregatedDollarValue,
+                    value: aggregatedAmount
+                }
+            })
+
+            const delegationData: DelegationData = {
+                delegated: delegatedData,
+                undelegated: undelegatedData, liquid: liquidData, rewards: rewardsData
             }
-        })
 
-        const delegationData: DelegationData = {
-            delegated: delegatedData,
-            undelegated: undelegatedData, liquid: liquidData, rewards: rewardsData
-        }
+            setData(delegationData)
 
-        setData(delegationData)
-    }, [delegations, balances])
+    }, [balances, priceList, delegations])
 
 
     const [isLoading, setLoading] = useState<boolean>(true)
 
 
     useEffect(() => {
-        setLoading(balances === null && isDelegationsLoading)
-    }, [balances, isDelegationsLoading])
+
+        setTimeout(() =>
+                setLoading(balances === null || isDelegationsLoading || updatedData === null || !!!priceList)
+            , 300)
+
+    }, [balances, isDelegationsLoading, updatedData, priceList])
+
 
     return (
         <VStack
@@ -122,7 +135,7 @@ const Dashboard: FC = () => {
             <Text
                 fontSize={35}
                 fontWeight={"bold"}>
-                Delegations
+                Dashboard
             </Text>
             <HStack
                 width="full"
@@ -131,15 +144,18 @@ const Dashboard: FC = () => {
                 <CardComponent
                     isWalletConnected={isWalletConnected}
                     isLoading={isLoading}
+                    isUndelegations={false}
                     title={"Balances"}
                     tokenData={updatedData?.liquid}/>
                 <CardComponent
                     isWalletConnected={isWalletConnected}
+                    isUndelegations={false}
                     isLoading={isLoading}
                     title={"Delegations"}
                     tokenData={updatedData?.delegated}/>
                 <CardComponent
-                    isWalletConnected={isWalletConnected}
+                    isWalletConnected={false}
+                    isUndelegations={true}
                     isLoading={isLoading}
                     title={"Undelegations"}
                     tokenData={updatedData?.undelegated}/>
@@ -153,9 +169,9 @@ const Dashboard: FC = () => {
                     isWalletConnected={isWalletConnected}/>
                 <RewardsComponent
                     isWalletConnected={isWalletConnected}
-                    isLoading={false}
+                    isLoading={isLoading}
                     data={updatedData && updatedData[TokenType[TokenType.rewards]]}
-                address={address}/>
+                    address={address}/>
             </HStack>
             <Validators address={address}/>
         </VStack>

@@ -6,8 +6,10 @@ const RedelegatePage = () => {
 
     const router = useRouter();
     const validatorAddress = router.query.validatorAddress;
+    const tokenSymbol = router.query.tokenSymbol;
 
-    return <ActionsComponent globalAction={ActionType.redelegate} validatorAddress={validatorAddress} />;
+    // @ts-ignore
+    return <ActionsComponent globalAction={ActionType.redelegate} validatorAddress={validatorAddress} tokenSymbol={tokenSymbol}/>;
 }
 
 export default RedelegatePage

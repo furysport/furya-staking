@@ -31,15 +31,12 @@ const AssetInput = forwardRef(( props : AssetInputProps, ref) => {
  // const tokenInfo = useTokenInfo(token?.tokenSymbol)
  // const baseToken = useBaseTokenInfo()
 
-  // const onMaxClick = () => {
-  //   const isTokenAndBaseTokenSame = tokenInfo?.symbol === baseToken?.symbol
-  //   onChange({
-  //     ...token,
-  //     amount: isTokenAndBaseTokenSame && !ignoreSlack
-  //       ? num(balance === 0 ? 0 : (balance - 0.1)).toFixed(6)
-  //       : num(balance).toFixed(6),
-  //   })
-  // }
+  const onMaxClick = () => {
+    onChange({
+      ...token,
+      amount: num(balance === 0 ? 0 : (balance - 0.1)).toFixed(6),
+    })
+  }
   const onHalfClick = () => {
     onChange({
       ...token,
@@ -73,7 +70,7 @@ const AssetInput = forwardRef(( props : AssetInputProps, ref) => {
         dollarValue={dollarValue}
         maxDisabled={false}
         hideMax={hideMax}
-        onMaxClick={()=>{}}
+        onMaxClick={onMaxClick}
         onHalfClick={onHalfClick}
       />
     </VStack>

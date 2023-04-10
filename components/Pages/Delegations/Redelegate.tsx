@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo} from 'react'
+import React, { useEffect, useMemo} from 'react'
 import {Text, VStack} from '@chakra-ui/react'
 import AssetInput from '../../AssetInput'
 import {useRecoilState} from "recoil";
@@ -6,11 +6,12 @@ import {walletState, WalletStatusType} from "state/atoms/walletAtoms";
 import {Controller, useForm} from "react-hook-form";
 import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
 import ValidatorInput from "components/ValidatorInput/ValidatorInput";
-import {ActionProps, TokenPriceBalance} from "components/Pages/Delegations/Delegate";
 import tokenList from "public/mainnet/white_listed_token_info.json";
 import useValidators from "hooks/useValidators";
+import usePrice from "hooks/usePrice";
+import tokens from "public/mainnet/white_listed_token_info.json";
 
-const Redelegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
+const Redelegate = ({ validatorAddress, delegations}) => {
 
     const [{status, address}, _] = useRecoilState(walletState)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
@@ -19,7 +20,9 @@ const Redelegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
 
     const {data: {validators = []} = {}} = useValidators({address})
 
-    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress])
+    const chosenValidator = useMemo(()=>
+        validators.find(v=>v.operator_address === validatorAddress),
+        [validatorAddress])
 
     const onInputChange = (tokenSymbol: string | null, amount: number) => {
 
@@ -31,13 +34,14 @@ const Redelegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
     }
 
     useEffect(() => {
+        const token = tokens.find(e=>e.symbol === "ampLUNA")
         const newState: DelegationState = {
+            validatorDestAddress: null,
             amount: 0,
-            denom: null,
-            validatorSrcAddress: null,
-            tokenSymbol: "WHALE",
-            validatorDestAddress: chosenValidator?.operator_address,
-            validatorDestName: chosenValidator?.description.moniker,
+            denom: token.denom,
+            tokenSymbol: token.symbol,
+            validatorSrcAddress: chosenValidator?.operator_address,
+            validatorSrcName: chosenValidator?.description.moniker,
             decimals: 6
         }
         setCurrentDelegationState(newState)
@@ -51,7 +55,33 @@ const Redelegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
         },
     })
 
-    const currentToken: TokenPriceBalance = tokens?.find(e => e.tokenSymbol === currentDelegationState.tokenSymbol)
+
+    const allSingleTokenDelegations = useMemo(() => {
+        return delegations
+            .filter((d) => d.token.symbol === currentDelegationState.tokenSymbol)
+            .filter(
+                (d) =>
+                    currentDelegationState.validatorSrcAddress === null ||
+                    d.delegation.validator_address ===
+                    currentDelegationState.validatorSrcAddress
+            );
+    }, [delegations, currentDelegationState]);
+
+    const aggregatedAmount = allSingleTokenDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
+    const [priceList] = usePrice() || []
+
+    const price = useMemo(() => {
+        if (!tokens || !Array.isArray(tokens) || !priceList) {
+            return undefined;
+        }
+        const token = tokens.find((e) => e.symbol === currentDelegationState.tokenSymbol);
+
+        if (!token) {
+            return undefined;
+        }
+        return priceList[token.name];
+    }, [priceList, currentDelegationState.tokenSymbol, tokens]);
+
 
     return <VStack
         px={7}
@@ -65,8 +95,7 @@ const Redelegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
             rules={{required: true}}
             render={({field}) => (
                 <ValidatorInput
-                    value={1}
-                    delegatedOnly={false}
+                    delegatedOnly={true}
                     validatorName={currentDelegationState.validatorSrcName}
                     onChange={(validator) => {
                         field.onChange(validator)
@@ -84,7 +113,6 @@ const Redelegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
             rules={{required: true}}
             render={({field}) => (
                 <ValidatorInput
-                    value={1}
                     delegatedOnly={false}
                     validatorName={currentDelegationState.validatorDestName}
                     onChange={(validator) => {
@@ -106,8 +134,8 @@ const Redelegate: FC<ActionProps> = ({tokens, validatorAddress}) => {
                     hideToken={currentDelegationState.tokenSymbol}
                     {...field}
                     token={currentDelegationState}
-                    whalePrice={currentToken?.price}
-                    balance={currentToken?.balance}
+                    whalePrice={price}
+                    balance={aggregatedAmount}
                     minMax={false}
                     disabled={false}
                     onChange={(value, isTokenChange) => {
