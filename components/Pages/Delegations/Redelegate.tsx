@@ -146,11 +146,11 @@ const Redelegate = ({ validatorAddress, delegations}) => {
                             setCurrentDelegationState({
                                 ...currentDelegationState,
                                 tokenSymbol: value.tokenSymbol,
-                                amount: value.amount,
+                                amount: value.amount === '' ? 0 : value.amount,
                                 denom: denom
                             })
                         } else {
-                            setCurrentDelegationState({...currentDelegationState, amount: value.amount})
+                            setCurrentDelegationState({...currentDelegationState, amount: value.amount === '' ? 0 : value.amount})
                         }
                     }}
                 />

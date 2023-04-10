@@ -9,9 +9,7 @@ export const redelegate = async (
     validators: any,
     allianceDenom: string
 ) => {
-    console.log("REDELEGATE")
-    console.log(validators.filter(v=>v.operator_address === validatorSrcAddress))
-    console.log(validators.filter(v=>v.operator_address === validatorDstAddress))
+// wrong sig valDest => valSrc valSrc => valDest
     const handleMsg = new MsgAllianceRedelegate(
         address,
         validatorDstAddress,

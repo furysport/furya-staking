@@ -11,7 +11,6 @@ import {Wallet} from '../util/wallet-adapters'
 import {getTokenInfoFromTokenList} from './useTokenInfo'
 import {useTokenList} from './useTokenList'
 import {useConnectedWallet} from '@terra-money/wallet-provider'
-import {asArray} from "@cosmjs/stream";
 
 async function fetchTokenBalance({
                                    client,
@@ -126,7 +125,6 @@ export const useMultipleTokenBalance = (tokenSymbols?: Array<string>) => {
   const { address, status, client, chainId, network } = useRecoilValue(walletState)
   const {tokens}= useTokenList()
   //const [ibcAssetsList] = useIBCAssetList()
-
   const queryKey = useMemo(
       () => `multipleTokenBalances/${tokenSymbols?.join('+')}`,
       [tokenSymbols]

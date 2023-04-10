@@ -62,7 +62,9 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                         <Text
                             fontSize={27}
                             fontWeight={"bold"}>
-                            {isWalletConnected ? `$${claimableRewards.toLocaleString()}`: "n/a"}
+                            {isWalletConnected ?
+                                `$${claimableRewards.toLocaleString()}`:
+                                "n/a"}
                         </Text>
                         <ClaimButton isWalletConnected={isWalletConnected} onOpenModal={onOpenModal} address={address}/>
                         <WalletModal
@@ -99,5 +101,4 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
     </VStack>
 }
 
-// @ts-ignore
 export default RewardsComponent

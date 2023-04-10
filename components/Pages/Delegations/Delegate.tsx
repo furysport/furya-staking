@@ -10,7 +10,7 @@ import tokenList from "public/mainnet/white_listed_token_info.json";
 import tokens from "public/mainnet/white_listed_token_info.json";
 import useValidators from "hooks/useValidators";
 import usePrice from "hooks/usePrice";
-import {TxStep} from "components/Pages/Delegations/ActionsComponent";
+import {TxStep} from "components/Pages/Delegations/hooks/useTransaction";
 
 export interface TokenBalance {
     tokenSymbol: string,
@@ -100,18 +100,18 @@ const Delegate: FC<ActionProps> = ({balance, validatorAddress, tokenSymbol}) => 
                     balance={currentTokenBalance?.balance}
                     minMax={false}
                     disabled={false}
-                    onChange={(value, isTokenChange) => {
+                    onChange={async (value, isTokenChange) => {
                         field.onChange(value)
                         if (isTokenChange) {
-                            const denom = tokenList.find(t=>t.symbol === value.tokenSymbol).denom
-                            setCurrentDelegationState({
+                            const denom = tokenList.find(t => t.symbol === value.tokenSymbol).denom
+                            await setCurrentDelegationState({
                                 ...currentDelegationState,
                                 tokenSymbol: value.tokenSymbol,
-                                amount: value.amount,
+                                amount: value.amount === '' ? 0 : Number(value.amount),
                                 denom: denom
                             })
                         } else {
-                            setCurrentDelegationState({...currentDelegationState, amount: value.amount})
+                            setCurrentDelegationState({...currentDelegationState, amount: value.amount === '' ? 0 : value.amount})
                         }
                     }}
                 />
