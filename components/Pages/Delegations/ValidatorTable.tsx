@@ -22,7 +22,6 @@ type Props = {
     columnFilters: any;
     address: string
 
-    setColumnFilters: void
 }
 type TableProps = {
     name: string;
@@ -74,8 +73,8 @@ const columns: ColumnDef<TableProps, any>[] = [
     columnHelper.accessor('status', {}),
 ];
 
-
 const ValidatorTable = ({columnFilters, setColumnFilters, address}: Props) => {
+
 
     const [sorting, setSorting] = useState<any>([{
         desc: false,
@@ -105,7 +104,7 @@ const ValidatorTable = ({columnFilters, setColumnFilters, address}: Props) => {
         }
         return validators?.map((validator) => ({
             name: validator?.description?.moniker,
-            votingPower: validator.votingPower,
+            votingPower: "0",
             commission: validator.commission,
             status: getIsActive(validator),
             actionButtons: <HStack spacing={5}>
