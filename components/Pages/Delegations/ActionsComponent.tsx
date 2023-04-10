@@ -7,7 +7,7 @@ import Delegate, {TokenBalance} from "./Delegate"
 import {useRouter} from 'next/router'
 
 import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
-import React, {useMemo, useState} from "react";
+import React, { useMemo, useState} from "react";
 import WalletModal from "../../Wallet/Modal/Modal";
 
 import Loader from "../../Loader";
@@ -17,8 +17,8 @@ import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 import useTransaction from "components/Pages/Delegations/hooks/useTransaction";
 import tokens from "public/mainnet/white_listed_token_info.json"
 import useDelegations from "hooks/useDelegations";
-import {Coin, MsgAllianceDelegate, MsgAllianceRedelegate, MsgAllianceUndelegate} from "@terra-money/feather.js";
-import {convertDenomToMicroDenom} from "util/conversion";
+import usePrice from "hooks/usePrice";
+
 export enum TxStep {
     /**
      * Idle
@@ -206,7 +206,7 @@ const ActionsComponent = ({globalAction, validatorAddress}) => {
                     {(() => {
                         switch (globalAction) {
                             case ActionType.delegate:
-                                return <Delegate balance={liquidTokenPriceBalances} validatorAddress={validatorAddress}/>;
+                                return <Delegate txStep={txStep} balance={liquidTokenPriceBalances} validatorAddress={validatorAddress}/>;
                             case ActionType.redelegate:
                                 return <Redelegate validatorAddress={validatorAddress} delegations={delegations}/>;
                             case ActionType.undelegate:
@@ -230,6 +230,10 @@ const ActionsComponent = ({globalAction, validatorAddress}) => {
                         txStep == TxStep.Posting ||
                         txStep == TxStep.Broadcasting}
                     onClick={async () => {
+                        console.log(txStep == TxStep.Estimating ||
+                            txStep == TxStep.Posting ||
+                            txStep == TxStep.Broadcasting ||
+                            (currentDelegationState.amount <= 0) && isWalletConnected)
                         if (isWalletConnected) {
                             await submit(globalAction,
                                 currentDelegationState.validatorDestAddress,

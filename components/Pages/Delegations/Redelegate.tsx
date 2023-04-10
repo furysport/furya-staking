@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo} from 'react'
+import React, { useEffect, useMemo} from 'react'
 import {Text, VStack} from '@chakra-ui/react'
 import AssetInput from '../../AssetInput'
 import {useRecoilState} from "recoil";
@@ -20,7 +20,9 @@ const Redelegate = ({ validatorAddress, delegations}) => {
 
     const {data: {validators = []} = {}} = useValidators({address})
 
-    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress])
+    const chosenValidator = useMemo(()=>
+        validators.find(v=>v.operator_address === validatorAddress),
+        [validatorAddress])
 
     const onInputChange = (tokenSymbol: string | null, amount: number) => {
 
@@ -66,11 +68,20 @@ const Redelegate = ({ validatorAddress, delegations}) => {
     }, [delegations, currentDelegationState]);
 
     const aggregatedAmount = allSingleTokenDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
-    const [priceList, timestamp] = usePrice() || []
+    const [priceList] = usePrice() || []
 
     const price = useMemo(() => {
-        return priceList[tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.name];
-    }, [priceList, currentDelegationState.tokenSymbol]);
+        if (!tokens || !Array.isArray(tokens) || !priceList) {
+            return undefined;
+        }
+        const token = tokens.find((e) => e.symbol === currentDelegationState.tokenSymbol);
+
+        if (!token) {
+            return undefined;
+        }
+        return priceList[token.name];
+    }, [priceList, currentDelegationState.tokenSymbol, tokens]);
+
 
     return <VStack
         px={7}
@@ -84,7 +95,6 @@ const Redelegate = ({ validatorAddress, delegations}) => {
             rules={{required: true}}
             render={({field}) => (
                 <ValidatorInput
-                    value={1}
                     delegatedOnly={true}
                     validatorName={currentDelegationState.validatorSrcName}
                     onChange={(validator) => {
@@ -103,7 +113,6 @@ const Redelegate = ({ validatorAddress, delegations}) => {
             rules={{required: true}}
             render={({field}) => (
                 <ValidatorInput
-                    value={1}
                     delegatedOnly={false}
                     validatorName={currentDelegationState.validatorDestName}
                     onChange={(validator) => {

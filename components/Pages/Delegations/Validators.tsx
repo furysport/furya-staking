@@ -6,7 +6,6 @@ import ValidatorTable from "./ValidatorTable"
 const Topbar = ({setColumnFilters}) => {
     const [activeButton, setActiveButton] = useState("all")
 
-
     return (
         <HStack width="full" justifyContent="space-between">
 

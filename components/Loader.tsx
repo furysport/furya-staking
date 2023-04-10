@@ -2,9 +2,9 @@ import React from 'react'
 
 import { Flex } from '@chakra-ui/react'
 
-const Loader = () => {
+const Loader = ({ width = '10rem', height = '10rem' }) => {
   return (
-    <Flex w="10rem" h="10rem" justify="center" align="center">
+    <Flex w={width} h={height} justify="center" align="center">
       <svg
         version="1.1"
         id="eTw5qp7ydSE1"

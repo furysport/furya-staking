@@ -1,24 +1,32 @@
-import { HStack, VStack, Text } from "@chakra-ui/react";
+import {HStack, VStack, Text, Box, Tooltip} from "@chakra-ui/react";
 import Loader from "components/Loader";
-import { FC } from "react";
+import React, {FC, useMemo} from "react";
 import { CustomTooltip } from "components/Pages/Delegations/CustomTooltip";
 import { TokenData} from "components/Pages/Delegations/Dashboard";
+import InfoIcon from "components/icons/InfoIcon";
 
 interface CardComponentProps {
     title: string
     tokenData: TokenData[];
     isLoading: boolean;
     isWalletConnected: boolean;
+    isUndelegations: boolean;
 }
 
-const CardComponent: FC<CardComponentProps> = ({title, tokenData,isLoading, isWalletConnected }) => {
+const CardComponent: FC<CardComponentProps> = ({title, tokenData,isLoading, isWalletConnected,isUndelegations }) => {
 
-    const sumAndMultiplyValues = (): number =>
-        tokenData?.reduce((total, item) => {
-           return  total + item.value * (item?.dollarValue !== undefined ? item?.dollarValue ?? 0 : 0);
+    const sumAndMultiplyValues = useMemo(() => {
+        return isLoading? 0: tokenData?.reduce((total, item) => {
+            return (
+                total + (item?.dollarValue !== undefined ? item?.dollarValue ?? 0 : 0)
+            );
         }, 0);
+    }, [tokenData, isLoading]);
 
-    const summedAndMultipliedValues = isWalletConnected ? `$${sumAndMultiplyValues()?.toLocaleString()}` : "n/a";
+    const summedAndMultipliedValues = useMemo(() => {
+        return isWalletConnected ? `$${sumAndMultiplyValues.toLocaleString()}` : "n/a";
+    }, [isWalletConnected, sumAndMultiplyValues]);
+
     return (
         <VStack
             width="full"
@@ -28,7 +36,7 @@ const CardComponent: FC<CardComponentProps> = ({title, tokenData,isLoading, isWa
             borderRadius={"20px"}
             alignItems="flex-start"
             verticalAlign="center"
-            minH={120}
+            minH={130}
             minW={300}
             as="form"
             overflow="hidden"
@@ -44,10 +52,35 @@ const CardComponent: FC<CardComponentProps> = ({title, tokenData,isLoading, isWa
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <Loader />
+                    <Loader height={"7rem"} width={"7rem"} />
                 </HStack>
-            ) : (<><Text color={"grey"}>{title}</Text>
-                <CustomTooltip
+            ) : (<>
+                <HStack>
+                    <Text color="gray">{title}</Text>
+                    {isUndelegations && <Tooltip
+                        label={
+                            <Box
+                                width="300px"
+                                height="80px"
+                                borderRadius="10px"
+                                bg="black"
+                                color="white"
+                                fontSize={14}
+                                p={4}>
+                                Cannot be displayed at the moment. We apologize for the inconvenience...
+                            </Box>
+                        }
+                        bg="transparent"
+                        hasArrow={false}
+                        placement="bottom"
+                        closeOnClick={false}
+                        arrowSize={0}>
+                        <Box>
+                            <InfoIcon color={"white"}cursor="pointer" />
+                        </Box>
+                    </Tooltip>}
+                </HStack>
+            <CustomTooltip
                     isWalletConnected={isWalletConnected}
                     data={tokenData}
                     label={`${summedAndMultipliedValues}`}/>

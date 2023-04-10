@@ -1,4 +1,4 @@
-import { LCDClient, Coins } from "@terra-money/feather.js"
+import { LCDClient } from "@terra-money/feather.js"
 import useClient from "hooks/useClient"
 import tokens from "public/mainnet/white_listed_token_info.json"
 import usePrice from "./usePrice"
@@ -120,7 +120,7 @@ const getDelegation = async (client: LCDClient | null, priceList: any, delegator
 
 const useDelegations = ({address}) => {
     const client = useClient()
-    const [priceList, timestamp] = usePrice() || []
+    const [priceList] = usePrice() || []
     return useQuery({
         queryKey: ['delegations', priceList, address],
         queryFn: () => getDelegation(client, priceList,address),

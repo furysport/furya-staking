@@ -23,7 +23,7 @@ const useClient = () => {
         'mainnet',
         'migaloo-1'
     );
-    }, [])
+    }, [lcdClient, connectedWallet])
 }
 
 export default useClient

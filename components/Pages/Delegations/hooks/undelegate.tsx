@@ -5,14 +5,15 @@ export const undelegate = async (
     wallet: TerraStationWallet,
     destBlockchain: string,
     valAddress: string,
+    address: string,
     amount: number,
     allianceDenom: string
 ) => {
     const handleMsg = new MsgAllianceUndelegate(
-        wallet.client.addresses[destBlockchain],
+        address,
         valAddress,
         new Coin(allianceDenom, amount)
     );
 
-    return wallet.client.post({ chainID: destBlockchain, msgs: [handleMsg] });
+    return await wallet.client.post({ chainID: destBlockchain, msgs: [handleMsg] });
 };

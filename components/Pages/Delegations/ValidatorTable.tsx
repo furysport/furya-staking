@@ -45,6 +45,7 @@ const columns: ColumnDef<TableProps,any>[] = [
         cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('votingPower', {
+        enableSorting: true,
         header: () => (
             <Text as="span" color="brand.50" minW="200px" fontSize="sm" textTransform="capitalize">
                 Voting Power
@@ -53,6 +54,8 @@ const columns: ColumnDef<TableProps,any>[] = [
         cell: (info) => info.getValue() + '%',
     }),
     columnHelper.accessor('commission', {
+        enableSorting: true,
+
         header: () => (
             <Text as="span" color="brand.50" minW="200px" fontSize="sm" textTransform="capitalize">
                 Commission
@@ -83,7 +86,6 @@ const router = useRouter()
     const { data: { validators = [] } = {} } = useValidators({address})
 
     const { data: { delegations = [] } = {} } = useDelegations({address})
-
 
 
     const tableData = useMemo(() => {
@@ -175,7 +177,7 @@ const router = useRouter()
 
                                 {header?.column?.columnDef?.enableSorting && (
                                     <VStack width="fit-content" p="0" m="0" spacing="0">
-                                        <TriangleUpIcon fontSize="8px" color={header.column.getIsSorted() == 'asc' ? "white" : "white"} />
+                                        <TriangleUpIcon fontSize="8px" color={header.column.getIsSorted() == 'asc' ? "white" : "gray"} />
                                         <TriangleDownIcon fontSize="8px" color={header.column.getIsSorted() === 'desc' ? "white" : "gray"} />
                                     </VStack>
                                 )}

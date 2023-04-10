@@ -22,12 +22,13 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
         onClose: onCloseModal,
     } = useDisclosure()
 
-    const claimableRewards = data?.reduce((acc, e) =>  acc + (e?.value ?? 0), 0) || 0;
+    const claimableRewards = data?.reduce((acc, e) =>  acc + (Number(e?.dollarValue) ?? 0), 0);
 
     return <VStack
         width="full"
         background={"#1C1C1C"}
         alignItems="flex-start"
+        justifyContent="center"
         px={7}
         pt={5}
         spacing={1}
@@ -82,10 +83,10 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                             <Box key={index} marginY={3} >
                                 <HStack justifyContent="space-between" width="100%" pr={3}>
                                     <Text>{Token[tokenData.token]}</Text>
-                                    <Text>{isWalletConnected ? tokenData.value: "n/a"}</Text>
+                                    <Text>{isWalletConnected ? `${(tokenData.value)?.toLocaleString()}` : "n/a"}</Text>
                                 </HStack>
                                 <HStack  justifyContent="flex-end" pr={3}>
-                                <Text marginBottom={1} fontSize={11} color={isWalletConnected ? "grey" : "black"}>{`≈$${tokenData.dollarValue}`}</Text>
+                                <Text marginBottom={1} fontSize={11} color={isWalletConnected ? "grey" : "black"}>{`≈$${(tokenData.dollarValue)?.toLocaleString()}`}</Text>
                                 </HStack>
                                     {index < data.length - 1 && <Divider />}
                             </Box>

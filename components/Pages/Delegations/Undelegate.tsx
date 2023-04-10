@@ -84,7 +84,6 @@ const Undelegate  = ({ delegations, validatorAddress})  => {
             rules={{ required: true }}
             render={({ field }) => (
         <ValidatorInput
-            value={1}
             validatorName={currentDelegationState?.validatorSrcName}
             delegatedOnly={true}
             onChange={(validator) => {

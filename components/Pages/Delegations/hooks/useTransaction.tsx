@@ -13,7 +13,7 @@ import {redelegate} from "components/Pages/Delegations/hooks/redelegate";
 import useClient from "hooks/useTerraStationClient";
 import {claimRewards} from "components/Pages/Delegations/hooks/claimRewards";
 import useDelegations from "hooks/useDelegations";
-
+import useValidators from "hooks/useValidators";
 export enum TxStep {
   /**
    * Idle
@@ -55,13 +55,19 @@ export const useTransaction = () => {
   const toast = useToast()
   const { chainId, address } = useRecoilValue(walletState)
   const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle)
-  const [bondingAction, setBondingAction] = useState<ActionType>(null)
+  const [delegationAction, setDelegationAction] = useState<ActionType>(null)
   const [txHash, setTxHash] = useState<string | undefined>(undefined)
   const [error, setError] = useState<unknown | null>(null)
   const [buttonLabel, setButtonLabel] = useState<unknown | null>(null)
   const client = useClient()
   const { data: { delegations = [], totalRewards} = {} } = useDelegations({address})
-
+  const {data: {validators = []} = {}} = useValidators({address})
+  // const delegationMsg = new MsgAllianceDelegate(
+  //       address,
+  //       "migaloovaloper1qvqqflpzkkakzwdkm2dx6f25sxnknuga4f90qp",
+  //       new Coin('ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A', 1000)
+  //   )
+  //
 
   const { data: fee } = useQuery<unknown, unknown, any | null>(
     ['fee', error],
@@ -69,7 +75,7 @@ export const useTransaction = () => {
       setError(null)
       setTxStep(TxStep.Estimating)
       try {
-        const response = 0 //await client.simulate(senderAddress, debouncedMsgs, '')
+        const response = 0 //await client.simulate(address, [delegationMsg], '')
         if (!!buttonLabel) setButtonLabel(null)
         setTxStep(TxStep.Ready)
         return response
@@ -122,9 +128,9 @@ export const useTransaction = () => {
       if(data.action===ActionType.delegate){
        return delegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom)
       }else if (data.action===ActionType.undelegate){
-        return undelegate(client,"migaloo-1", data.validatorSrcAddress,adjustedAmount, data.denom)
+        return undelegate(client,"migaloo-1", data.validatorSrcAddress,address,adjustedAmount, data.denom)
       }else if (data.action===ActionType.redelegate){
-        return redelegate(client,"migaloo-1", data.validatorSrcAddress,data.validatorDestAddress,adjustedAmount, data.denom)
+        return redelegate(client,"migaloo-1", data.validatorSrcAddress,data.validatorDestAddress,address,adjustedAmount,validators, data.denom)
       }
       else{
         return claimRewards(client, delegations)
@@ -135,7 +141,7 @@ export const useTransaction = () => {
         setTxStep(TxStep.Posting)
       },
       onError: (e) => {
-        console.log("HERE ERRORO")
+        console.log("HERE ERROR")
         let message: any = ''
         console.error(e?.toString())
         setTxStep(TxStep.Failed)
@@ -166,13 +172,13 @@ export const useTransaction = () => {
             </Finder>
           )
         } else {
-          setError('Failed to execute transaction.')
-          message = 'Failed to execute transaction.'
+          setError('Failed to post transaction.')
+          message = 'Failed to post transaction.'
         }
 
         toast({
           title:  (() => {
-            switch (bondingAction) {
+            switch (delegationAction) {
               case ActionType.delegate:
                 return "Delegation Failed.";
               case ActionType.undelegate:
@@ -196,7 +202,7 @@ export const useTransaction = () => {
         setTxStep(TxStep.Broadcasting)
         setTimeout(()=>{
           setTxHash(data?.result.txhash)
-        },(2000))
+
         console.log("HERE SUCCESS")
         console.log(data?.result.txhash)
         console.log(data?.result)
@@ -204,7 +210,7 @@ export const useTransaction = () => {
 
         toast({
           title:  (() => {
-            switch (bondingAction) {
+            switch (delegationAction) {
               case ActionType.delegate:
                 return "Delegation Successful.";
               case ActionType.undelegate:
@@ -228,8 +234,8 @@ export const useTransaction = () => {
           duration: 9000,
           position: 'top-right',
           isClosable: true,
-        })
-      },
+        }) },2000)
+      }
     }
   )
 
@@ -257,7 +263,7 @@ export const useTransaction = () => {
     if (fee == null) {
       return
     }
-    await setBondingAction(action)
+    await setDelegationAction(action)
 
      mutate({
       fee,
@@ -267,7 +273,7 @@ export const useTransaction = () => {
       denom,
       amount,
     })
-  }, [fee, mutate])
+  }, [fee, mutate, client])
 
   useEffect(() => {
     if (txInfo != null && txHash != null) {

@@ -91,7 +91,7 @@ const AssetOverview = ({
                 w={93}>
                     {data?.map(e =>
                         (<Text key={e.color}>
-                                {isWalletConnected ? `$${(e.value)?.toLocaleString()}` : "n/a"}
+                                {isWalletConnected ? `$${(e.dollarValue)?.toLocaleString()}` : "n/a"}
                             </Text>
                     ))}
                 </VStack>

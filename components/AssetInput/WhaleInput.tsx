@@ -92,8 +92,6 @@ const AssetInput: FC<AssetInputProps> = forwardRef(
     ref
   ) => {
 
-
-
       const tokenInfo = getTokenInfoFromTokenList(token?.tokenSymbol,tokens)
 
     return (

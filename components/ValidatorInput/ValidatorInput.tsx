@@ -7,7 +7,6 @@ import {walletState} from "state/atoms/walletAtoms";
 
 interface ValidatorInputProps {
     image?: boolean
-    value: any
     onChange: (value: any, isTokenChange?: boolean) => void
     showList?: boolean
     onInputFocus?: () => void
