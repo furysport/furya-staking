@@ -17,7 +17,6 @@ import {useMultipleTokenBalance} from "hooks/useTokenBalance";
 import useTransaction from "components/Pages/Delegations/hooks/useTransaction";
 import tokens from "public/mainnet/white_listed_token_info.json"
 import useDelegations from "hooks/useDelegations";
-import usePrice from "hooks/usePrice";
 
 export enum TxStep {
     /**
@@ -50,10 +49,9 @@ export enum TxStep {
     Failed = 6,
 }
 
-const ActionsComponent = ({globalAction, validatorAddress}) => {
+const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUNA"}) => {
 
     const [{chainId, status,address}, _] = useRecoilState(walletState)
-
     const isWalletConnected: boolean = status === WalletStatusType.connected
     const {
         isOpen: isOpenModal,
@@ -89,10 +87,8 @@ const ActionsComponent = ({globalAction, validatorAddress}) => {
         const actionString = ActionType[action].toString()
         const onClick = async () => {
             setCurrentDelegationState({...currentDelegationState, amount: 0})
-            const validatorAddress = currentDelegationState?.validatorDestAddress ?? ""
             await router.push({
-                pathname: `/${actionString}`,
-                query: { validatorAddress },
+                pathname: `/${actionString}`
             });
         }
 
@@ -206,7 +202,7 @@ const ActionsComponent = ({globalAction, validatorAddress}) => {
                     {(() => {
                         switch (globalAction) {
                             case ActionType.delegate:
-                                return <Delegate txStep={txStep} balance={liquidTokenPriceBalances} validatorAddress={validatorAddress}/>;
+                                return <Delegate txStep={txStep} balance={liquidTokenPriceBalances} validatorAddress={validatorAddress} tokenSymbol={tokenSymbol}/>;
                             case ActionType.redelegate:
                                 return <Redelegate validatorAddress={validatorAddress} delegations={delegations}/>;
                             case ActionType.undelegate:

@@ -20,10 +20,11 @@ export interface TokenBalance {
 export interface ActionProps {
     balance: TokenBalance[]
     validatorAddress:string,
+    tokenSymbol:string,
     txStep : TxStep
 }
 
-const Delegate: FC<ActionProps> = ({balance, validatorAddress}) => {
+const Delegate: FC<ActionProps> = ({balance, validatorAddress, tokenSymbol}) => {
 
     const [{status, address}, _] = useRecoilState(walletState)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
@@ -31,20 +32,17 @@ const Delegate: FC<ActionProps> = ({balance, validatorAddress}) => {
     const isWalletConnected = status === WalletStatusType.connected
     const {data: {validators = []} = {}} = useValidators({address})
 
-    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress])
+    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress, validators])
 
     useEffect(() => {
-        const token = tokens.find(e=>e.symbol === "ampLUNA")
-        const newState: DelegationState = {
-            tokenSymbol: token.symbol,
+        const token = tokens.find(e=>e.symbol === tokenSymbol)
+        setCurrentDelegationState({...currentDelegationState, tokenSymbol: token.symbol,
             amount: 0,
             decimals: 6,
             validatorSrcAddress: null,
-            validatorDestAddress: chosenValidator?.operator_address,
+            validatorDestAddress: validatorAddress,
             validatorDestName: chosenValidator?.description.moniker,
-            denom: token.denom
-        }
-        setCurrentDelegationState(newState)
+            denom: token.denom})
     }, [isWalletConnected, chosenValidator])
 
 

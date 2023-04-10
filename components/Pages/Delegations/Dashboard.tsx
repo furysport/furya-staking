@@ -58,8 +58,6 @@ const Dashboard: FC = () => {
     const { data, isLoading: isDelegationsLoading } = useDelegations({ address });
     const delegations = useMemo(() => (data?.delegations || []), [data]);
     //const {} = useUndelegations({address})
-    console.log("delegations")
-    console.log(delegations)
     const {
         data: balances,
         isLoading: balancesLoading
@@ -137,7 +135,7 @@ const Dashboard: FC = () => {
             <Text
                 fontSize={35}
                 fontWeight={"bold"}>
-                Delegations
+                Dashboard
             </Text>
             <HStack
                 width="full"
