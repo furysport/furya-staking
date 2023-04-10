@@ -26,7 +26,7 @@ export const CustomTooltip = ({data, label, isWalletConnected,
             </Text>
             <Text
                 fontSize={14}>
-                {isWalletConnected ? value : "n/a"}
+                {isWalletConnected ? `${value.toLocaleString()}`: "n/a"}
             </Text>
         </HStack>
     }

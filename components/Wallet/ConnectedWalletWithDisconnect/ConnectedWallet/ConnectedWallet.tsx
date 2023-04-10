@@ -9,7 +9,6 @@ import { walletState } from 'state/atoms/walletAtoms'
 function ConnectedWallet({ connected }) {
   const toast = useToast()
   const { address } = useRecoilValue(walletState)
-
   const copyToClipboard = () => {
     try {
       navigator.clipboard.writeText(address)

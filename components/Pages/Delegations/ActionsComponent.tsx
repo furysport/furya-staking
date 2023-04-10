@@ -14,40 +14,10 @@ import Loader from "../../Loader";
 import {ActionType} from "components/Pages/Delegations/Dashboard";
 import Undelegate from "components/Pages/Delegations/Undelegate";
 import {useMultipleTokenBalance} from "hooks/useTokenBalance";
-import useTransaction from "components/Pages/Delegations/hooks/useTransaction";
-import tokens from "public/mainnet/white_listed_token_info.json"
+import useTransaction, {TxStep} from "components/Pages/Delegations/hooks/useTransaction";
+import whiteListedTokens from "public/mainnet/white_listed_token_info.json"
 import useDelegations from "hooks/useDelegations";
-
-export enum TxStep {
-    /**
-     * Idle
-     */
-    Idle = 0,
-    /**
-     * Estimating fees
-     */
-    Estimating = 1,
-    /**
-     * Ready to post transaction
-     */
-    Ready = 2,
-    /**
-     * Signing transaction in Terra Station
-     */
-    Posting = 3,
-    /**
-     * Broadcasting
-     */
-    Broadcasting = 4,
-    /**
-     * Successful
-     */
-    Successful = 5,
-    /**
-     * Failed
-     */
-    Failed = 6,
-}
+import CustomButton from "components/CustomButton";
 
 const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUNA"}) => {
 
@@ -65,20 +35,25 @@ const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUN
 
     const {submit, txStep} = useTransaction()
 
-    const { data: { delegations = [], totalRewards} = {} } = useDelegations({address})
+    const { data: { delegations = [] } = {} } = useDelegations({address})
 
-    const {data: balances} = useMultipleTokenBalance(tokens?.map(e => e.symbol) ?? [])
+    const {data: balances} = useMultipleTokenBalance(whiteListedTokens?.map(e => e.symbol) ?? [])
 
-    const liquidTokenPriceBalances: TokenBalance[] = tokens?.map((tokenInfo, index) => ({
+    const liquidTokenPriceBalances: TokenBalance[] = whiteListedTokens?.map((tokenInfo, index) => ({
          balance: balances?.[index], tokenSymbol: tokenInfo.symbol
     })) ?? []
 
     const buttonLabel = useMemo(() => {
+        const valSrc = currentDelegationState?.validatorSrcAddress === undefined ? null : currentDelegationState?.validatorSrcAddress
+        const valDest = currentDelegationState?.validatorDestAddress === undefined ? null : currentDelegationState?.validatorDestAddress
+
         if (!isWalletConnected) return "Connect Wallet"
+        else if (valSrc === null && valDest === null && globalAction === ActionType.redelegate) return "Choose Validators"
+        else if (valSrc === null  && (globalAction === ActionType.undelegate || globalAction === ActionType.redelegate)) return "Choose Validator"
+        else if (valDest === null && globalAction !== ActionType.undelegate) return "Choose Validator"
         else if (currentDelegationState?.amount === 0) return "Enter Amount"
         else return ActionType[globalAction]
     }, [isWalletConnected, currentDelegationState, globalAction])
-
 
     const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(false)
 
@@ -86,7 +61,8 @@ const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUN
 
         const actionString = ActionType[action].toString()
         const onClick = async () => {
-            setCurrentDelegationState({...currentDelegationState, amount: 0})
+            await setCurrentDelegationState({...currentDelegationState,
+                amount: 0, validatorSrcAddress:null, validatorDestAddress:null})
             await router.push({
                 pathname: `/${actionString}`
             });
@@ -210,39 +186,32 @@ const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUN
                         }
                     })()}
                 </Box>
-                <Button
-                    alignSelf="center"
-                    bg="#6ACA70"
-                    borderRadius="full"
-                    width="100%"
-                    variant="primary"
+                <CustomButton
+                    buttonLabel={buttonLabel}
+                    onClick={
+                        async () => {
+                            if (isWalletConnected) {
+                                await submit(globalAction,
+                                    currentDelegationState.validatorDestAddress,
+                                    currentDelegationState.validatorSrcAddress,
+                                    currentDelegationState.amount,
+                                    currentDelegationState.denom)
+                            } else {
+                                onOpenModal()
+                            }
+                        }
+                    }
                     disabled={txStep == TxStep.Estimating ||
                         txStep == TxStep.Posting ||
                         txStep == TxStep.Broadcasting ||
-                        (currentDelegationState.amount <= 0) && isWalletConnected}
-                    maxWidth={570}
-                    isLoading={
+                        (currentDelegationState.amount <= 0) && isWalletConnected || currentDelegationState?.validatorDestAddress === null && globalAction === ActionType.delegate || currentDelegationState?.validatorSrcAddress === null && (globalAction === ActionType.undelegate || globalAction === ActionType.redelegate)}
+                    loading={
                         txStep == TxStep.Estimating ||
                         txStep == TxStep.Posting ||
                         txStep == TxStep.Broadcasting}
-                    onClick={async () => {
-                        console.log(txStep == TxStep.Estimating ||
-                            txStep == TxStep.Posting ||
-                            txStep == TxStep.Broadcasting ||
-                            (currentDelegationState.amount <= 0) && isWalletConnected)
-                        if (isWalletConnected) {
-                            await submit(globalAction,
-                                currentDelegationState.validatorDestAddress,
-                                currentDelegationState.validatorSrcAddress,
-                                currentDelegationState.amount,
-                                currentDelegationState.denom)
-                        } else {
-                            onOpenModal()
-                        }
-                    }}
-                    style={{textTransform: "capitalize"}}>
-                    {buttonLabel}
-                </Button>
+                    height="57px"
+                    width="563px"
+                />
                 <WalletModal
                     isOpenModal={isOpenModal}
                     onCloseModal={onCloseModal}

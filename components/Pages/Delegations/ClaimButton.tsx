@@ -1,13 +1,12 @@
 import useDelegations from 'hooks/useDelegations';
-import {Button} from '@chakra-ui/react'
 import {useMemo} from 'react';
-import useTransaction from "components/Pages/Delegations/hooks/useTransaction";
+import useTransaction, {TxStep} from "components/Pages/Delegations/hooks/useTransaction";
 import {ActionType} from "components/Pages/Delegations/Dashboard";
-import {TxStep} from "components/Pages/Delegations/ActionsComponent";
+import CustomButton from "components/CustomButton";
 
 const ClaimButton = ({isWalletConnected, onOpenModal, address}) => {
 
-  const { data: { delegations = [], totalRewards} = {} } = useDelegations({address})
+  const { data: {totalRewards} = {} } = useDelegations({address})
 
 
   const {submit, txStep} = useTransaction()
@@ -21,24 +20,21 @@ const ClaimButton = ({isWalletConnected, onOpenModal, address}) => {
     else return 'Claim'
   }, [totalRewards, isWalletConnected])
 
-
+const isLoading =
+    txStep == TxStep.Estimating ||
+    txStep == TxStep.Posting ||
+    txStep == TxStep.Broadcasting
   return (
-    <Button
-      variant="primary"
-      minW="200px"
-      minH="50px"
-      style={{ transform: 'translateY(-10px)' }}
-      size="m"
-      disabled={!isWalletConnected || totalRewards === 0 }
-      onClick={isWalletConnected && totalRewards !==0 ? onClaim : onOpenModal}
-      isLoading={
-        txStep == TxStep.Estimating ||
-        txStep == TxStep.Posting ||
-        txStep == TxStep.Broadcasting
-      }>
-      {buttonLabel}
-    </Button>
+      <CustomButton
+          buttonLabel={buttonLabel}
+          onClick={
+            isWalletConnected && Number(totalRewards) !== 0 ? onClaim : onOpenModal
+          }
+          disabled={isWalletConnected && Number(totalRewards) === 0}
+          loading={isLoading}
+          height="60px"
+          width="250px"
+      />
   )
 }
-
 export default ClaimButton

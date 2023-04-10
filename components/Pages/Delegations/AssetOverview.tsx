@@ -88,7 +88,7 @@ const AssetOverview = ({
 
                 spacing={6}
                 pb={3}
-                w={93}>
+                w={85}>
                     {data?.map(e =>
                         (<Text key={e.color}>
                                 {isWalletConnected ? `$${(e.dollarValue)?.toLocaleString()}` : "n/a"}
@@ -97,11 +97,11 @@ const AssetOverview = ({
                 </VStack>
                 <PieChart
                     style={{pointerEvents: 'none'}}
-                    width={250}
+                    width={290}
                     height={275}>
                     <Pie
-                        data={isWalletConnected && aggregatedAssets !== 0? data : [{value: 1}]}
-                        cx="50%"
+                        data={isWalletConnected && aggregatedAssets !== 0 ? data : [{value: 1}]}
+                        cx="42%"
                         cy="45%"
                         innerRadius={95}
                         outerRadius={120}

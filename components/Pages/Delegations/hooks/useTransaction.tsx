@@ -45,12 +45,6 @@ export enum TxStep {
   Failed = 6,
 }
 
-type Params = {
-  price?: number
-  gasAdjustment?: number
-  estimateEnabled?: boolean
-}
-
 export const useTransaction = () => {
   const toast = useToast()
   const { chainId, address } = useRecoilValue(walletState)
@@ -141,7 +135,6 @@ export const useTransaction = () => {
         setTxStep(TxStep.Posting)
       },
       onError: (e) => {
-        console.log("HERE ERROR")
         let message: any = ''
         console.error(e?.toString())
         setTxStep(TxStep.Failed)
@@ -202,11 +195,6 @@ export const useTransaction = () => {
         setTxStep(TxStep.Broadcasting)
         setTimeout(()=>{
           setTxHash(data?.result.txhash)
-
-        console.log("HERE SUCCESS")
-        console.log(data?.result.txhash)
-        console.log(data?.result)
-        console.log(data)
 
         toast({
           title:  (() => {
