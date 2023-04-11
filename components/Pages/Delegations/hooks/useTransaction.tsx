@@ -54,14 +54,15 @@ export const useTransaction = () => {
   const [error, setError] = useState<unknown | null>(null)
   const [buttonLabel, setButtonLabel] = useState<unknown | null>(null)
   const client = useClient()
-  const { data: { delegations = [], totalRewards} = {} } = useDelegations({address})
+  const { data: { delegations = [] } = {} } = useDelegations({address})
   const {data: {validators = []} = {}} = useValidators({address})
+
   // const delegationMsg = new MsgAllianceDelegate(
   //       address,
   //       "migaloovaloper1qvqqflpzkkakzwdkm2dx6f25sxnknuga4f90qp",
   //       new Coin('ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A', 1000)
-  //   )
-  //
+  //   ).packAny()
+
 
   const { data: fee } = useQuery<unknown, unknown, any | null>(
     ['fee', error],
@@ -69,7 +70,8 @@ export const useTransaction = () => {
       setError(null)
       setTxStep(TxStep.Estimating)
       try {
-        const response = 0 //await client.simulate(address, [delegationMsg], '')
+        const response = 0//await client.simulate(address, [delegationMsg], '')
+
         if (!!buttonLabel) setButtonLabel(null)
         setTxStep(TxStep.Ready)
         return response
@@ -127,7 +129,7 @@ export const useTransaction = () => {
         return redelegate(client,"migaloo-1", data.validatorSrcAddress,data.validatorDestAddress,address,adjustedAmount,validators, data.denom)
       }
       else{
-        return claimRewards(client, delegations)
+        return claimRewards(client, delegations, address)
       }
     },
     {
