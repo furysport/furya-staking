@@ -53,6 +53,7 @@ const Dashboard = () => {
             color: t.color,
         }));
     }, [filteredTokens]);
+
     const rewardsTokenData = useMemo(() => {
         return whiteListedTokens.map((t) => ({
             token: Token[t.symbol],
@@ -73,8 +74,9 @@ const Dashboard = () => {
         delegated: rawTokenData,
         undelegated: rawTokenData,
         liquid: rawTokenData,
-        rewards: rawTokenData,
+        rewards: rewardsTokenData,
     });
+
     const [isLoading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -94,7 +96,6 @@ const Dashboard = () => {
             const allDelegations = delegations.filter((d) => d.token.symbol === tokenData.tokenSymbol);
             const aggregatedDollarValue = allDelegations.reduce((acc, e) => acc + Number(isRewards ? e?.rewards.dollarValue ?? 0 : e?.token.dollarValue ?? 0), 0);
             const aggregatedAmount = allDelegations.reduce((acc, e) => acc + Number(isRewards ? e?.rewards?.amount ?? 0 : e?.token?.amount ?? 0), 0);
-
 
             return {
                 ...tokenData,
