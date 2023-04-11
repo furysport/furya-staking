@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo} from 'react'
+import React, {useEffect, useMemo} from 'react'
 import {Text, VStack} from '@chakra-ui/react'
 import AssetInput from '../../AssetInput'
 import {useRecoilState} from "recoil";
@@ -10,8 +10,9 @@ import tokenList from "public/mainnet/white_listed_token_info.json";
 import useValidators from "hooks/useValidators";
 import usePrice from "hooks/usePrice";
 import tokens from "public/mainnet/white_listed_token_info.json";
+import {useRouter} from "next/router";
 
-const Redelegate = ({ validatorAddress, delegations}) => {
+const Redelegate = ({validatorDestAddress, validatorSrcAddress, delegations, tokenSymbol}) => {
 
     const [{status, address}, _] = useRecoilState(walletState)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
@@ -20,9 +21,13 @@ const Redelegate = ({ validatorAddress, delegations}) => {
 
     const {data: {validators = []} = {}} = useValidators({address})
 
-    const chosenValidator = useMemo(()=>
-        validators.find(v=>v.operator_address === validatorAddress),
-        [validatorAddress])
+    const chosenDestValidator = useMemo(() =>
+            validators.find(v => v.operator_address === validatorDestAddress),
+        [validatorDestAddress, validators])
+
+    const chosenSrcValidator = useMemo(() =>
+            validators.find(v => v.operator_address === validatorSrcAddress),
+        [validatorSrcAddress, validators])
 
     const onInputChange = (tokenSymbol: string | null, amount: number) => {
 
@@ -34,18 +39,19 @@ const Redelegate = ({ validatorAddress, delegations}) => {
     }
 
     useEffect(() => {
-        const token = tokens.find(e=>e.symbol === "ampLUNA")
-        const newState: DelegationState = {
-            validatorDestAddress: null,
+        const token = tokens.find(e => e.symbol === tokenSymbol)
+        setCurrentDelegationState({
+            ...currentDelegationState,
+            validatorDestAddress: chosenDestValidator?.operator_address,
+            validatorDestName: chosenDestValidator?.description.moniker,
             amount: 0,
             denom: token.denom,
             tokenSymbol: token.symbol,
-            validatorSrcAddress: chosenValidator?.operator_address,
-            validatorSrcName: chosenValidator?.description.moniker,
+            validatorSrcAddress: chosenSrcValidator?.operator_address,
+            validatorSrcName: chosenSrcValidator?.description.moniker,
             decimals: 6
-        }
-        setCurrentDelegationState(newState)
-    }, [isWalletConnected, chosenValidator])
+        })
+    }, [ chosenDestValidator, chosenSrcValidator])
 
 
     const {control} = useForm({
@@ -69,7 +75,7 @@ const Redelegate = ({ validatorAddress, delegations}) => {
 
     const aggregatedAmount = allSingleTokenDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
     const [priceList] = usePrice() || []
-
+    const router = useRouter()
     const price = useMemo(() => {
         if (!tokens || !Array.isArray(tokens) || !priceList) {
             return undefined;
@@ -97,13 +103,21 @@ const Redelegate = ({ validatorAddress, delegations}) => {
                 <ValidatorInput
                     delegatedOnly={true}
                     validatorName={currentDelegationState.validatorSrcName}
-                    onChange={(validator) => {
+                    onChange={async (validator) => {
                         field.onChange(validator)
                         setCurrentDelegationState({
                             ...currentDelegationState,
                             validatorSrcAddress: validator.operator_address,
                             validatorSrcName: validator.description.moniker
                         })
+                        await router.push({
+                            pathname: '/redelegate',
+                            query: {
+                                validatorSrcAddress: validator.operator_address,
+                                validatorDestAddress: currentDelegationState.validatorDestAddress,
+                                tokenSymbol: currentDelegationState.tokenSymbol
+                            }
+                        });
                     }}
                     showList={true}/>)}/>
         <Text pt={5}>To</Text>
@@ -115,13 +129,21 @@ const Redelegate = ({ validatorAddress, delegations}) => {
                 <ValidatorInput
                     delegatedOnly={false}
                     validatorName={currentDelegationState.validatorDestName}
-                    onChange={(validator) => {
+                    onChange={async (validator) => {
                         field.onChange(validator)
                         setCurrentDelegationState({
                             ...currentDelegationState,
                             validatorDestAddress: validator.operator_address,
                             validatorDestName: validator.description.moniker
                         })
+                        await router.push({
+                            pathname: '/redelegate',
+                            query: {
+                                validatorSrcAddress: currentDelegationState.validatorSrcAddress,
+                                validatorDestAddress: validator.operator_address,
+                                tokenSymbol: currentDelegationState.tokenSymbol
+                            }
+                        });
                     }}
                     showList={true}/>)}/>
         <Text pt={5}>Amount</Text>
@@ -138,19 +160,30 @@ const Redelegate = ({ validatorAddress, delegations}) => {
                     balance={aggregatedAmount}
                     minMax={false}
                     disabled={false}
-                    onChange={(value, isTokenChange) => {
+                    onChange={async (value, isTokenChange) => {
                         onInputChange(value, 0)
                         field.onChange(value)
                         if (isTokenChange) {
-                            const denom = tokenList.find(t=>t.symbol === value.tokenSymbol).denom
+                            const denom = tokenList.find(t => t.symbol === value.tokenSymbol).denom
                             setCurrentDelegationState({
                                 ...currentDelegationState,
                                 tokenSymbol: value.tokenSymbol,
                                 amount: value.amount === '' ? 0 : value.amount,
                                 denom: denom
                             })
+                            await router.push({
+                                pathname: '/redelegate',
+                                query: {
+                                    validatorSrcAddress: currentDelegationState.validatorSrcAddress,
+                                    validatorDestAddress: currentDelegationState.validatorDestAddress,
+                                    tokenSymbol: value.tokenSymbol
+                                }
+                            });
                         } else {
-                            setCurrentDelegationState({...currentDelegationState, amount: value.amount === '' ? 0 : value.amount})
+                            setCurrentDelegationState({
+                                ...currentDelegationState,
+                                amount: value.amount === '' ? 0 : value.amount
+                            })
                         }
                     }}
                 />

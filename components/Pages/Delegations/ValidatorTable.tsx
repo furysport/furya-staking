@@ -1,13 +1,13 @@
-import {Button, Text, HStack, VStack, Box} from '@chakra-ui/react'
+import {Box, Button, HStack, Text, VStack} from '@chakra-ui/react'
 import {
+    ColumnDef,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getSortedRowModel,
-    useReactTable,
     getPaginationRowModel,
-    ColumnDef
+    getSortedRowModel,
+    useReactTable
 } from '@tanstack/react-table'
 import React, {useMemo, useState} from 'react'
 import useValidators from 'hooks/useValidators';
@@ -73,7 +73,7 @@ const columns: ColumnDef<TableProps, any>[] = [
     columnHelper.accessor('status', {}),
 ];
 
-const ValidatorTable = ({columnFilters, setColumnFilters, address}: Props) => {
+const ValidatorTable = ({columnFilters, address}: Props) => {
 
 
     const [sorting, setSorting] = useState<any>([{
@@ -93,10 +93,25 @@ const ValidatorTable = ({columnFilters, setColumnFilters, address}: Props) => {
 
         const onClick = async (action: ActionType, validatorAddress: string) => {
             const tokenSymbol = "ampLUNA"
-            await router.push({
-                pathname: `/${ActionType[action]}`,
-                query: {validatorAddress, tokenSymbol},
-            });
+            if (action === ActionType.delegate) {
+                const validatorDestAddress = validatorAddress
+                await router.push({
+                    pathname: `/${ActionType[action]}`,
+                    query: {validatorDestAddress, tokenSymbol},
+                });
+            }else if(action === ActionType.undelegate){
+                const validatorSrcAddress = validatorAddress
+                await router.push({
+                    pathname: `/${ActionType[action]}`,
+                    query: {validatorSrcAddress, tokenSymbol},
+                });
+            }else if(action === ActionType.redelegate){
+                const validatorSrcAddress = validatorAddress
+                await router.push({
+                    pathname: `/${ActionType[action]}`,
+                    query: {validatorSrcAddress, tokenSymbol},
+                });
+            }
         };
         const getIsActive = (validator) => {
             const delegation = delegations.find(({delegation}) => delegation.validator_address === validator.validator_addr)
@@ -104,7 +119,8 @@ const ValidatorTable = ({columnFilters, setColumnFilters, address}: Props) => {
         }
         return validators?.map((validator) => ({
             name: validator?.description?.moniker,
-            votingPower: "0",
+            // @ts-ignore
+            votingPower: validator.votingPower,
             commission: validator.commission,
             status: getIsActive(validator),
             actionButtons: <HStack spacing={5}>
@@ -161,10 +177,7 @@ const ValidatorTable = ({columnFilters, setColumnFilters, address}: Props) => {
                             flex={index == 0 || index == 3 ? 1 : 'unset'}
                             minW={index == 1 || index == 2 ? "200px" : 'unset'}
                             cursor={header.column.getCanSort() ? "pointer" : "default"}
-                            onClick={header.column.getToggleSortingHandler()}
-                            p="0"
-                            m="0"
-                        >
+                            onClick={header.column.getToggleSortingHandler()}>
                             <HStack>
                                 <Box>
                                     {

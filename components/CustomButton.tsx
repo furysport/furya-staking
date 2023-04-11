@@ -8,6 +8,7 @@ interface CustomButtonProps {
     buttonLabel: string;
     height: string;
     width: string;
+    transform?: string
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -17,6 +18,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
                                                        buttonLabel,
                                                        height,
                                                        width,
+                                                       transform
                                                    }) => {
     const similarButtonStyles: CSSProperties = {
         borderRadius: '78px',
@@ -26,7 +28,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
         background: disabled ? 'gray' : '#6ACA70',
         color: 'white',
         fontWeight: 'bold',
-        transform: 'translateY(-10px)',
+        transform: transform,
         outline: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
         transition: '0.2s all',

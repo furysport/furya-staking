@@ -27,6 +27,7 @@ const isLoading =
   return (
       <CustomButton
           buttonLabel={buttonLabel}
+          transform={'translateY(-15px)'}
           onClick={
             isWalletConnected && Number(totalRewards) !== 0 ? onClaim : onOpenModal
           }

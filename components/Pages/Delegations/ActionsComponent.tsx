@@ -19,7 +19,7 @@ import whiteListedTokens from "public/mainnet/white_listed_token_info.json"
 import useDelegations from "hooks/useDelegations";
 import CustomButton from "components/CustomButton";
 
-const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUNA"}) => {
+const ActionsComponent = ({globalAction, validatorDestAddress,validatorSrcAddress, tokenSymbol = "ampLUNA"}) => {
 
     const [{chainId, status,address}, _] = useRecoilState(walletState)
     const isWalletConnected: boolean = status === WalletStatusType.connected
@@ -63,9 +63,10 @@ const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUN
         const onClick = async () => {
             await setCurrentDelegationState({...currentDelegationState,
                 amount: 0, validatorSrcAddress:null, validatorDestAddress:null})
-            await router.push({
-                pathname: `/${actionString}`
-            });
+                await router.push({
+                    pathname: actionString,
+                    query: {tokenSymbol: currentDelegationState.tokenSymbol}
+                });
         }
 
         return <Button
@@ -178,11 +179,11 @@ const ActionsComponent = ({globalAction, validatorAddress, tokenSymbol = "ampLUN
                     {(() => {
                         switch (globalAction) {
                             case ActionType.delegate:
-                                return <Delegate txStep={txStep} balance={liquidTokenPriceBalances} validatorAddress={validatorAddress} tokenSymbol={tokenSymbol}/>;
+                                return <Delegate balance={liquidTokenPriceBalances} validatorDestAddress={validatorDestAddress} tokenSymbol={tokenSymbol}/>;
                             case ActionType.redelegate:
-                                return <Redelegate validatorAddress={validatorAddress} delegations={delegations}/>;
+                                return <Redelegate validatorDestAddress={validatorDestAddress} validatorSrcAddress={validatorSrcAddress} delegations={delegations} tokenSymbol={tokenSymbol}/>;
                             case ActionType.undelegate:
-                                return <Undelegate delegations={delegations} validatorAddress={validatorAddress}/>;
+                                return <Undelegate delegations={delegations} validatorSrcAddress={validatorSrcAddress} tokenSymbol={tokenSymbol}/>;
                         }
                     })()}
                 </Box>

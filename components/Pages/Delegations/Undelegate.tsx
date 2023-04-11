@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo} from 'react'
+import React, {useEffect, useMemo} from 'react'
 import {Text, VStack} from '@chakra-ui/react'
 import AssetInput from '../../AssetInput'
-import { useRecoilState} from "recoil";
+import {useRecoilState} from "recoil";
 import {walletState, WalletStatusType} from "state/atoms/walletAtoms";
 import {Controller, useForm} from "react-hook-form";
 import {delegationAtom, DelegationState} from "state/atoms/delegationAtoms";
@@ -9,8 +9,9 @@ import ValidatorInput from "components/ValidatorInput/ValidatorInput";
 import tokens from "public/mainnet/white_listed_token_info.json";
 import usePrice from "hooks/usePrice";
 import useValidators from "hooks/useValidators";
+import {useRouter} from "next/router";
 
-const Undelegate  = ({ delegations, validatorAddress})  => {
+const Undelegate = ({delegations, validatorSrcAddress, tokenSymbol}) => {
 
     const [{status, address}, _] = useRecoilState(walletState)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
@@ -19,10 +20,10 @@ const Undelegate  = ({ delegations, validatorAddress})  => {
 
     const {data: {validators = []} = {}} = useValidators({address})
 
-    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress])
+    const chosenSrcValidator = useMemo(() => validators.find(v => v.operator_address === validatorSrcAddress), [validatorSrcAddress, validators])
 
     const onInputChange = (tokenSymbol: string | null, amount: number) => {
-        const newState = { ...currentDelegationState, amount: Number(amount) };
+        const newState = {...currentDelegationState, amount: Number(amount)};
         if (tokenSymbol) {
             newState.tokenSymbol = tokenSymbol;
         }
@@ -31,25 +32,25 @@ const Undelegate  = ({ delegations, validatorAddress})  => {
 
 
     useEffect(() => {
-        const token = tokens.find(e=>e.symbol === "ampLUNA")
+        const token = tokens.find(e => e.symbol === tokenSymbol)
 
-        const newState: DelegationState = {
+        setCurrentDelegationState({
+            ...currentDelegationState,
             validatorDestAddress: null,
             tokenSymbol: token.symbol,
             amount: 0,
             decimals: 6,
-            validatorSrcAddress: chosenValidator?.operator_address,
-            validatorSrcName: chosenValidator?.description.moniker,
+            validatorSrcAddress: chosenSrcValidator?.operator_address,
+            validatorSrcName: chosenSrcValidator?.description.moniker,
             denom: token.denom
-        }
-        setCurrentDelegationState(newState)
-    }, [isWalletConnected, chosenValidator])
+        })
+    }, [ chosenSrcValidator])
 
 
-    const { control } = useForm({
+    const {control} = useForm({
         mode: 'onChange',
         defaultValues: {
-             currentDelegationState
+            currentDelegationState
         },
     })
     const allSingleTokenDelegations = useMemo(() => {
@@ -64,44 +65,51 @@ const Undelegate  = ({ delegations, validatorAddress})  => {
     }, [delegations, currentDelegationState]);
 
     const aggregatedAmount = allSingleTokenDelegations?.reduce((acc, e) => (acc + Number(e?.token?.amount ?? 0)), 0).toFixed(6);
-    const [priceList, timestamp] = usePrice() || []
+    const [priceList ] = usePrice() || []
 
     const price = useMemo(
         () => priceList?.[tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.name],
         [priceList, currentDelegationState.tokenSymbol]
     );
-
+    const router = useRouter()
 
     return <VStack
         px={7}
         width="full"
-    alignItems="flex-start"
+        alignItems="flex-start"
         marginBottom={5}>
         <Text>From</Text>
         <Controller
             name="currentDelegationState"
             control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-        <ValidatorInput
-            validatorName={currentDelegationState?.validatorSrcName}
-            delegatedOnly={true}
-            onChange={(validator) => {
-                field.onChange(validator)
-                setCurrentDelegationState({
-                    ...currentDelegationState,
-                    validatorSrcAddress: validator.operator_address,
-                    validatorSrcName: validator.description.moniker
-                })
-            }}
-            showList={true}/>)}
+            rules={{required: true}}
+            render={({field}) => (
+                <ValidatorInput
+                    validatorName={currentDelegationState?.validatorSrcName}
+                    delegatedOnly={true}
+                    onChange={async (validator) => {
+                        field.onChange(validator)
+                        setCurrentDelegationState({
+                            ...currentDelegationState,
+                            validatorSrcAddress: validator.operator_address,
+                            validatorSrcName: validator.description.moniker
+                        })
+                        await router.push({
+                            pathname: '/undelegate',
+                            query: {
+                                validatorSrcAddress: validator.operator_address,
+                                tokenSymbol: currentDelegationState.tokenSymbol
+                            }
+                        });
+                    }}
+                    showList={true}/>)}
         />
         <Text pt={5}>Amount</Text>
         <Controller
             name="currentDelegationState"
             control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
+            rules={{required: true}}
+            render={({field}) => (
                 <AssetInput
                     hideToken={currentDelegationState.tokenSymbol}
                     {...field}
@@ -110,17 +118,29 @@ const Undelegate  = ({ delegations, validatorAddress})  => {
                     balance={aggregatedAmount}
                     minMax={false}
                     disabled={false}
-                    onChange={(value, isTokenChange) => {
+                    onChange={async (value, isTokenChange) => {
                         onInputChange(value, 0)
                         field.onChange(value)
-                        if(isTokenChange){
-                            const denom = tokens.find(t=>t.symbol === value.tokenSymbol).denom
-                            setCurrentDelegationState({...currentDelegationState,
+                        if (isTokenChange) {
+                            const denom = tokens.find(t => t.symbol === value.tokenSymbol).denom
+                            setCurrentDelegationState({
+                                ...currentDelegationState,
                                 tokenSymbol: value.tokenSymbol,
                                 amount: value.amount === '' ? 0 : value.amount,
-                            denom: denom})}
-                        else{
-                            setCurrentDelegationState({...currentDelegationState, amount: value.amount === '' ? 0 : value.amount})
+                                denom: denom
+                            })
+                            await router.push({
+                                pathname: '/undelegate',
+                                query: {
+                                    validatorSrcAddress: currentDelegationState.validatorSrcAddress,
+                                    tokenSymbol: value.tokenSymbol
+                                }
+                            });
+                        } else {
+                            setCurrentDelegationState({
+                                ...currentDelegationState,
+                                amount: value.amount === '' ? 0 : value.amount
+                            })
                         }
                     }}
                 />
