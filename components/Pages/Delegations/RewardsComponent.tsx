@@ -33,7 +33,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
         pt={5}
         spacing={1}
         borderRadius={"20px"}
-        minH={320}
+        h={320}
         minW={500}
         as="form"
         overflow="hidden"
@@ -75,11 +75,11 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                     </HStack>
                     <Box
                         overflowY="scroll"
-                        minW={550}
+                        minW={540}
                         minH={180}
                         backgroundColor="black"
+                        alignSelf={"center"}
                         px="4"
-                        pt="2"
                         borderRadius="10px">
                         {data?.map((tokenData, index) => (
                             <Box key={index} marginY={3} >
