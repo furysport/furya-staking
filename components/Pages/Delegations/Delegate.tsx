@@ -10,7 +10,7 @@ import tokenList from "public/mainnet/white_listed_token_info.json";
 import tokens from "public/mainnet/white_listed_token_info.json";
 import useValidators from "hooks/useValidators";
 import usePrice from "hooks/usePrice";
-import {TxStep} from "components/Pages/Delegations/hooks/useTransaction";
+import {useRouter} from "next/router";
 
 export interface TokenBalance {
     tokenSymbol: string,
@@ -19,12 +19,11 @@ export interface TokenBalance {
 
 export interface ActionProps {
     balance: TokenBalance[]
-    validatorAddress:string,
+    validatorDestAddress:string,
     tokenSymbol:string,
-    txStep : TxStep
 }
 
-const Delegate: FC<ActionProps> = ({balance, validatorAddress, tokenSymbol}) => {
+const Delegate: FC<ActionProps> = ({balance, validatorDestAddress, tokenSymbol}) => {
 
     const [{status, address}, _] = useRecoilState(walletState)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState<DelegationState>(delegationAtom)
@@ -32,7 +31,9 @@ const Delegate: FC<ActionProps> = ({balance, validatorAddress, tokenSymbol}) => 
     const isWalletConnected = status === WalletStatusType.connected
     const {data: {validators = []} = {}} = useValidators({address})
 
-    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorAddress),[validatorAddress, validators])
+    const chosenValidator = useMemo(()=>validators.find(v=>v.operator_address === validatorDestAddress),[validatorDestAddress, validators])
+
+    const router = useRouter()
 
     useEffect(() => {
         const token = tokens.find(e=>e.symbol === tokenSymbol)
@@ -40,10 +41,10 @@ const Delegate: FC<ActionProps> = ({balance, validatorAddress, tokenSymbol}) => 
             amount: 0,
             decimals: 6,
             validatorSrcAddress: null,
-            validatorDestAddress: validatorAddress,
+            validatorDestAddress: validatorDestAddress,
             validatorDestName: chosenValidator?.description.moniker,
             denom: token.denom})
-    }, [isWalletConnected, chosenValidator])
+    }, [chosenValidator])
 
 
     const {control} = useForm({
@@ -74,13 +75,18 @@ const Delegate: FC<ActionProps> = ({balance, validatorAddress, tokenSymbol}) => 
                 <ValidatorInput
                     delegatedOnly={false}
                     validatorName={currentDelegationState.validatorDestName}
-                    onChange={(validator) => {
+                    onChange={async (validator) => {
                         field.onChange(validator)
                         setCurrentDelegationState({
                             ...currentDelegationState,
                             validatorDestAddress: validator.operator_address,
                             validatorDestName: validator.description.moniker
                         })
+                        await router.push({
+                            pathname: '/delegate',
+                            query: {validatorDestAddress: validator.operator_address,
+                                tokenSymbol: currentDelegationState.tokenSymbol}
+                        });
                     }}
                     showList={true}/>)}/>
         <Text
@@ -110,6 +116,10 @@ const Delegate: FC<ActionProps> = ({balance, validatorAddress, tokenSymbol}) => 
                                 amount: value.amount === '' ? 0 : Number(value.amount),
                                 denom: denom
                             })
+                            await router.push({
+                                pathname: '/delegate',
+                                query: {validatorDestAddress: currentDelegationState.validatorDestAddress,tokenSymbol: value.tokenSymbol}
+                            });
                         } else {
                             setCurrentDelegationState({...currentDelegationState, amount: value.amount === '' ? 0 : value.amount})
                         }

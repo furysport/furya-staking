@@ -4,11 +4,11 @@ import { ActionType } from "components/Pages/Delegations/Dashboard";
 
 const DelegatePage = () => {
     const router = useRouter();
-    const validatorAddress = router.query.validatorAddress;
+    const validatorDestAddress = router.query.validatorDestAddress;
     const tokenSymbol = router.query.tokenSymbol;
 
     // @ts-ignore
-    return <ActionsComponent globalAction={ActionType.delegate} validatorAddress={validatorAddress} tokenSymbol={tokenSymbol}/>;
+    return <ActionsComponent globalAction={ActionType.delegate} validatorDestAddress={validatorDestAddress} tokenSymbol={tokenSymbol}/>;
 };
 
 export default DelegatePage;

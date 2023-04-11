@@ -10,8 +10,8 @@ const useClient = () => {
             'migaloo-1': {
                 lcd: 'https://ww-migaloo-rest.polkachu.com/',
                 chainID: 'migaloo-1',
-                gasAdjustment: 0.1,
-                gasPrices: { uwhale: 0.05 },
+                gasAdjustment: 1.75,
+                gasPrices: { uwhale: 0.35 },
                 prefix: 'migaloo',
             }
         });

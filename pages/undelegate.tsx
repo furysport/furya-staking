@@ -5,12 +5,12 @@ import {useRouter} from "next/router";
 const UndelegatePage = () => {
 
     const router = useRouter();
-    const validatorAddress = router.query.validatorAddress;
+    const validatorSrcAddress = router.query.validatorSrcAddress;
     const tokenSymbol = router.query.tokenSymbol;
 
 
     // @ts-ignore
-    return <ActionsComponent globalAction={ActionType.undelegate} validatorAddress={validatorAddress} tokenSymbol={tokenSymbol}/>;
+    return <ActionsComponent globalAction={ActionType.undelegate} validatorSrcAddress={validatorSrcAddress} tokenSymbol={tokenSymbol}/>;
 }
 
 export default UndelegatePage

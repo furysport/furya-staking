@@ -1,4 +1,4 @@
-import {Box,  HStack, Text, VStack,} from '@chakra-ui/react'
+import {Box, HStack, Text, VStack,} from '@chakra-ui/react'
 
 import {Cell, Pie, PieChart} from 'recharts'
 
@@ -6,7 +6,7 @@ import Loader from '../../Loader'
 
 
 export enum Token {
-     WHALE, ampLUNA, bLUNA
+    WHALE, ampLUNA, bLUNA
 }
 
 export enum TokenType {
@@ -14,10 +14,10 @@ export enum TokenType {
 }
 
 const AssetOverview = ({
-                             isWalletConnected,
-                             isLoading,
-                             data
-                         }) => {
+                           isWalletConnected,
+                           isLoading,
+                           data
+                       }) => {
 
     const borderRadius = "30px"
     const TokenBox = ({token}) => {
@@ -34,11 +34,11 @@ const AssetOverview = ({
                     borderRadius="50%"
                     mr="2">
                 </Box>
-                <Text >{Token[token]}</Text>
+                <Text>{Token[token]}</Text>
             </HStack>
         );
     };
-    let aggregatedAssets = data?.reduce((acc, e) =>  acc + (e?.value ?? 0), 0);
+    let aggregatedAssets = data?.reduce((acc, e) => acc + (e?.value ?? 0), 0);
     return <VStack
         width="full"
         background={"#1C1C1C"}
@@ -46,7 +46,7 @@ const AssetOverview = ({
         alignItems="flex-start"
         verticalAlign="center"
         h={320}
-        minW={640}
+        w={1500}
         as="form"
         overflow="hidden"
         position="relative"
@@ -67,15 +67,16 @@ const AssetOverview = ({
                 alignItems="center"
                 justifyContent="space-between"
                 pl={8}
-                pt={5}
-                spacing={70}>
+                pt={3}
+                spacing={35}>
                 <VStack
                     alignItems="start"
-                    alignSelf="flex-start">
+                    alignSelf="flex-start"
+                    w={160}>
                     <Text
                         paddingBottom={8}
                         color="whiteAlpha.600">
-                        Assets
+                        Delegated Assets
                     </Text>
                     {data?.map(e =>
                         (<TokenBox key={`tokenBox-${e.token}`} token={e.token}/>)
@@ -83,17 +84,17 @@ const AssetOverview = ({
                 </VStack>
                 <VStack
                     alignItems="start"
-                    alignSelf="start"
+                    alignSelf="flex-start"
                     paddingTop={16}
 
-                spacing={6}
-                pb={3}
-                w={85}>
+                    spacing={6}
+                    pb={3}
+                    w={100}>
                     {data?.map(e =>
                         (<Text key={e.color}>
                                 {isWalletConnected ? `$${(e.dollarValue)?.toLocaleString()}` : "n/a"}
                             </Text>
-                    ))}
+                        ))}
                 </VStack>
                 <PieChart
                     style={{pointerEvents: 'none'}}
@@ -109,8 +110,8 @@ const AssetOverview = ({
                         stroke="none">
                         {isWalletConnected ?
                             data?.map((_entry: any, index: number) => (<Cell
-                                    key={`cell-${index}`}
-                                    fill={data[index].color}/>)) :
+                                key={`cell-${index}`}
+                                fill={data[index].color}/>)) :
                             <Cell
                                 key={"cell-${index}"}
                                 fill="grey"/>}
