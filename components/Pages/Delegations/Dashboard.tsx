@@ -7,7 +7,7 @@ import AssetOverview, {Token, TokenType} from './AssetOverview';
 import RewardsComponent from 'components/Pages/Delegations/RewardsComponent';
 import Validators from 'components/Pages/Delegations/Validators';
 import {useMultipleTokenBalance} from 'hooks/useTokenBalance';
-import tokens from 'public/mainnet/white_listed_token_info.json';
+import whiteListedTokens from 'public/mainnet/white_listed_token_info.json';
 import useDelegations from 'hooks/useDelegations';
 import {TOKENS_TO_EXCLUDE_BY_SYMBOL} from 'constants/staking';
 import usePrice from 'hooks/usePrice';
@@ -39,7 +39,7 @@ const Dashboard = () => {
     const isWalletConnected: boolean = status === WalletStatusType.connected;
 
     const filteredTokens = useMemo(
-        () => tokens.filter((token) => !TOKENS_TO_EXCLUDE_BY_SYMBOL.includes(token.symbol)),
+        () => whiteListedTokens.filter((token) => !TOKENS_TO_EXCLUDE_BY_SYMBOL.includes(token.symbol)),
         []
     );
 
@@ -53,6 +53,16 @@ const Dashboard = () => {
             color: t.color,
         }));
     }, [filteredTokens]);
+    const rewardsTokenData = useMemo(() => {
+        return whiteListedTokens.map((t) => ({
+            token: Token[t.symbol],
+            tokenSymbol: t.symbol,
+            name: t.name,
+            dollarValue: 0,
+            value: 0,
+            color: t.color,
+        }));
+    }, []);
 
     const [priceList] = usePrice() || [];
     const {data, isLoading: isDelegationsLoading} = useDelegations({address});
@@ -101,7 +111,7 @@ const Dashboard = () => {
             value: balances?.[index],
         }));
 
-        const rewardsData = rawTokenData.map((tokenData) => calculateData(tokenData, true));
+        const rewardsData = rewardsTokenData.map((tokenData) => calculateData(tokenData, true));
 
         const delegationData: DelegationData = {
             delegated: delegatedData,
@@ -112,7 +122,7 @@ const Dashboard = () => {
 
         setData(delegationData);
 
-    }, [balances, priceList, delegations, rawTokenData]);
+    }, [balances, priceList, delegations, rawTokenData, rewardsTokenData]);
     useEffect(() => {
         setLoading(balances === null || isDelegationsLoading || updatedData === null || !priceList);
     }, [balances, isDelegationsLoading, updatedData, priceList]);
