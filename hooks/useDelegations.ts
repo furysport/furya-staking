@@ -98,6 +98,7 @@ const useDelegations = ({address}) => {
         enabled: !!client && !!address && !!priceList,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
+        refetchInterval: 5000
     })
 
 }
