@@ -1,4 +1,4 @@
-import { LCDClient } from "@terra-money/feather.js"
+import {Coins, LCDClient} from "@terra-money/feather.js"
 import useClient from "hooks/useClient"
 import tokens from "public/mainnet/white_listed_token_info.json"
 import usePrice from "./usePrice"
@@ -9,52 +9,21 @@ const getDelegation = async (client: LCDClient | null, priceList: any, delegator
 
     if (!client) return Promise.resolve([])
 
-    const mockResponse = {
-        delegations: [
-            {
-                delegation: {
-                    delegator_address: "migaloo1luw6vqtnxx96s094t5hchu6xx9t3fw9g4cpr53",
-                    validator_address: "migaloovaloper1rqvctgdpafvc0k9fx4ng8ckt94x723zmp3g0jv",
-                    denom: "ibc/40C29143BF4153B365089E40E437B7AA819672646C45BB0A5F1E10915A0B6708"
-                },
-                balance: {
-                    denom: "ibc/40C29143BF4153B365089E40E437B7AA819672646C45BB0A5F1E10915A0B6708",
-                    amount: "10000000",
-                }
-            },
-            {
-                delegation: {
-                    delegator_address: "migaloo1luw6vqtnxx96s094t5hchu6xx9t3fw9g4cpr53",
-                    validator_address: "migaloovaloper1fc4kjfau480nr503yl0r8ml7vvn07d2rvn0750",
-                    denom: "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A"
-                },
-                balance: {
-                    denom: "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A",
-                    amount: "20000000",
-
-                }
-            }
-        ]
-    }
-
-    const mockRewards = (denom: string) => ({
-        rewards: {
-            denom: denom,
-            amount: Math.random() * 3000000
-        }
-    })
-
     const getRewards = (delegations: any) => {
 
-        return Promise.all(delegations?.map((item: any) => {
-            const { delegator_address, validator_address, denom } = item.delegation
-
-            // return client?.alliance.delegatorRewards(delegator_address, validator_address, denom)
-            return client?.alliance.delegatorRewards(delegator_address, validator_address, denom)
-                .then(({ rewards }) => {
+        return Promise.all(delegations?.map(async (item: any) => {
+            const {delegator_address, validator_address, denom} = item.delegation
+            return await client?.alliance
+                .getReqFromAddress(delegatorAddress)
+                .get<{ rewards?: Coins }>(
+                    `/terra/alliances/rewards/${delegator_address}/${validator_address}/${denom}`,
+                    {}
+                ).then(({rewards}) => {
+                    //TODO check if this continues to work with different rewards
+                    const reward = rewards[0]
                     return {
                         ...item,
-                        rewards
+                        reward,
                     }
                 })
                 .catch((e) => {
@@ -67,6 +36,7 @@ const getDelegation = async (client: LCDClient | null, priceList: any, delegator
     }
     const allianceDelegation = await client?.alliance.alliancesDelegation(delegatorAddress)
 
+
     return getRewards(allianceDelegation?.delegations)
         .then((data) => {
             return data?.map((item) => {
@@ -75,14 +45,15 @@ const getDelegation = async (client: LCDClient | null, priceList: any, delegator
                 const amount = token ? num(item.balance?.amount).div(10 ** token.decimals).toNumber() : 0
                 const dollarValue = token ? num(amount).times(priceList[token.name]).dp(2).toNumber() : 0
                 //rewards amount
-                const rewardsAmount = token ? num(item.rewards?.amount).div(10 ** token.decimals).dp(token.decimals).toNumber() : 0
+                const rewardsAmount = token ? num(item.reward?.amount).div(10 ** token.decimals).dp(token.decimals).toNumber() : 0
                 const rewardsDollarValue = token ? num(rewardsAmount).times(priceList[token.name]).dp(2).toNumber() : 0
 
                 return {
                     ...item,
-                    rewards: {
+                    reward: {
                         amount: rewardsAmount,
-                        dollarValue: rewardsDollarValue
+                        dollarValue: rewardsDollarValue,
+                        denom: item?.reward?.denom
                     },
                     token: {
                         ...token,
@@ -102,7 +73,7 @@ const getDelegation = async (client: LCDClient | null, priceList: any, delegator
 
             }, { dollarValue: 0 })
             const totalRewards = data.reduce((acc, item) => {
-                const { dollarValue } = item.rewards
+                const { dollarValue } = item.reward
                 return {
                     dollarValue: acc.dollarValue + dollarValue
                 }

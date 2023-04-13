@@ -16,7 +16,8 @@ export enum TokenType {
 const AssetOverview = ({
                            isWalletConnected,
                            isLoading,
-                           data
+                           data,
+                           aprs
                        }) => {
 
     const borderRadius = "30px"
@@ -25,8 +26,7 @@ const AssetOverview = ({
 
         return (
             <HStack
-                mr="10"
-                paddingBottom={4}>
+                mr="10">
                 <Box
                     bg={color}
                     w="4"
@@ -74,21 +74,23 @@ const AssetOverview = ({
                     alignSelf="flex-start"
                     w={160}>
                     <Text
-                        paddingBottom={8}
+                        paddingBottom={5}
                         color="whiteAlpha.600">
                         Delegated Assets
                     </Text>
-                    {data?.map(e =>
-                        (<TokenBox key={`tokenBox-${e.token}`} token={e.token}/>)
-                    )}
+                    {data?.map(e => {
+                        const apr = aprs.find(apr=>apr.name === e.tokenSymbol)
+                        return (<VStack key={`tokenBox-${e.token}`} alignItems={"flex-start"}  >
+                            <TokenBox  token={e.token}/>
+                            <Text paddingBottom={4} color={"#1C1C1C"}>{`APR ≈${apr?.apr.toFixed(1)}%`}</Text>
+                            </VStack>)})}
                 </VStack>
                 <VStack
                     alignItems="start"
                     alignSelf="flex-start"
-                    paddingTop={16}
-
-                    spacing={6}
-                    pb={3}
+                    paddingTop={"53px"}
+                    spacing={14}
+                    pb={0}
                     w={100}>
                     {data?.map(e =>
                         (<Text key={e.color}>

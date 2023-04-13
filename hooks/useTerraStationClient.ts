@@ -2,7 +2,7 @@ import { LCDClient } from '@terra-money/feather.js';
 import { useMemo } from 'react';
 import {TerraStationWallet} from "util/wallet-adapters/terraStationWallet";
 import {useConnectedWallet} from "@terra-money/wallet-provider";
-const useClient = () => {
+export const useClient = () => {
     const connectedWallet = useConnectedWallet()
 
     const lcdClient = useMemo(() => {
@@ -11,7 +11,7 @@ const useClient = () => {
                 lcd: 'https://ww-migaloo-rest.polkachu.com/',
                 chainID: 'migaloo-1',
                 gasAdjustment: 1.75,
-                gasPrices: { uwhale: 0.35 },
+                gasPrices: { uwhale: 0.25 },
                 prefix: 'migaloo',
             }
         });

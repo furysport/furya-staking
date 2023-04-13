@@ -1,6 +1,5 @@
 import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
-import {Fee, MsgClaimDelegationRewards} from '@terra-money/feather.js';
-import {estimateFee} from "components/Pages/Delegations/hooks/feeEstimation";
+import { MsgClaimDelegationRewards} from '@terra-money/feather.js';
 
 export const claimRewards = async (
     wallet: TerraStationWallet,
@@ -14,12 +13,10 @@ export const claimRewards = async (
                 delegation.denom
             )})
 
-    const feeEstimation = await estimateFee(wallet,address,msgs)
-    const amounts = feeEstimation.amount
-    const gasLimit = feeEstimation.gas_limit
+    // const feeEstimation = await estimateFee(wallet,address,msgs)
+    // const amounts = feeEstimation.amount
+    // const gasLimit = feeEstimation.gas_limit
+    //
 
-    console.log(amounts)
-    console.log(gasLimit)
-
-    return await wallet.client.post({ chainID: 'migaloo-1', msgs: msgs, fee:new Fee(gasLimit, amounts) });
+    return await wallet.client.post({ chainID: 'migaloo-1', msgs: msgs });
 };
