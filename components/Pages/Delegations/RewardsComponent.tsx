@@ -1,6 +1,6 @@
 import {Box, Divider, HStack, Text, useDisclosure, VStack} from "@chakra-ui/react";
 import Loader from "components/Loader";
-import {FC} from "react";
+import {FC, useMemo} from "react";
 import {useRecoilState} from "recoil";
 import {walletState} from "state/atoms/walletAtoms";
 import WalletModal from "components/Wallet/Modal/Modal";
@@ -8,13 +8,14 @@ import {TokenData} from "components/Pages/Delegations/Dashboard";
 import {Token} from "components/Pages/Delegations/AssetOverview";
 import ClaimButton from "components/Pages/Delegations/ClaimButton";
 
-interface UndelegationsProps{
+interface UndelegationsProps {
     isWalletConnected: boolean,
     isLoading: boolean,
     address: string,
     data: TokenData[]
 }
-const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,data, address})=>{
+
+const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading, data}) => {
     const [{chainId}, _] = useRecoilState(walletState)
     const {
         isOpen: isOpenModal,
@@ -22,7 +23,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
         onClose: onCloseModal,
     } = useDisclosure()
 
-    const claimableRewards = data?.reduce((acc, e) =>  acc + (Number(e?.dollarValue) ?? 0), 0);
+    const claimableRewards = useMemo(() => data?.reduce((acc, e) => acc + (Number(e?.value) ?? 0), 0), [data]);
 
     return <VStack
         width="full"
@@ -48,7 +49,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                 justifyContent="center"
                 alignItems="center">
                 <Loader/>
-            </HStack> :(
+            </HStack> : (
                 <>
                     <Text
                         color={"grey"}>
@@ -58,15 +59,18 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                         justifyContent="space-between"
                         width="100%"
                         height="100%"
-                        paddingBottom={2}>
+                        paddingBottom={0}>
                         <Text
                             fontSize={27}
                             fontWeight={"bold"}>
                             {isWalletConnected ?
-                                `$${claimableRewards.toLocaleString()}`:
+                                `$${claimableRewards.toLocaleString()}` :
                                 "n/a"}
                         </Text>
-                        <ClaimButton isWalletConnected={isWalletConnected} onOpenModal={onOpenModal} address={address}/>
+                        <ClaimButton
+                            isWalletConnected={isWalletConnected}
+                            onOpenModal={onOpenModal}
+                            totalRewards={claimableRewards}/>
                         <WalletModal
                             isOpenModal={isOpenModal}
                             onCloseModal={onCloseModal}
@@ -76,26 +80,26 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                     <Box
                         overflowY="scroll"
                         minW={540}
-                        minH={180}
+                        minH={170}
                         backgroundColor="black"
                         alignSelf={"center"}
                         px="4"
-                        borderRadius="10px">
+                        borderRadius="10px"
+                        marginBottom="20px">
                         {data?.map((tokenData, index) => (
-                            <Box key={index} marginY={3} >
+                            <Box key={index} marginY={3}>
                                 <HStack justifyContent="space-between" width="100%" pr={3}>
                                     <Text>{Token[tokenData.token]}</Text>
-                                    <Text>{isWalletConnected ? `${(tokenData.value)?.toLocaleString()}` : "n/a"}</Text>
+                                    <Text>{isWalletConnected ? `${tokenData.value === 0 ? 0 : (tokenData.value)?.toFixed(6)}` : "n/a"}</Text>
                                 </HStack>
-                                <HStack  justifyContent="flex-end" pr={3}>
-                                <Text marginBottom={1} fontSize={11} color={isWalletConnected ? "grey" : "black"}>{`≈$${(tokenData.dollarValue)?.toLocaleString()}`}</Text>
+                                <HStack justifyContent="flex-end" pr={3}>
+                                    <Text marginBottom={1} fontSize={11}
+                                          color={isWalletConnected ? "grey" : "black"}>{`≈$${(tokenData.dollarValue)?.toLocaleString()}`}</Text>
                                 </HStack>
-                                    {index < data.length - 1 && <Divider />}
+                                {index < data.length - 1 && <Divider/>}
                             </Box>
                         ))}
                     </Box>
-
-
                 </>)
         }
     </VStack>

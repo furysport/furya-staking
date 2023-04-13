@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState} from 'react';
 import {HStack, Text, VStack} from '@chakra-ui/react';
-import {useRecoilState} from 'recoil';
+import { useRecoilState} from 'recoil';
 import {walletState, WalletStatusType} from 'state/atoms/walletAtoms';
 import CardComponent from 'components/Pages/Delegations/CardComponent';
 import AssetOverview, {Token, TokenType} from './AssetOverview';
@@ -11,6 +11,9 @@ import whiteListedTokens from 'public/mainnet/white_listed_token_info.json';
 import useDelegations from 'hooks/useDelegations';
 import {TOKENS_TO_EXCLUDE_BY_SYMBOL} from 'constants/staking';
 import usePrice from 'hooks/usePrice';
+import {useAlliances} from "hooks/useAlliances";
+import {useTotalWhaleEmission} from "hooks/useMigaloo";
+import {useWhalePrice} from "queries/useGetTokenDollarValueQuery";
 
 export enum ActionType {
     delegate,
@@ -70,6 +73,21 @@ const Dashboard = () => {
     const delegations = useMemo(() => data?.delegations || [], [data]);
     const {data: balances } = useMultipleTokenBalance(filteredTokens.map((e) => e.symbol));
 
+    const {alliances: allianceData} = useAlliances()
+    const {totalWhaleEmission} = useTotalWhaleEmission()
+    const price = useWhalePrice()
+    const alliances = useMemo(() => allianceData?.alliances || [], [allianceData?.alliances]);
+
+    const allianceAPRs = useMemo(() => {
+        return alliances?.map(alliance => {
+            return ({
+                name: alliance.name,
+                apr: !isNaN(alliance.totalDollarAmount) ? ((totalWhaleEmission * price * alliance.weight) / alliance.totalDollarAmount) * 100 : 0,
+            })
+        });
+    }, [alliances, totalWhaleEmission, price]);
+
+
     const [updatedData, setData] = useState<DelegationData>({
         delegated: rawTokenData,
         undelegated: rawTokenData,
@@ -92,7 +110,7 @@ const Dashboard = () => {
             };
         });
 
-        const calculateData = (tokenData: any, isRewards: boolean) => {
+        const calculateDelegationData = (tokenData: any, isRewards: boolean) => {
             const allDelegations = delegations.filter((d) => d.token.symbol === tokenData.tokenSymbol);
             const aggregatedDollarValue = allDelegations.reduce((acc, e) => acc + Number(isRewards ? e?.rewards.dollarValue ?? 0 : e?.token.dollarValue ?? 0), 0);
             const aggregatedAmount = allDelegations.reduce((acc, e) => acc + Number(isRewards ? e?.rewards?.amount ?? 0 : e?.token?.amount ?? 0), 0);
@@ -103,8 +121,22 @@ const Dashboard = () => {
                 value: Number(aggregatedAmount),
             };
         };
+        const calculateRewardData = (tokenData: any, isRewards: boolean) => {
 
-        const delegatedData = rawTokenData.map((tokenData) => calculateData(tokenData, false));
+            const denom = whiteListedTokens.find(t=>t.symbol===tokenData.tokenSymbol).denom
+            const allDelegations = delegations.filter((d) => d?.reward?.denom === denom);
+
+            const aggregatedDollarValue = allDelegations.reduce((acc, e) => acc + Number(isRewards ? e?.reward.dollarValue ?? 0 : e?.token.dollarValue ?? 0), 0);
+            const aggregatedAmount = allDelegations.reduce((acc, e) => acc + Number(isRewards ? e?.reward?.amount ?? 0 : e?.token?.amount ?? 0), 0);
+
+            return {
+                ...tokenData,
+                dollarValue: Number(aggregatedDollarValue),
+                value: Number(aggregatedAmount),
+            };
+        };
+
+        const delegatedData = rawTokenData.map((tokenData) => calculateDelegationData(tokenData, false));
 
         const undelegatedData = rawTokenData.map((token, index) => ({
             ...token,
@@ -112,7 +144,7 @@ const Dashboard = () => {
             value: balances?.[index],
         }));
 
-        const rewardsData = rewardsTokenData.map((tokenData) => calculateData(tokenData, true));
+        const rewardsData = rewardsTokenData.map((tokenData) => calculateRewardData(tokenData, true));
 
         const delegationData: DelegationData = {
             delegated: delegatedData,
@@ -123,7 +155,8 @@ const Dashboard = () => {
 
         setData(delegationData);
 
-    }, [balances, priceList, delegations, rawTokenData, rewardsTokenData]);
+    }, [balances, delegations, rawTokenData, rewardsTokenData]);
+
     useEffect(() => {
         setLoading(balances === null || isDelegationsLoading || updatedData === null || !priceList);
     }, [balances, isDelegationsLoading, updatedData, priceList]);
@@ -153,7 +186,8 @@ const Dashboard = () => {
                 <AssetOverview
                     isLoading={isLoading}
                     data={updatedData && updatedData?.delegated}
-                    isWalletConnected={isWalletConnected}/>
+                    isWalletConnected={isWalletConnected}
+                    aprs={allianceAPRs}/>
                 <RewardsComponent
                     isWalletConnected={isWalletConnected}
                     isLoading={isLoading}
