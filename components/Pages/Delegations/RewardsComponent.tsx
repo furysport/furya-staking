@@ -23,9 +23,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
         onClose: onCloseModal,
     } = useDisclosure()
 
-    const claimableRewards = useMemo(() =>
-        data?.reduce((acc, e) =>
-            acc + (Number(e?.dollarValue) ?? 0), 0), [data]);
+    const claimableRewards = useMemo(() => data?.reduce((acc, e) => acc + (Number(e?.value) ?? 0), 0), [data]);
 
     return <VStack
         width="full"

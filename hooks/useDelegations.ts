@@ -40,14 +40,13 @@ const getDelegation = async (client: LCDClient | null, priceList: any, delegator
     return getRewards(allianceDelegation?.delegations)
         .then((data) => {
             return data?.map((item) => {
-                const delegatedToken = tokens.find((token) => token.denom === item.balance?.denom)
-                const rewardToken = tokens.find((token) => token.denom === item.reward?.denom)
+                const token = tokens.find((token) => token.denom === item.balance?.denom)
                 //delegation amount
-                const amount = delegatedToken ? num(item.balance?.amount).div(10 ** delegatedToken.decimals).toNumber() : 0
-                const dollarValue = delegatedToken ? num(amount).times(priceList[delegatedToken.name]).dp(2).toNumber() : 0
+                const amount = token ? num(item.balance?.amount).div(10 ** token.decimals).toNumber() : 0
+                const dollarValue = token ? num(amount).times(priceList[token.name]).dp(2).toNumber() : 0
                 //rewards amount
-                const rewardsAmount = rewardToken ? num(item.reward?.amount).div(10 ** rewardToken.decimals).dp(rewardToken.decimals).toNumber() : 0
-                const rewardsDollarValue = rewardToken ? num(rewardsAmount).times(priceList[rewardToken.name]).dp(2).toNumber() : 0
+                const rewardsAmount = token ? num(item.reward?.amount).div(10 ** token.decimals).dp(token.decimals).toNumber() : 0
+                const rewardsDollarValue = token ? num(rewardsAmount).times(priceList[token.name]).dp(2).toNumber() : 0
 
                 return {
                     ...item,
@@ -57,7 +56,7 @@ const getDelegation = async (client: LCDClient | null, priceList: any, delegator
                         denom: item?.reward?.denom
                     },
                     token: {
-                        ...delegatedToken,
+                        ...token,
                         amount,
                         dollarValue
                     }
