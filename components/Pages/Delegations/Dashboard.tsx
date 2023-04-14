@@ -121,13 +121,13 @@ const Dashboard = () => {
                 value: Number(aggregatedAmount),
             };
         };
-        const calculateRewardData = (tokenData: any, isRewards: boolean) => {
+        const calculateRewardData = (tokenData: any) => {
 
             const denom = whiteListedTokens.find(t=>t.symbol===tokenData.tokenSymbol).denom
             const allDelegations = delegations.filter((d) => d?.reward?.denom === denom);
 
-            const aggregatedDollarValue = allDelegations.reduce((acc, e) => acc + Number(isRewards ? e?.reward.dollarValue ?? 0 : e?.token.dollarValue ?? 0), 0);
-            const aggregatedAmount = allDelegations.reduce((acc, e) => acc + Number(isRewards ? e?.reward?.amount ?? 0 : e?.token?.amount ?? 0), 0);
+            const aggregatedDollarValue = allDelegations.reduce((acc, e) => acc + Number(e?.reward.dollarValue ?? 0 ), 0);
+            const aggregatedAmount = allDelegations.reduce((acc, e) => acc + Number(e?.reward?.amount ?? 0), 0);
 
             return {
                 ...tokenData,
@@ -144,7 +144,7 @@ const Dashboard = () => {
             value: balances?.[index],
         }));
 
-        const rewardsData = rewardsTokenData.map((tokenData) => calculateRewardData(tokenData, true));
+        const rewardsData = rewardsTokenData.map((tokenData) => calculateRewardData(tokenData));
 
         const delegationData: DelegationData = {
             delegated: delegatedData,
