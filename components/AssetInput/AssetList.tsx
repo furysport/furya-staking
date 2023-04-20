@@ -21,7 +21,7 @@ const AssetList: FC<AssetListProps> = ({
                                            amount,
                                            edgeTokenList = [],
                                        }) => {
-    const tokens = useTokenList().tokens.filter(t=>t.symbol !== "WHALE")
+    const tokens = useTokenList().tokens
 
     const {data: tokenBalance= []} = useMultipleTokenBalance(
        tokens?.map(({ symbol }) => symbol))

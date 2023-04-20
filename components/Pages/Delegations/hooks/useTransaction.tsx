@@ -7,11 +7,13 @@ import {useRecoilValue} from "recoil";
 import {walletState} from "state/atoms/walletAtoms";
 import {convertDenomToMicroDenom} from "util/conversion";
 import {ActionType} from "components/Pages/Delegations/Dashboard";
-import {delegate} from "components/Pages/Delegations/hooks/alliance/delegate";
-import {undelegate} from "components/Pages/Delegations/hooks/alliance/undelegate";
-import {redelegate} from "components/Pages/Delegations/hooks/alliance/redelegate";
+import {delegate as allianceDelegate} from "./native-staking/delegate";
+import {undelegate as allianceUnDelegate} from "./native-staking/undelegate";
+import {redelegate as allianceRedelegate} from "./native-staking/redelegate";
+// Native staking 
+import {delegate as nativeDelegate} from "./native-staking/delegate";
 import useClient from "hooks/useTerraStationClient";
-import {claimRewards} from "./alliance/claimRewards";
+import {claimRewards} from "./native-staking/claimRewards";
 import useDelegations from "hooks/useDelegations";
 import useValidators from "hooks/useValidators";
 export enum TxStep {
@@ -122,7 +124,7 @@ export const useTransaction = () => {
     (data: any) => {
       const adjustedAmount = convertDenomToMicroDenom(data.amount, 6)
       if(data.action===ActionType.delegate){
-       return delegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom)
+       return data.denom == "uwhale" ? nativeDelegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom) : delegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom)
       }else if (data.action===ActionType.undelegate){
         return undelegate(client,"migaloo-1", data.validatorSrcAddress,address,adjustedAmount, data.denom)
       }else if (data.action===ActionType.redelegate){
