@@ -7,11 +7,11 @@ import {useRecoilValue} from "recoil";
 import {walletState} from "state/atoms/walletAtoms";
 import {convertDenomToMicroDenom} from "util/conversion";
 import {ActionType} from "components/Pages/Delegations/Dashboard";
-import {delegate} from "components/Pages/Delegations/hooks/delegate";
-import {undelegate} from "components/Pages/Delegations/hooks/undelegate";
-import {redelegate} from "components/Pages/Delegations/hooks/redelegate";
+import {delegate} from "components/Pages/Delegations/hooks/alliance/delegate";
+import {undelegate} from "components/Pages/Delegations/hooks/alliance/undelegate";
+import {redelegate} from "components/Pages/Delegations/hooks/alliance/redelegate";
 import useClient from "hooks/useTerraStationClient";
-import {claimRewards} from "components/Pages/Delegations/hooks/claimRewards";
+import {claimRewards} from "./alliance/claimRewards";
 import useDelegations from "hooks/useDelegations";
 import useValidators from "hooks/useValidators";
 export enum TxStep {
