@@ -12,6 +12,8 @@ import {undelegate as allianceUnDelegate} from "./native-staking/undelegate";
 import {redelegate as allianceRedelegate} from "./native-staking/redelegate";
 // Native staking 
 import {delegate as nativeDelegate} from "./native-staking/delegate";
+import {undelegate as nativeUnDelegate} from "./native-staking/undelegate";
+import {redelegate as nativeRedelegate} from "./native-staking/redelegate";
 import useClient from "hooks/useTerraStationClient";
 import {claimRewards} from "./native-staking/claimRewards";
 import useDelegations from "hooks/useDelegations";
@@ -124,11 +126,11 @@ export const useTransaction = () => {
     (data: any) => {
       const adjustedAmount = convertDenomToMicroDenom(data.amount, 6)
       if(data.action===ActionType.delegate){
-       return data.denom == "uwhale" ? nativeDelegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom) : delegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom)
+       return data.denom == "uwhale" ? nativeDelegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom) : allianceDelegate(client,"migaloo-1", data.validatorDestAddress,address,adjustedAmount, data.denom)
       }else if (data.action===ActionType.undelegate){
-        return undelegate(client,"migaloo-1", data.validatorSrcAddress,address,adjustedAmount, data.denom)
+        return data.denom == "uwhale" ? nativeUnDelegate(client,"migaloo-1", data.validatorSrcAddress,address,adjustedAmount, data.denom) : allianceUnDelegate(client,"migaloo-1", data.validatorSrcAddress,address,adjustedAmount, data.denom)
       }else if (data.action===ActionType.redelegate){
-        return redelegate(client,"migaloo-1", data.validatorSrcAddress,data.validatorDestAddress,address,adjustedAmount,validators, data.denom)
+        return data.denom == "uwhale" ? nativeRedelegate(client,"migaloo-1", data.validatorSrcAddress,data.validatorDestAddress,address,adjustedAmount,validators, data.denom) : allianceRedelegate(client,"migaloo-1", data.validatorSrcAddress,data.validatorDestAddress,address,adjustedAmount,validators, data.denom)
       }
       else{
         return claimRewards(client, delegations, address)
