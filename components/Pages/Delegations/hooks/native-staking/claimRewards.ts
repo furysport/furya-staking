@@ -1,7 +1,7 @@
 import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 import { MsgWithdrawDelegatorReward, MsgClaimDelegationRewards} from '@terra-money/feather.js';
 
-export const claimRewards = async (
+export const claimAllRewards = async (
     wallet: TerraStationWallet,
     delegations: any,
     address: string,

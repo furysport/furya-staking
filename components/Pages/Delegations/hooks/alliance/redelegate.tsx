@@ -12,9 +12,8 @@ export const redelegate = async (
 // wrong sig valDest => valSrc valSrc => valDest
     const handleMsg = new MsgAllianceRedelegate(
         address,
-        validatorSrcAddress,
-
         validatorDstAddress,
+        validatorSrcAddress,
         new Coin(allianceDenom, amount)
     );
 

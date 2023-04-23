@@ -4,8 +4,6 @@ import tokens from "public/mainnet/white_listed_token_info.json"
 import usePrice from "./usePrice"
 import {num} from "libs/num";
 import {useQuery} from "react-query";
-import { isTemplateExpression } from "typescript";
-import { it } from "node:test";
 
 
 const getDelegation = async (client: LCDClient | null, priceList: any, delegatorAddress: string): Promise<any> => {

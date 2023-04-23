@@ -10,12 +10,12 @@ import {ActionType} from "components/Pages/Delegations/Dashboard";
 import {delegate as allianceDelegate} from "./native-staking/delegate";
 import {undelegate as allianceUnDelegate} from "./native-staking/undelegate";
 import {redelegate as allianceRedelegate} from "./native-staking/redelegate";
-import {claimRewards as allianceClaimRewards} from "./native-staking/claimRewards";
+import {claimAllRewards as allianceClaimRewards} from "./native-staking/claimRewards";
 // Native staking 
 import {delegate as nativeDelegate} from "./native-staking/delegate";
 import {undelegate as nativeUnDelegate} from "./native-staking/undelegate";
 import {redelegate as nativeRedelegate} from "./native-staking/redelegate";
-import { claimRewards as nativeClaimRewards } from './native-staking/claimRewards';
+import { claimAllRewards as nativeClaimRewards } from './native-staking/claimRewards';
 import useClient from "hooks/useTerraStationClient";
 import useDelegations from "hooks/useDelegations";
 import useValidators from "hooks/useValidators";
