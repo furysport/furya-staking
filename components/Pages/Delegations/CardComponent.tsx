@@ -24,7 +24,7 @@ const CardComponent: FC<CardComponentProps> = ({title, tokenData,isLoading, isWa
     }, [tokenData, isLoading]);
 
     const summedAndMultipliedValues = useMemo(() => {
-        return isWalletConnected ? `$${sumAndMultiplyValues.toLocaleString()}` : "n/a";
+        return isWalletConnected ? `$${sumAndMultiplyValues.toFixed(2).toString()}` : "n/a";
     }, [isWalletConnected, sumAndMultiplyValues]);
 
     return (

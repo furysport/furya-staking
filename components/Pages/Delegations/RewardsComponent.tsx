@@ -20,7 +20,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
         onOpen: onOpenModal,
         onClose: onCloseModal,
     } = useDisclosure()
-
+    // console.log(data);
     const claimableRewards = useMemo(() =>
         data?.reduce((acc, e) =>
             acc + (Number(e?.dollarValue) ?? 0), 0), [data]);
@@ -64,7 +64,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                             fontSize={27}
                             fontWeight={"bold"}>
                             {isWalletConnected ?
-                                `$${claimableRewards.toLocaleString()}` :
+                                `$${claimableRewards.toFixed(2).toString()}` :
                                 "n/a"}
                         </Text>
                         <ClaimButton
@@ -94,7 +94,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({isWalletConnected, isLoading,
                                 </HStack>
                                 <HStack justifyContent="flex-end" pr={3}>
                                     <Text marginBottom={1} fontSize={11}
-                                          color={isWalletConnected ? "grey" : "black"}>{`≈$${(reward.dollarValue)?.toLocaleString()}`}</Text>
+                                          color={isWalletConnected ? "grey" : "black"}>{`≈$${(reward.dollarValue)?.toFixed(2).toString()}`}</Text>
                                 </HStack>
                                 {index < data.length - 1 && <Divider/>}
                             </Box>
