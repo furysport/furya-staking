@@ -7,10 +7,10 @@ import { useRecoilValue } from 'recoil';
 import { walletState } from 'state/atoms/walletAtoms';
 import { convertDenomToMicroDenom } from 'util/conversion';
 import { ActionType } from 'components/Pages/Delegations/Dashboard';
-import { delegate as allianceDelegate } from './native-staking/delegate';
-import { undelegate as allianceUnDelegate } from './native-staking/undelegate';
-import { redelegate as allianceRedelegate } from './native-staking/redelegate';
-import { claimAllRewards as allianceClaimRewards } from './native-staking/claimRewards';
+import { delegate as allianceDelegate } from './alliance/delegate';
+import { undelegate as allianceUnDelegate } from './alliance/undelegate';
+import { redelegate as allianceRedelegate } from './alliance/redelegate';
+import { claimRewards as allianceClaimRewards } from './alliance/claimRewards';
 // Native staking
 import { delegate as nativeDelegate } from './native-staking/delegate';
 import { undelegate as nativeUnDelegate } from './native-staking/undelegate';
