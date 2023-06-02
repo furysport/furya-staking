@@ -7,15 +7,14 @@ import { useRecoilValue } from 'recoil';
 import { walletState } from 'state/atoms/walletAtoms';
 import { convertDenomToMicroDenom } from 'util/conversion';
 import { ActionType } from 'components/Pages/Delegations/Dashboard';
-import { delegate as allianceDelegate } from './alliance/delegate';
-import { undelegate as allianceUnDelegate } from './alliance/undelegate';
-import { redelegate as allianceRedelegate } from './alliance/redelegate';
-import { claimRewards as allianceClaimRewards } from './alliance/claimRewards';
+import { allianceDelegate } from 'components/Pages/Delegations/hooks/alliance/allianceDelegate';
+import { allianceUndelegate } from 'components/Pages/Delegations/hooks/alliance/allianceUndelegate';
+import { allianceRedelegate } from 'components/Pages/Delegations/hooks/alliance/allianceRedelegate';
 // Native staking
-import { delegate as nativeDelegate } from './native-staking/delegate';
-import { undelegate as nativeUnDelegate } from './native-staking/undelegate';
-import { redelegate as nativeRedelegate } from './native-staking/redelegate';
-import { claimAllRewards as nativeClaimRewards } from './native-staking/claimRewards';
+import { nativeDelegate } from 'components/Pages/Delegations/hooks/native-staking/nativeDelegate';
+import { nativeUndelegate } from 'components/Pages/Delegations/hooks/native-staking/nativeUndelegate';
+import { nativeRedelegate } from 'components/Pages/Delegations/hooks/native-staking/nativeRedelegate';
+import { claimAllRewards } from 'components/Pages/Delegations/hooks/claimRewards';
 import useClient from 'hooks/useTerraStationClient';
 import useDelegations from 'hooks/useDelegations';
 import useValidators from 'hooks/useValidators';
@@ -61,12 +60,6 @@ export const useTransaction = () => {
   const client = useClient();
   const { data: { delegations = [] } = {} } = useDelegations({ address });
   const { data: { validators = [] } = {} } = useValidators({ address });
-
-  // const delegationMsg = new MsgAllianceDelegate(
-  //       address,
-  //       "migaloovaloper1qvqqflpzkkakzwdkm2dx6f25sxnknuga4f90qp",
-  //       new Coin('ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A', 1000)
-  //   ).packAny()
 
   const { data: fee } = useQuery<unknown, unknown, any | null>(
     ['fee', error],
@@ -141,7 +134,7 @@ export const useTransaction = () => {
             );
       } else if (data.action === ActionType.undelegate) {
         return data.denom == 'uwhale'
-          ? nativeUnDelegate(
+          ? nativeUndelegate(
               client,
               'migaloo-1',
               data.validatorSrcAddress,
@@ -149,7 +142,7 @@ export const useTransaction = () => {
               adjustedAmount,
               data.denom,
             )
-          : allianceUnDelegate(
+          : allianceUndelegate(
               client,
               'migaloo-1',
               data.validatorSrcAddress,
@@ -180,7 +173,7 @@ export const useTransaction = () => {
               data.denom,
             );
       } else {
-        return nativeClaimRewards(client, delegations, address);
+        return claimAllRewards(client, delegations);
       }
     },
     {

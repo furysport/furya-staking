@@ -4,6 +4,7 @@ import useDelegations from './useDelegations';
 import useClient from 'hooks/useClient';
 import { num } from 'libs/num';
 import { useQuery } from 'react-query';
+import { convertMicroDenomToDenom } from 'util/conversion';
 
 type GetValidatorsParams = {
   client: LCDClient | null;
@@ -35,8 +36,6 @@ const getValidators = ({
   //
   //     })
   // }
-
-  // client?.alliance.alliancesValidators("migaloo-1")
   return client?.alliance
     .alliancesValidators('migaloo-1')
     .then((data) => {
@@ -80,11 +79,20 @@ const getValidators = ({
       return [[], {}];
     });
 };
-
+const getStakedWhale = async ({ client }) => {
+  let sum = 0;
+  await client?.staking.validators('migaloo-1').then((data) => {
+    data[0].forEach((validator) => {
+      sum = sum + Number(validator.tokens.toString());
+    });
+  });
+  return convertMicroDenomToDenom(sum, 6);
+};
 type UseValidatorsResult = {
   data: {
     validators: Validator[];
     pagination: any;
+    stakedWhale: number;
   };
   isFetching: boolean;
 };
@@ -106,10 +114,16 @@ const useValidators = ({ address }): UseValidatorsResult => {
     queryFn: () => getValidators({ client, validatorInfo, delegations }),
     enabled: !!client && !!validatorInfo,
   });
+  const { data: stakedWhale } = useQuery({
+    queryKey: ['stakedWhale'],
+    queryFn: () => getStakedWhale({ client }),
+    enabled: !!client,
+  });
   return {
     data: {
       validators: data?.validators || [],
       pagination: data?.pagination || {},
+      stakedWhale: stakedWhale || 0,
     },
     isFetching,
   };

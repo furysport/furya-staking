@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { HStack, Text, VStack } from '@chakra-ui/react';
 import { useRecoilState } from 'recoil';
 import { walletState, WalletStatusType } from 'state/atoms/walletAtoms';
-import CardComponent from 'components/Pages/Delegations/CardComponent';
+import CardComponent, {
+  AssetType,
+} from 'components/Pages/Delegations/CardComponent';
 import AssetOverview, { Token, TokenType } from './AssetOverview';
 import RewardsComponent from 'components/Pages/Delegations/RewardsComponent';
 import Validators from 'components/Pages/Delegations/Validators';
@@ -15,6 +17,7 @@ import { useAlliances } from 'hooks/useAlliances';
 import { useTotalYearlyWhaleEmission } from 'hooks/useMigaloo';
 import { useWhalePrice } from 'queries/useGetTokenDollarValueQuery';
 import useUndelegations from 'hooks/useUndelegations';
+import useValidators from 'hooks/useValidators';
 
 interface Reward {
   amount: number;
@@ -90,6 +93,8 @@ const Dashboard = () => {
   const { alliances: allianceData } = useAlliances();
   const { totalYearlyWhaleEmission } = useTotalYearlyWhaleEmission();
 
+  const { data: validatorData } = useValidators({ address });
+
   const price = useWhalePrice();
   const alliances = useMemo(
     () => allianceData?.alliances || [],
@@ -100,24 +105,39 @@ const Dashboard = () => {
     () => undelegationData?.undelegations || [],
     [undelegationData],
   );
+  const summedAllianceWeights = useMemo(
+    () =>
+      alliances
+        ?.map((alliance) => {
+          return Number(alliance?.weight);
+        })
+        .reduce((acc, e) => acc + (isNaN(e) ? 0 : e), 0),
+    [alliances],
+  );
 
   const allianceAPRs = useMemo(() => {
     return alliances?.map((alliance) => {
       if (alliance.name === 'WHALE') {
-        // TODO: APR here is static which is hacky and should be changed
+        const apr = Number(
+          ((totalYearlyWhaleEmission * (1 - summedAllianceWeights)) /
+            (validatorData?.stakedWhale | 0)) *
+            100,
+        );
         return {
-          name: alliance.name,
-          apr: 9.7,
+          name: 'WHALE',
+          apr: apr,
         };
-      }
-      return {
-        name: alliance.name,
-        apr: !isNaN(alliance.totalDollarAmount)
+      } else {
+        const apr = !isNaN(alliance.totalDollarAmount)
           ? ((totalYearlyWhaleEmission * price * alliance?.weight) /
               alliance?.totalDollarAmount) *
             100
-          : 0,
-      };
+          : 0;
+        return {
+          name: alliance.name,
+          apr: apr,
+        };
+      }
     });
   }, [alliances, totalYearlyWhaleEmission, price]);
 
@@ -226,34 +246,30 @@ const Dashboard = () => {
 
     const rewardsData = calculateRewardData();
 
-    const total = delegatedData.map((tokenData, index) => { 
-      const undelegatedTokenData = undelegatedData[index] 
-      const liquidTokenData = liquidData[index] 
-      const rewardsTokenData = rewardsData[index]
-      const totalDollarValue = tokenData.dollarValue + undelegatedTokenData.dollarValue + liquidTokenData.dollarValue + rewardsTokenData.dollarValue
-      const totalValue = tokenData.value + undelegatedTokenData.value + liquidTokenData.value
+    const total = delegatedData.map((tokenData, index) => {
+      const undelegatedTokenData = undelegatedData[index];
+      const liquidTokenData = liquidData[index];
+      const rewardsTokenData = rewardsData[index];
+      const totalDollarValue =
+        tokenData.dollarValue +
+        undelegatedTokenData.dollarValue +
+        liquidTokenData.dollarValue +
+        rewardsTokenData.dollarValue;
+      const totalValue =
+        tokenData.value + undelegatedTokenData.value + liquidTokenData.value;
       return {
         ...tokenData,
         dollarValue: totalDollarValue,
-        value: totalValue
-      }
-    })
-
-
-
-
-    console.log({liquidData: liquidData, total: total})
-    console.log('total', total)
-    
-
-
+        value: totalValue,
+      };
+    });
 
     const delegationData: DelegationData = {
       delegated: delegatedData,
       undelegated: undelegatedData,
       liquid: liquidData,
       rewards: rewardsData,
-      total
+      total,
     };
 
     setData(delegationData);
@@ -280,10 +296,10 @@ const Dashboard = () => {
         Dashboard
       </Text>
       <HStack width="full" paddingY={5} spacing={10}>
-      <CardComponent
+        <CardComponent
           isWalletConnected={isWalletConnected}
           isLoading={isLoading}
-          isUndelegations='total'
+          assetType={AssetType.total}
           title={'Total Alliance Assets'}
           tokenData={updatedData?.total}
         />
@@ -301,7 +317,7 @@ const Dashboard = () => {
         />
         <CardComponent
           isWalletConnected={isWalletConnected}
-          isUndelegations={"undelegations"}
+          assetType={AssetType.undelegations}
           isLoading={isLoading}
           title={'Undelegations'}
           tokenData={updatedData?.undelegated}
