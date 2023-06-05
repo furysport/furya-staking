@@ -7,7 +7,6 @@ import {
 export const claimAllRewards = async (
   wallet: TerraStationWallet,
   delegations: any,
-  address: string,
 ) => {
   const msgs = delegations.map(({ delegation }) => {
     if (delegation.denom == 'uwhale') {

@@ -10,15 +10,19 @@ interface CardComponentProps {
   tokenData: TokenData[];
   isLoading: boolean;
   isWalletConnected: boolean;
-  isUndelegations?: string;
+  assetType?: AssetType;
 }
 
+export enum AssetType {
+  total,
+  undelegations,
+}
 const CardComponent: FC<CardComponentProps> = ({
   title,
   tokenData,
   isLoading,
   isWalletConnected,
-  isUndelegations = false,
+  assetType,
 }) => {
   const sumAndMultiplyValues = useMemo(() => {
     return isLoading
@@ -70,7 +74,7 @@ const CardComponent: FC<CardComponentProps> = ({
           <HStack>
             <Text color="gray">{title}</Text>
             {/* if isUndelegations is 'undelegations' then show unbonding peroid of otherwise show hello world */}
-            {isUndelegations && (
+            {assetType && (
               <Tooltip
                 label={
                   <Box
@@ -81,7 +85,9 @@ const CardComponent: FC<CardComponentProps> = ({
                     fontSize={14}
                     p={4}
                   >
-                    {isUndelegations === 'undelegations' ? 'Unbonding period of 21 days' : 'Total Balances includes all assets in your wallet, including those that are not delegated and those that are currently undelegating. Hover over the amount to see a break down per token'}
+                    {assetType === AssetType.undelegations
+                      ? 'Unbonding period of 21 days'
+                      : 'Total Balances includes all assets in your wallet, including those that are not delegated and those that are currently undelegating. Hover over the amount to see a break down per token'}
                   </Box>
                 }
                 bg="transparent"
@@ -100,7 +106,7 @@ const CardComponent: FC<CardComponentProps> = ({
             isWalletConnected={isWalletConnected}
             data={tokenData}
             label={`${summedAndMultipliedValues}`}
-            labelColor={isUndelegations === 'total' ? "brand.500" : "white"}
+            labelColor={assetType === AssetType.total ? 'brand.500' : 'white'}
           />
         </>
       )}
