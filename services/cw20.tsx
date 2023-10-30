@@ -1,4 +1,3 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient'
 import { Coin } from '@cosmjs/launchpad'
 import {Wallet} from "util/wallet-adapters/index";

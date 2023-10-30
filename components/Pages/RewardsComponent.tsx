@@ -25,7 +25,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
   isLoading,
   data,
 }) => {
-  const { chainId }= useRecoilValue(walletState);
+  const { chainId } = useRecoilValue(walletState);
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -35,7 +35,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
   const claimableRewards = useMemo(
     () => data?.reduce((acc, e) => acc + (Number(e?.dollarValue) ?? 0), 0),
     [data],
-  );
+  ) || 0
 
   return (
     <VStack

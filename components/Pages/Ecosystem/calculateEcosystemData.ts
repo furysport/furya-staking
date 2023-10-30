@@ -43,7 +43,7 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
         return rewards?.filter(reward=> reward.tabType === TabType.ecosystem).map((reward) => {
             return {
                 symbol: reward.tokenSymbol,
-                amount: reward.amount,
+                amount: reward.amount || 0,
                 dollarValue: reward.tokenSymbol === 'mUSDC' ? 1 : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
             }
         })
@@ -61,7 +61,7 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
         const totalDollarValue =
             tokenData?.dollarValue +
             liquidTokenData?.dollarValue +
-            (rewardsTokenData?.dollarValue ?? 0);
+            (rewardsTokenData?.dollarValue || 0)
         const totalValue =
             tokenData.value + liquidTokenData.value;
         return {
