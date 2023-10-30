@@ -101,7 +101,7 @@ const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
             {data?.map((e) => (
               <Text key={e.color}>
                 {isWalletConnected
-                  ? `$${e.dollarValue?.toLocaleString()}`
+                  ? `$${e.dollarValue?.toFixed(2)}`
                   : 'n/a'}
               </Text>
             ))}
