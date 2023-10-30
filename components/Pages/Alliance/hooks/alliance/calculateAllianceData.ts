@@ -5,7 +5,7 @@ export const calculateAllianceData = (rawAllianceTokenData, priceList, allianceB
     // Calculate data when dependencies change
     if (!priceList || !allianceBalances || !delegations) return
 
-    const liquidData = rawAllianceTokenData.map((token, index) => {
+    const liquidData = rawAllianceTokenData?.map((token, index) => {
         const balance = allianceBalances?.[index] !== undefined ? allianceBalances?.[index] : 0
         return {
             ...token,
@@ -56,7 +56,7 @@ export const calculateAllianceData = (rawAllianceTokenData, priceList, allianceB
         }
     };
     const calculateRewardData = () => {
-        const allRewards = delegations.map((d) => d.rewards);
+        const allRewards = delegations?.map((d) => d.rewards);
         const concatenatedRewards: Reward[] = allRewards.reduce(
             (acc: Reward[], currList: Reward[]) => {
                 return acc.concat(currList);
@@ -64,7 +64,7 @@ export const calculateAllianceData = (rawAllianceTokenData, priceList, allianceB
             [],
         )
 
-        return whiteListedAllianceTokens.map((t) => {
+        return whiteListedAllianceTokens?.map((t) => {
             const sameTokenRewards = concatenatedRewards.filter(
                 (r) => r.denom === t.denom,
             )

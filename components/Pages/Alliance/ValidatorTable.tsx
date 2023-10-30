@@ -141,7 +141,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
     // Shuffle the validators before returning
     return validators
       ?.sort(() => Math.random() - 0.5)
-      .map((validator) => ({
+      ?.map((validator) => ({
         name: validator?.description?.moniker,
         // @ts-ignore
         votingPower: validator.votingPower,
@@ -215,7 +215,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
 
   return (
     <VStack width="full" minW="800px" overflowX="auto">
-      {table.getHeaderGroups().map((headerGroup, index) => (
+      {table.getHeaderGroups()?.map((headerGroup, index) => (
         <HStack
           key={headerGroup.id}
           width="full"
@@ -261,7 +261,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
           ))}
         </HStack>
       ))}
-      {table.getRowModel().rows.map((row, index) => (
+      {table.getRowModel().rows?.map((row, index) => (
         <HStack
           key={row.id}
           width="full"

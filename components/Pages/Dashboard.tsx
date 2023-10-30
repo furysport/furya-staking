@@ -70,7 +70,7 @@ const Dashboard = () => {
     }, [whiteListedAllianceTokens])
 
     const rawLiquidityTokenData = useMemo(() => {
-        return whiteListedLiquidityTokens.map((t) => ({
+        return whiteListedLiquidityTokens?.map((t) => ({
             token: Token[t.symbol],
             tokenSymbol: t.symbol,
             name: t.name,
@@ -138,17 +138,17 @@ const Dashboard = () => {
     const delegations = useMemo(() => data?.delegations || [], [data])
 
     const {data: allianceBalances} = useMultipleTokenBalance(
-        whiteListedAllianceTokens.map((e) => e.symbol),
+        whiteListedAllianceTokens?.map((e) => e.symbol),
     )
     const {data: ecosystemBalances} = useMultipleTokenBalance(
-        whiteListedEcosystemTokens.map((e) => e.symbol),
+        whiteListedEcosystemTokens?.map((e) => e.symbol),
     )
 
     const {data: liquidityBalances} = useMultipleTokenBalance(
-        whiteListedLiquidityTokens.map((e) => e.symbol),
+        whiteListedLiquidityTokens?.map((e) => e.symbol),
     )
 
-    const {alliances: allianceData} = useAlliances();
+    const {alliances: allianceData} = useAlliances()
     const {totalYearlyWhaleEmission} = useTotalYearlyWhaleEmission()
 
     const {data: validatorData} = useValidators({address});
@@ -169,9 +169,9 @@ const Dashboard = () => {
         () =>
             alliances
                 ?.map((alliance) => {
-                    return Number(alliance?.weight);
+                    return Number(alliance?.weight)
                 })
-                .reduce((acc, e) => acc + (isNaN(e) ? 0 : e), 0),
+                ?.reduce((acc, e) => acc + (isNaN(e) ? 0 : e), 0),
         [alliances],
     )
 
@@ -276,7 +276,7 @@ const Dashboard = () => {
             !priceList,
         )
 
-    }, [ updatedAllianceData, priceList]);
+    }, [updatedAllianceData, priceList]);
 
     return (
         <VStack

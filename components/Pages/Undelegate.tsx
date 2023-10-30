@@ -43,21 +43,21 @@ export const Undelegate = ({tokenSymbol}) => {
         onOpen: onOpenModal,
         onClose: onCloseModal,
     } = useDisclosure()
-    const tabFromUrl = router.pathname.split('/')[1].split('/')[0]
+    const tabFromUrl = router.pathname.split('/')?.[1].split('/')?.[0]
     const [_, setTabType] = useRecoilState(tabState)
 
     const whiteListedTokens = useMemo(() => {
-        if (tabFromUrl === 'ecosystem') {
+        if (tabFromUrl === TabType.ecosystem) {
             return whiteListedEcosystemTokens
-        } else if (tabFromUrl === 'liquidity') {
+        } else if (tabFromUrl === TabType.liquidity) {
             return whiteListedLiquidityTokens
         }
     }, [tabFromUrl])
 
     useEffect(() => {
-        if (tabFromUrl === 'ecosystem') {
+        if (tabFromUrl === TabType.ecosystem) {
             setTabType(TabType.ecosystem)
-        } else if (tabFromUrl === 'liquidity') {
+        } else if (tabFromUrl === TabType.liquidity) {
             setTabType(TabType.liquidity)
         }
     }, [tabFromUrl])

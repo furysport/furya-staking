@@ -30,7 +30,7 @@ export const Delegate = ({tokenSymbol}) => {
     const isWalletConnected: boolean = status === WalletStatusType.connected
     const {submit, txStep} = useTransaction()
     const router = useRouter()
-    const tabFromUrl = router.pathname.split('/')[1].split('/')[0]
+    const tabFromUrl = router.pathname.split('/')?.[1].split('/')?.[0]
     const {control} = useForm({
         mode: 'onChange',
         defaultValues: {

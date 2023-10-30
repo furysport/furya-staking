@@ -33,19 +33,19 @@ const getRewards = async (contractAddress: string, address: string, client: Wall
     }
     const rawRewards : RawRewardInfo[] = await client.queryContractSmart(contractAddress, msg)
     return rawRewards.map((info) => {
-        const stakedToken = tokens.find((token) => token.denom === (info?.staked_asset?.native ?? info?.staked_asset?.cw20))
-        const rewardToken = tokens.find((token) => token.denom === (info?.reward_asset?.native ?? info?.reward_asset?.cw20))
+        const stakedToken = tokens?.find((token) => token.denom === (info?.staked_asset?.native ?? info?.staked_asset?.cw20))
+        const rewardToken = tokens?.find((token) => token.denom === (info?.reward_asset?.native ?? info?.reward_asset?.cw20))
 
         return {
             tabType: stakedToken.tabType as TabType,
-            tokenSymbol: rewardToken.symbol,
-            name: rewardToken.name,
-            denom: rewardToken.denom,
-            amount: convertMicroDenomToDenom(info.rewards, 6),
+            tokenSymbol: rewardToken?.symbol,
+            name: rewardToken?.name,
+            denom: rewardToken?.denom,
+            amount: convertMicroDenomToDenom(info?.rewards, 6),
         }
     }).filter((info) => info !== null)
         .reduce((acc, current) => {
-            const existingEntry = acc.find((entry) => entry.tabType === current.tabType && entry.tokenSymbol === current.tokenSymbol);
+            const existingEntry = acc?.find((entry) => entry.tabType === current.tabType && entry.tokenSymbol === current.tokenSymbol);
             if (existingEntry) {
                 existingEntry.amount += current.amount // Add up the amounts
             } else {

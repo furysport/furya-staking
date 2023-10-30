@@ -22,7 +22,7 @@ const getStakedBalances = async (contractAddress: string, address: string, clien
     const stakedInfos = await client.queryContractSmart(contractAddress, msg)
 
     return stakedInfos.map((info) => {
-        const token = tokens.find((token) => token.denom === (info?.asset?.native ?? info?.asset?.cw20))
+        const token = tokens?.find((token) => token.denom === (info?.asset?.native ?? info?.asset?.cw20))
             return {
                 denom: token.denom,
                 tokenSymbol: token.symbol,

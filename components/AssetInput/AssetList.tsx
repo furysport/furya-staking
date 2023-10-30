@@ -65,7 +65,7 @@ const AssetList: FC<AssetListProps> = ({
                 },
             }}
         >
-            {filterAssets.map((item, index) => (
+            {filterAssets?.map((item, index) => (
                 <HStack
                     key={item?.name}
                     as={Button}
