@@ -131,7 +131,7 @@ const Dashboard = () => {
     const [priceList] = usePrices() || []
 
     // TODO: useDelegations should return 1 list of delegations which includes both native staking and alliance staking entries for the given address
-    const {data, isLoading: isDelegationsLoading} = useDelegations({address})
+    const {data} = useDelegations({address})
 
     const {data : stakedBalances} = useQueryStakedBalances()
 

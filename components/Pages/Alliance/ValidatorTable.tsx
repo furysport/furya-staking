@@ -215,7 +215,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
 
   return (
     <VStack width="full" minW="800px" overflowX="auto">
-      {table.getHeaderGroups()?.map((headerGroup, index) => (
+      {table.getHeaderGroups()?.map((headerGroup) => (
         <HStack
           key={headerGroup.id}
           width="full"
@@ -261,7 +261,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
           ))}
         </HStack>
       ))}
-      {table.getRowModel().rows?.map((row, index) => (
+      {table.getRowModel().rows?.map((row) => (
         <HStack
           key={row.id}
           width="full"
