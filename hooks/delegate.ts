@@ -2,8 +2,7 @@ import file from "public/mainnet/contract_addresses.json"
 import {coin} from "@cosmjs/amino";
 import {isNativeToken} from "util/isNative";
 import {MsgExecuteContract} from "@terra-money/feather.js";
-
-export const toBase64 = (obj: object) => Buffer.from(JSON.stringify(obj)).toString('base64')
+import {toBase64} from "util/toBase64";
 export const delegate = async (
     client: any,
     address: string,

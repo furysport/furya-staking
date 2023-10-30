@@ -34,7 +34,7 @@ export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liqu
     }
     const calculateRewardData = () => {
         if (rewards.length === 0) return
-        return rewards.filter((reward: { tabType: TabType; })=>reward.tabType=== TabType.ecosystem).map((reward) => {
+        return rewards.filter((reward: { tabType: TabType })=>reward.tabType === TabType.liquidity).map((reward) => {
             return {
                 symbol: reward.tokenSymbol,
                 amount: reward.amount,
@@ -50,8 +50,8 @@ export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liqu
     const rewardsData = calculateRewardData()
 
     const total = delegatedData.map((tokenData, index) => {
-        const liquidTokenData = liquidData[index];
-        const rewardsTokenData = rewardsData[index];
+        const liquidTokenData = liquidData?.[index]
+        const rewardsTokenData = rewardsData?.[index]
         const totalDollarValue =
             tokenData?.dollarValue +
             liquidTokenData?.dollarValue +

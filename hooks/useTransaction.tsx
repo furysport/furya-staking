@@ -141,6 +141,7 @@ export const useTransaction = () => {
             onSuccess: (data: any) => {
                 setTxStep(TxStep.Broadcasting)
                 setTimeout(() => {
+                    console.log('data', data)
                     setTxHash(data?.transactionHash)
 
                     toast({
