@@ -55,7 +55,7 @@ export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liqu
         const totalDollarValue =
             tokenData?.dollarValue +
             liquidTokenData?.dollarValue +
-            rewardsTokenData?.dollarValue;
+            (rewardsTokenData?.dollarValue || 0)
         const totalValue =
             tokenData.value + liquidTokenData.value;
         return {
