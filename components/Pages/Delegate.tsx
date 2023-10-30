@@ -75,7 +75,7 @@ export const Delegate = ({tokenSymbol}) => {
 
     useEffect(() => {
         if (tokenSymbol) {
-            const token = whiteListedTokens.find((e) => e.symbol === tokenSymbol)
+            const token = whiteListedTokens?.find((e) => e.symbol === tokenSymbol)
             if (!token) return
             setCurrentDelegationState({
                 ...currentDelegationState,
@@ -85,7 +85,7 @@ export const Delegate = ({tokenSymbol}) => {
                 denom: token?.denom,
             })
         } else {
-            const token = whiteListedTokens.find((e) => e.symbol === currentDelegationState.tokenSymbol) || whiteListedTokens[0]
+            const token = whiteListedTokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol) || whiteListedTokens[0]
             setCurrentDelegationState({
                 ...currentDelegationState,
                 tokenSymbol: token?.symbol,
@@ -178,7 +178,7 @@ export const Delegate = ({tokenSymbol}) => {
                             onChange={async (value, isTokenChange) => {
                                 field.onChange(value);
                                 if (isTokenChange) {
-                                    const denom = whiteListedTokens.find(
+                                    const denom = whiteListedTokens?.find(
                                         (t) => t.symbol === value.tokenSymbol,
                                     ).denom;
                                     setCurrentDelegationState({
