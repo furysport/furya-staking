@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import ValidatorSelectModal from 'components/ValidatorInput/ValidatorSelectModal';
 import { FC } from 'react';
 import { useRecoilState } from 'recoil';
-import { walletState } from 'state/atoms/walletAtoms';
+import { walletState } from 'state/walletState';
 
 interface ValidatorInputProps {
   image?: boolean;

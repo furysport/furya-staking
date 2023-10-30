@@ -58,7 +58,7 @@ export class TerraStationWallet implements Wallet {
           msg.value.sender,
           msg.value.contract,
           JSON.parse(String.fromCharCode.apply(null, msg.value.msg)),
-          msg.value.funds.map(
+          msg.value.funds?.map(
             (coin) => new StationCoin(coin.denom, coin.amount),
           ),
         );
@@ -117,7 +117,7 @@ export class TerraStationWallet implements Wallet {
       senderAddress,
       contractAddress,
       msg,
-      funds.map((coin) => new StationCoin(coin.denom, coin.amount)),
+      funds?.map((coin) => new StationCoin(coin.denom, coin.amount)),
     );
     return this.client
       .post({
@@ -205,7 +205,7 @@ export class TerraStationWallet implements Wallet {
       .catch((err) => {
         if (axios.isAxiosError(err)) {
           console.log(err);
-          throw new Error(err.response.data);
+          throw new Error(err.response.statusText);
         }
         throw err;
       });

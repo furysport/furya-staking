@@ -1,19 +1,19 @@
-import React, { useMemo } from 'react';
-import { BsCircleFill } from 'react-icons/bs';
-import { useQuery } from 'react-query';
+import React, { useMemo } from 'react'
+import { BsCircleFill } from 'react-icons/bs'
+import { useQuery } from 'react-query'
 
-import { HStack, Icon, Text } from '@chakra-ui/react';
-import { useChains } from 'hooks/useChainInfo';
-import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/atoms/walletAtoms';
+import { HStack, Icon, Text } from '@chakra-ui/react'
+import { useChains } from 'hooks/useChainInfo'
+import { useRecoilValue } from 'recoil'
+import { walletState } from 'state/walletState'
 
 const Status = () => {
-  const chains: Array<any> = useChains();
-  const { chainId } = useRecoilValue(walletState);
+  const chains: Array<any> = useChains()
+  const { chainId } = useRecoilValue(walletState)
 
   const url = useMemo(() => {
     return chains?.find((c) => c?.chainId === chainId)?.rpc;
-  }, [chainId, chains]);
+  }, [chainId, chains])
 
   const { data: status } = useQuery(
     ['status', chainId],
@@ -23,21 +23,19 @@ const Status = () => {
       return {
         block: resJons?.result?.sync_info?.latest_block_height || status?.block,
         active: !!resJons?.result?.sync_info?.latest_block_height,
-      };
+      }
     },
     {
       refetchInterval: 6000,
       enabled: !!url,
     },
-  );
+  )
 
   return (
     <HStack
       borderRadius="23px"
       backgroundColor="rgba(0, 0, 0, 0.5)"
       width="fit-content"
-      // right="15px"
-      // bottom="10px"
       color="white"
       paddingX={5}
       paddingY={1}
@@ -54,7 +52,7 @@ const Status = () => {
         height="11px"
       />
     </HStack>
-  );
-};
+  )
+}
 
-export default Status;
+export default Status

@@ -3,11 +3,9 @@ import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
-import { walletState, WalletStatusType } from 'state/atoms/walletAtoms';
+import { walletState, WalletStatusType } from 'state/walletState';
 import { DEFAULT_TOKEN_BALANCE_REFETCH_INTERVAL } from 'util/constants';
 import { Wallet } from '../util/wallet-adapters';
-//import { getIBCAssetInfoFromList, useIBCAssetInfo } from './useIBCAssetInfo'
-//import { IBCAssetInfo, useIBCAssetList } from './useIbcAssetList'
 import { getTokenInfoFromTokenList } from './useTokenInfo';
 import { useTokenList } from './useTokenList';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
@@ -24,69 +22,23 @@ async function fetchTokenBalance({
   const { denom, native, token_address, decimals } = token || {};
 
   if (!denom && !token_address) {
-    return 0;
-    // throw new Error(
-    //   `No denom or token_address were provided to fetch the balance.`
-    // )
+    return 0
   }
 
-  /*
-   * if this is a native asset or an ibc asset that has juno_denom
-   *  */
   if (native && !!client) {
     const coin = await client.getBalance(address, denom);
+    console.log("COINO", coin )
     const amount = coin ? Number(coin.amount) : 0;
     return convertMicroDenomToDenom(amount, decimals);
-    // return {
-    //   balance : convertMicroDenomToDenom(amount, decimals),
-    //   ...token
-    // }
   }
-
-  /*
-   * everything else
-  //  *  */
-  // if (token_address) {
-  //   try {
-  //     const balance = await CW20(client).use(token_address).balance(address)
-  //     return convertMicroDenomToDenom(Number(balance), decimals)
-  //   } catch (err) {
-  //     return 0
-  //   }
-  //   // return {
-  //   //   balance : convertMicroDenomToDenom(Number(balance), decimals),
-  //   //   ...token
-  //   // }
-  // }
-
   return 0;
 }
-
-// const mapIbcTokenToNative = (ibcToken?: IBCAssetInfo) => {
-//   if (ibcToken?.juno_denom) {
-//     return {
-//       ...ibcToken,
-//       native: true,
-//       denom: ibcToken.juno_denom,
-//     }
-//   }
-//   return undefined
-// }
 
 export const useTokenBalance = (tokenSymbol: string) => {
   const { address, network, client, chainId } = useRecoilValue(walletState);
   const connectedWallet = useConnectedWallet();
   const selectedAddr = connectedWallet?.addresses[chainId] || address;
-  // TODO: Adding this fixes the issue where refresh means no client
-  // const { connectKeplr } = useConnectKeplr()
-  // const { connectLeap } = useConnectLeap()
-  // if (!client && status == '@wallet-state/restored') {
-  //   if (activeWallet === 'leap') {
-  //     connectLeap()
-  //   } else {
-  //     connectKeplr()
-  //   }
-  // }
+
   const { tokens } = useTokenList();
   const tokenInfo = tokens?.filter((e) => e.symbol === tokenSymbol)[0];
   //const ibcAssetInfo = useIBCAssetInfo(tokenSymbol)
@@ -111,7 +63,7 @@ export const useTokenBalance = (tokenSymbol: string) => {
       refetchInterval: DEFAULT_TOKEN_BALANCE_REFETCH_INTERVAL,
       refetchIntervalInBackground: true,
     },
-  );
+  )
 
   return { balance, isLoading: isLoading, refetch };
 };
@@ -138,9 +90,6 @@ export const useMultipleTokenBalance = (tokenSymbols?: Array<string>) => {
               address,
               token:
                 getTokenInfoFromTokenList(tokenSymbol, tokens) ||
-                // mapIbcTokenToNative(
-                //     getIBCAssetInfoFromList(tokenSymbol, ibcAssetsList?.tokens)
-                // ) ||
                 {},
             });
           }),

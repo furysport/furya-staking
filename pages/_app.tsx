@@ -1,23 +1,22 @@
-import { FC, useEffect } from 'react';
-import { useState } from 'react';
-import { Toaster } from 'react-hot-toast';
-import { QueryClientProvider } from 'react-query';
+import { FC, useEffect } from 'react'
+import { useState } from 'react'
+import { Toaster } from 'react-hot-toast'
+import { QueryClientProvider } from 'react-query'
 
-import { ChakraProvider, CSSReset } from '@chakra-ui/react';
+import { ChakraProvider, CSSReset } from '@chakra-ui/react'
 import {
   getChainOptions,
   StaticWalletProvider,
   WalletControllerChainOptions,
   WalletProvider,
-} from '@terra-money/wallet-provider';
-import AppLoading from '../components/AppLoading';
-import AppLayout from '../components/Layout/AppLayout';
-import type { AppProps } from 'next/app';
-import Head from 'next/head';
-import { RecoilRoot } from 'recoil';
-import { queryClient } from '../services/queryClient';
-
-import theme from '../theme';
+} from '@terra-money/wallet-provider'
+import AppLoading from '../components/AppLoading'
+import AppLayout from '../components/Layout/AppLayout'
+import type { AppProps } from 'next/app'
+import Head from 'next/head'
+import { RecoilRoot } from 'recoil'
+import { queryClient } from 'services/queryClient'
+import theme from '../theme'
 
 const MyApp: FC<AppProps> = ({
   Component,
@@ -25,9 +24,9 @@ const MyApp: FC<AppProps> = ({
   defaultNetwork,
   walletConnectChainIds,
 }: AppProps & WalletControllerChainOptions) => {
-  const [mounted, setMounted] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false)
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => setMounted(true), [])
 
   return typeof window !== 'undefined' ? (
     <WalletProvider
@@ -82,14 +81,14 @@ const MyApp: FC<AppProps> = ({
         </RecoilRoot>
       </>
     </StaticWalletProvider>
-  );
-};
+  )
+}
 
 MyApp.getInitialProps = async () => {
-  const chainOptions = await getChainOptions();
+  const chainOptions = await getChainOptions()
   return {
     ...chainOptions,
-  };
-};
+  }
+}
 
-export default MyApp;
+export default MyApp

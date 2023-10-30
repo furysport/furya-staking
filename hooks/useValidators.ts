@@ -25,17 +25,6 @@ const getValidators = ({
     return !!delegation;
   };
 
-  // const getCommistion = (validators: Validator[]) => {
-  //     return validators.map((validator: Validator) => {
-  //         const rate = validator?.commission?.commission_rates.rate.toString()
-  //         const commission = num(rate).times(100).toFixed(2)
-  //         return {
-  //             ...validator,
-  //             commission: commission
-  //         }
-  //
-  //     })
-  // }
   return client?.alliance
     .alliancesValidators('migaloo-1')
     .then((data) => {

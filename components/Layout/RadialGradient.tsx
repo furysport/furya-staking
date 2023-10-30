@@ -1,23 +1,14 @@
 import React, { FC, useMemo } from 'react';
-
 import { Box } from '@chakra-ui/react';
 import { useRecoilValue } from 'recoil';
-
-// import { activeChain } from 'state/atoms/activeChain';
-import { walletState } from 'state/atoms/walletAtoms';
+import { walletState } from 'state/walletState';
 
 const backgrounds = {
   'migaloo-1':
     'linear-gradient(90deg, rgba(60, 205, 100, 0.25) 2.83%, rgba(0, 117, 255, 0.25) 97.47%)',
 };
 
-const RadialGradient: FC = () => {
-  const { chainId } = useRecoilValue(walletState);
-  const wallet = useMemo(() => {
-    return backgrounds[chainId];
-  }, [chainId]);
-
-  return (
+const RadialGradient: FC = () => (
     <Box
       position="absolute"
       height="718px"
@@ -29,7 +20,6 @@ const RadialGradient: FC = () => {
       borderTopRightRadius="20%"
       zIndex="-1"
     />
-  );
-};
+  )
 
 export default RadialGradient;
