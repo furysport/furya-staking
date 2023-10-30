@@ -123,7 +123,6 @@ const getUndelegations = async (
         symbol: token.symbol,
       };
     });
-console.log(undelegations)
   // Do the same for native undelegations
   const nativeRes = (await client?.staking
     .getReqFromAddress(delegatorAddress)
@@ -149,7 +148,7 @@ console.log(undelegations)
   const allUndelegations = undelegations.concat(native_undelegations);
 
   return { allUndelegations };
-};
+}
 
 const useUndelegations = ({ address }) => {
   const client = useClient();
@@ -161,7 +160,7 @@ const useUndelegations = ({ address }) => {
     enabled: !!address && !!priceList,
     refetchOnWindowFocus: false,
     refetchOnMount: false
-  });
-};
+  })
+}
 
 export default useUndelegations;

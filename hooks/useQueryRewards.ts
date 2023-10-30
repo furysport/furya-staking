@@ -5,6 +5,7 @@ import {Wallet} from "util/wallet-adapters/index"
 import file from "public/mainnet/contract_addresses.json"
 import tokens from "public/mainnet/tokens.json";
 import {convertMicroDenomToDenom} from "util/conversion";
+import {TabType} from "state/tabState";
 
 interface Asset {
     native: string
@@ -18,6 +19,7 @@ interface RawRewardInfo {
 }
 
 export interface RewardInfo {
+    tabType: TabType
     tokenSymbol: string
     name: string
     denom: string
@@ -31,14 +33,26 @@ const getRewards = async (contractAddress: string, address: string, client: Wall
     }
     const rawRewards : RawRewardInfo[] = await client.queryContractSmart(contractAddress, msg)
     return rawRewards.map((info) => {
-        const token = tokens.find((token) => token.denom === (info?.reward_asset?.native ?? info?.reward_asset?.cw20))
+        const stakedToken = tokens.find((token) => token.denom === (info?.staked_asset?.native ?? info?.staked_asset?.cw20))
+        const rewardToken = tokens.find((token) => token.denom === (info?.reward_asset?.native ?? info?.reward_asset?.cw20))
+
         return {
-            tokenSymbol: token.symbol,
-            name: token.name,
-            denom: token.denom,
+            tabType: stakedToken.tabType as TabType,
+            tokenSymbol: rewardToken.symbol,
+            name: rewardToken.name,
+            denom: rewardToken.denom,
             amount: convertMicroDenomToDenom(info.rewards, 6),
         }
-    })
+    }).filter((info) => info !== null)
+        .reduce((acc, current) => {
+            const existingEntry = acc.find((entry) => entry.tabType === current.tabType && entry.tokenSymbol === current.tokenSymbol);
+            if (existingEntry) {
+                existingEntry.amount += current.amount // Add up the amounts
+            } else {
+                acc.push(current) // Add new entry
+            }
+            return acc
+        }, [])
 }
 export const useQueryRewards = () => {
     const {client, address} = useRecoilValue(walletState)

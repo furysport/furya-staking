@@ -36,6 +36,7 @@ export enum ActionType {
     redelegate,
     undelegate,
     claim,
+    updateRewards
 }
 
 export type TokenData = {
@@ -55,9 +56,8 @@ export interface DelegationData {
 }
 
 const Dashboard = () => {
-    const {status, address} = useRecoilValue(walletState);
-    const isWalletConnected: boolean = status === WalletStatusType.connected;
-
+    const {status, address} = useRecoilValue(walletState)
+    const isWalletConnected: boolean = status === WalletStatusType.connected
 
     const rawAllianceTokenData = useMemo(() => {
         return whiteListedAllianceTokens.map((t) => ({
@@ -80,7 +80,6 @@ const Dashboard = () => {
             color: t.color,
         }));
     }, [whiteListedAllianceTokens])
-
 
     const rawEcosystemTokenData = useMemo(() => {
         return whiteListedEcosystemTokens.map((t) => ({
@@ -151,9 +150,7 @@ const Dashboard = () => {
     )
 
     const {alliances: allianceData} = useAlliances();
-    const {totalYearlyWhaleEmission} = useTotalYearlyWhaleEmission();
-
-    useGetTotalStakedBalances()
+    const {totalYearlyWhaleEmission} = useTotalYearlyWhaleEmission()
 
     const {data: validatorData} = useValidators({address});
 
@@ -164,11 +161,11 @@ const Dashboard = () => {
         [allianceData?.alliances],
     )
 
-    const {data: undelegationData} = useUndelegations({address});
+    const {data: undelegationData} = useUndelegations({address})
     const undelegations = useMemo(
         () => undelegationData?.undelegations || [],
         [undelegationData],
-    );
+    )
     const summedAllianceWeights = useMemo(
         () =>
             alliances
@@ -186,7 +183,7 @@ const Dashboard = () => {
                     ((totalYearlyWhaleEmission * (1 - summedAllianceWeights)) /
                         (validatorData?.stakedWhale | 0)) *
                     100,
-                );
+                )
                 return {
                     name: 'WHALE',
                     apr: apr,
@@ -200,49 +197,37 @@ const Dashboard = () => {
                 return {
                     name: alliance.name,
                     apr: apr,
-                };
+                }
             }
-        });
+        })
     }, [alliances, totalYearlyWhaleEmission, whalePrice])
-    const [tabIndex, setCurrentTab] = useRecoilState(tabState)
 
-    const nonAllianceAPRs = useMemo(() => {
-        if (tabIndex === TabType.ecosystem) {
-            return whiteListedEcosystemTokens.map((token) => {
-                return {
-                    type: TabType.ecosystem,
-                    name: token.name,
-                    apr: 0,
-                }
-            })
-        } else if (tabIndex === TabType.liquidity) {
-            return whiteListedLiquidityTokens.map((token) => {
-                return {
-                    type: TabType.liquidity,
-                    name: token.name,
-                    apr: 0,
-                }
-            })
+    const [currentTab, setCurrentTab] = useRecoilState(tabState)
+
+    const setTabType = (index: number) => {
+        switch (index) {
+            case 0:
+                setCurrentTab(TabType.alliance)
+                break;
+            case 1:
+                setCurrentTab(TabType.ecosystem)
+                break;
+            case 2:
+                setCurrentTab(TabType.liquidity)
+                break;
         }
-    },[])
+    }
 
-    const ecosystemAPRs = useMemo(() => {
-        return whiteListedEcosystemTokens.map((token) => {
-            return {
-                name: token.name,
-                apr: 0,
-            }
-        })
-    }, [])
-
-    const liquidityAPRs = useMemo(() => {
-        return whiteListedLiquidityTokens.map((token) => {
-            return {
-                name: token.name,
-                apr: 0,
-            }
-        })
-    }, [])
+    const tabTypeToIndex = (tabType: TabType) => {
+        switch (tabType) {
+            case TabType.alliance:
+                return 0
+            case TabType.ecosystem:
+                return 1
+            case TabType.liquidity:
+                return 2
+        }
+    }
 
     const [updatedAllianceData, setAllianceData] = useState<DelegationData>({
         delegated: rawAllianceTokenData,
@@ -272,29 +257,28 @@ const Dashboard = () => {
 
     useEffect(() => {
         calculateAllianceData(rawAllianceTokenData, priceList, allianceBalances, delegations, undelegations, setAllianceData)
-    }, [allianceBalances, delegations, rawAllianceTokenData, allianceRewardsTokenData, undelegations])
+    }, [allianceBalances, delegations, rawAllianceTokenData, allianceRewardsTokenData, undelegations, priceList])
 
 
     useEffect(() => {
         calculateEcosystemData(rawEcosystemTokenData, priceList, ecosystemBalances, stakedBalances,rewards, setEcosystemData)
-    }, [ecosystemBalances,stakedBalances, rewards, rawEcosystemTokenData, ecosystemRewardsTokenData])
+    }, [ecosystemBalances,stakedBalances, rewards, rawEcosystemTokenData, ecosystemRewardsTokenData, priceList])
 
     const { lpTokenPrice } = useGetLPTokenPrice()
     useEffect(() => {
-        calculateLiquidityData(rawLiquidityTokenData, lpTokenPrice, liquidityBalances, delegations, setLiquidityData)
-    }, [ecosystemBalances, delegations, rawEcosystemTokenData, ecosystemRewardsTokenData])
+        calculateLiquidityData(rawLiquidityTokenData, lpTokenPrice, liquidityBalances, stakedBalances, rewards, setLiquidityData)
+    }, [liquidityBalances, delegations, rawLiquidityTokenData, liquidityRewardsTokenData, priceList, lpTokenPrice])
 
 
 
     useEffect(() => {
+        console.log({allianceBalances, ecosystemBalances, liquidityBalances, isDelegationsLoading, updatedAllianceData, priceList})
         setLoading(
-            !allianceBalances ||!ecosystemBalances ||!liquidityBalances ||
-            isDelegationsLoading ||
             updatedAllianceData === null ||
             !priceList,
         )
 
-    }, [allianceBalances, isDelegationsLoading, updatedAllianceData, priceList, ecosystemBalances, liquidityBalances]);
+    }, [ updatedAllianceData, priceList]);
 
     return (
         <VStack
@@ -304,7 +288,7 @@ const Dashboard = () => {
             alignItems={'flex-start'}
             justifyContent={"center"}
             justify={'center'}>
-                <Tabs variant={'brand'} index={tabIndex} onChange={(index)=>setCurrentTab(index)}>
+                <Tabs variant={'brand'} index={tabTypeToIndex(currentTab)} onChange={(index)=>setTabType(index)}>
                     <TabList
                         display={['flex']}
                         flexWrap={['wrap']}
@@ -322,15 +306,13 @@ const Dashboard = () => {
                                          updatedData={updatedAllianceData} allianceAPRs={allianceAPRs}/>
                         </TabPanel>
                         <TabPanel>
-                            <EcosystemTab isWalletConnected={isWalletConnected} isLoading={isLoading} address={address} updatedData={updatedEcosystemData} aprs={ecosystemAPRs}/>
+                            <EcosystemTab isWalletConnected={isWalletConnected} isLoading={isLoading} address={address} updatedData={updatedEcosystemData}/>
                         </TabPanel>
                         <TabPanel>
-                           <LiquidityTab isWalletConnected={isWalletConnected} isLoading={isLoading} address={address} updatedData={updatedLiquidityData} aprs={liquidityAPRs}/>
+                           <LiquidityTab isWalletConnected={isWalletConnected} isLoading={isLoading} address={address} updatedData={updatedLiquidityData}/>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
-
-
         </VStack>
     )
 }

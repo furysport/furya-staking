@@ -145,7 +145,6 @@ export const useTransaction = () => {
 
                     toast({
                         title: (() => {
-                            console.log("delegationActio", delegationAction)
                             switch (delegationAction) {
                                 case ActionType.delegate:
                                     return 'Delegation Successful.'

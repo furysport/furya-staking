@@ -1,9 +1,9 @@
-import {Reward} from "components/Pages/Dashboard";
-import whiteListedLiquidityTokens from 'public/mainnet/white_listed_liquidity_token_info.json'
+import {TabType} from "state/tabState";
+import {EnhancedStakeInfo} from "hooks/useQueryStakedBalances";
 
-export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liquidityBalances,delegations, setLiquidityData) => {
+export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liquidityBalances,  stakedBalances: EnhancedStakeInfo[], rewards, setLiquidityData) => {
     // Calculate data when dependencies change
-    if (!lpTokenPrice|| !liquidityBalances) return
+    if (!lpTokenPrice || !liquidityBalances || !rewards) return
 
     const liquidData = rawLiquidityTokenData.map((token, index) => {
         const balance = liquidityBalances?.[index] !== undefined ? liquidityBalances?.[index] : 0
@@ -13,17 +13,16 @@ export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liqu
             value: balance,
         }
     })
-
     const calculateDelegationData = (tokenData: any) => {
-        const allDelegations = delegations.filter(
-            (d) => d.token.symbol === tokenData.tokenSymbol,
+        const allDelegations = stakedBalances.filter(
+            (d) => d.tokenSymbol === tokenData.tokenSymbol,
         )
         const aggregatedDollarValue = allDelegations.reduce(
-            (acc, e) => acc + Number(e?.token.dollarValue ?? 0),
+            (acc, e) => acc + (Number(e?.amount ?? 0) * Number(lpTokenPrice ?? 0)),
             0,
         )
         const aggregatedAmount = allDelegations.reduce(
-            (acc, e) => acc + Number(e?.token?.amount ?? 0),
+            (acc, e) => acc + Number(e?.amount ?? 0),
             0,
         )
 
@@ -33,33 +32,13 @@ export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liqu
             value: Number(aggregatedAmount),
         }
     }
-
     const calculateRewardData = () => {
-        const allRewards = delegations.map((d) => d.rewards);
-        const concatenatedRewards: Reward[] = allRewards.reduce(
-            (acc: Reward[], currList: Reward[]) => {
-                return acc.concat(currList);
-            },
-            [],
-        )
-
-        return whiteListedLiquidityTokens.map((t) => {
-            const sameTokenRewards = concatenatedRewards.filter(
-                (r) => r.denom === t.denom,
-            )
-
-            const amount = sameTokenRewards?.reduce(
-                (acc, e) => acc + (Number(e?.amount) ?? 0),
-                0,
-            )
-            const dollarValue = sameTokenRewards?.reduce(
-                (acc, e) => acc + (Number(e?.dollarValue) ?? 0),
-                0,
-            )
+        if (rewards.length === 0) return
+        return rewards.filter((reward: { tabType: TabType; })=>reward.tabType=== TabType.ecosystem).map((reward) => {
             return {
-                symbol: t.symbol,
-                amount: amount,
-                dollarValue: dollarValue,
+                symbol: reward.tokenSymbol,
+                amount: reward.amount,
+                dollarValue: (Number(reward.amount) * Number(lpTokenPrice ?? 0)),
             }
         })
     }

@@ -44,17 +44,17 @@ export const Delegate = ({tokenSymbol}) => {
     } = useDisclosure()
 
     const whiteListedTokens = useMemo(() => {
-        if (tabFromUrl === 'ecosystem') {
+        if (tabFromUrl === TabType.ecosystem) {
             return whiteListedEcosystemTokens
-        } else if (tabFromUrl === 'liquidity') {
+        } else if (tabFromUrl === TabType.liquidity) {
             return whiteListedLiquidityTokens
         }
     }, [tabFromUrl])
 
     useEffect(() => {
-        if (tabFromUrl === 'ecosystem') {
+        if (tabFromUrl === TabType.ecosystem) {
             setTabType(TabType.ecosystem)
-        } else if (tabFromUrl === 'liquidity') {
+        } else if (tabFromUrl === TabType.liquidity) {
             setTabType(TabType.liquidity)
         }
     }, [tabFromUrl])
@@ -99,9 +99,6 @@ export const Delegate = ({tokenSymbol}) => {
     useEffect(() => {
         router.push(`/${tabFromUrl}/delegate?tokenSymbol=${currentDelegationState.tokenSymbol}`)
     }, [tabFromUrl, currentDelegationState])
-
-    console.log("currentDelegationState.tokenSymbol")
-    console.log(currentDelegationState.tokenSymbol)
 
     const price = useMemo(
         () => currentDelegationState?.tokenSymbol === "USDC-WHALE_LP" ? lpTokenPrice :

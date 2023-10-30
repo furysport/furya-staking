@@ -18,6 +18,7 @@ import { claimAllRewards } from 'components/Pages/Alliance/hooks/claimRewards';
 import useClient from 'hooks/useTerraStationClient';
 import useDelegations from 'hooks/useDelegations';
 import {TxStep} from "types/blockchain";
+import {updateRewards} from "hooks/updateRewards";
 
 
 export const useTransaction = () => {
@@ -137,8 +138,10 @@ export const useTransaction = () => {
               adjustedAmount,
               data.denom,
             );
-      } else {
+      } else if(data.action === ActionType.claim) {
         return claimAllRewards(client, delegations);
+      } else {
+        return updateRewards(client, address)
       }
     },
     {
@@ -191,6 +194,8 @@ export const useTransaction = () => {
                 return 'Redelegation Failed.';
               case ActionType.claim:
                 return 'Claiming Failed.';
+              case ActionType.updateRewards:
+                return 'Updating Failed.';
               default:
                 return '';
             }
@@ -211,13 +216,15 @@ export const useTransaction = () => {
             title: (() => {
               switch (delegationAction) {
                 case ActionType.delegate:
-                  return 'Delegation Successful.';
+                  return 'Delegation Successful.'
                 case ActionType.undelegate:
-                  return 'Undelegation Successful.';
+                  return 'Undelegation Successful.'
                 case ActionType.redelegate:
-                  return 'Redelegation Successful.';
+                  return 'Redelegation Successful.'
                 case ActionType.claim:
-                  return 'Claiming Successful.';
+                  return 'Claiming Successful.'
+                case ActionType.updateRewards:
+                  return 'Updating Rewards Successful.'
                 default:
                   return '';
               }

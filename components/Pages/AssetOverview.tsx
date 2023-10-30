@@ -39,7 +39,7 @@ const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
       </HStack>
     );
   };
-  let aggregatedAssets = data?.reduce((acc, e) => acc + (e?.value ?? 0), 0);
+  const aggregatedAssets = data?.reduce((acc, e) => acc + (e?.value ?? 0), 0);
   return (
     <VStack
       width="full"
@@ -79,7 +79,7 @@ const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
               Delegated Assets
             </Text>
             {data?.map((e) => {
-              const apr = aprs.find((apr) => apr.name === e.tokenSymbol);
+              const apr = aprs?.find((apr) => apr.name === e.tokenSymbol);
               return (
                 <VStack key={`tokenBox-${e.token}`} alignItems={'flex-start'}>
                   <TokenBox token={e.token} />

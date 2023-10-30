@@ -1,5 +1,6 @@
 import {EnhancedStakeInfo} from "hooks/useQueryStakedBalances";
 import {RewardInfo} from "hooks/useQueryRewards";
+import {TabType} from "state/tabState";
 
 export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosystemBalances, stakedBalances: EnhancedStakeInfo[], rewards: RewardInfo[],  setEcosystemData) => {
     // Calculate data when dependencies change
@@ -39,7 +40,7 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
 
     const calculateRewardData = () => {
 
-        return rewards?.map((reward) => {
+        return rewards?.filter(reward=>reward.tabType=== TabType.ecosystem).map((reward) => {
             return {
                 symbol: reward.tokenSymbol,
                 amount: reward.amount,

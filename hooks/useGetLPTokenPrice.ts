@@ -1,9 +1,8 @@
-import {Wallet} from "util/wallet-adapters/index";
 import {useQuery} from "react-query";
-import {useRecoilValue} from "recoil";
-import {walletState} from "state/walletState";
 import {convertMicroDenomToDenom} from "util/conversion";
 import usePrices from "hooks/usePrices";
+import {LCDClient} from "@terra-money/feather.js/dist/client/lcd/LCDClient";
+import useClient from "hooks/useClient";
 
 interface Asset {
     amount: string;
@@ -18,11 +17,11 @@ interface PoolInfo {
     assets: Asset[]
     total_share: number
 }
-export const fetchTotalPoolSupply = async (client: Wallet, whalePrice: number) => {
+export const fetchTotalPoolSupply = async (client: LCDClient, whalePrice: number) => {
     if (!client) {
         return null
     }
-    const poolInfo : PoolInfo = await client.queryContractSmart("migaloo1xv4ql6t6r8zawlqn2tyxqsrvjpmjfm6kvdfvytaueqe3qvcwyr7shtx0hj", {
+    const poolInfo : PoolInfo = await client.wasm.contractQuery("migaloo1xv4ql6t6r8zawlqn2tyxqsrvjpmjfm6kvdfvytaueqe3qvcwyr7shtx0hj", {
         pool: {},
     })
     const totalDollarAmount = poolInfo?.assets.map((asset) => {
@@ -38,7 +37,7 @@ export const fetchTotalPoolSupply = async (client: Wallet, whalePrice: number) =
     return totalDollarAmount / convertMicroDenomToDenom(poolInfo.total_share, 6)
 }
 export const useGetLPTokenPrice = () => {
-    const { client } = useRecoilValue(walletState)
+    const client = useClient()
     const [priceList] = usePrices() || []
     const whalePrice = priceList?.['Whale']
     const {data: lpTokenPrice, isLoading} = useQuery(['getLPInfo', whalePrice],

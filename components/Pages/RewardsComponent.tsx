@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import Loader from 'components/Loader';
 import { FC, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue} from 'recoil';
 import { walletState } from 'state/walletState';
 import WalletModal from 'components/Wallet/Modal/WalletModal';
 import ClaimButton from 'components/Pages/ClaimButton';
@@ -25,7 +25,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
   isLoading,
   data,
 }) => {
-  const [{ chainId }, _] = useRecoilState(walletState);
+  const { chainId }= useRecoilValue(walletState);
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
