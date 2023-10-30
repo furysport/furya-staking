@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Text, VStack } from '@chakra-ui/react';
 import AssetInput from 'components/AssetInput/index';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import { walletState, WalletStatusType } from 'state/walletState';
+import { walletState } from 'state/walletState';
 import { Controller, useForm } from 'react-hook-form';
 import { delegationState, DelegationState } from 'state/delegationState';
 import ValidatorInput from 'components/ValidatorInput/ValidatorInput';

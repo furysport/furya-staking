@@ -2,9 +2,8 @@ import {HStack, Text, VStack} from "@chakra-ui/react"
 import CardComponent, {AssetType} from "components/Pages/CardComponent"
 import AssetOverview, {TokenType} from "components/Pages/AssetOverview"
 import RewardsComponent from "components/Pages/RewardsComponent"
-import React, {useState} from "react"
+import React from "react"
 import CustomButton from "components/CustomButton"
-import {ActionType} from "components/Pages/Dashboard"
 import {useRouter} from "next/router"
 import {useRecoilState} from "recoil";
 import {delegationState} from "state/delegationState";

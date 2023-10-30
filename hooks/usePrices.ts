@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { getTokenPrice } from 'hooks/getPrice';
 
 const usePrices = () => {
-  const { data: priceList, isLoading } = useQuery({
+  const { data: priceList } = useQuery({
     queryKey: ['priceList'],
     queryFn: getTokenPrice,
   });
