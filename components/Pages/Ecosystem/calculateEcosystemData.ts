@@ -10,7 +10,7 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
         const balance = ecosystemBalances?.[index] !== undefined ? ecosystemBalances?.[index] : 0
         return {
             ...token,
-            dollarValue: token.symbol === 'mUSDC' ? 1 :
+            dollarValue: token.symbol === 'mUSDC' ? balance :
                 priceList && priceList[token.name]
                     ? priceList[token.name] * balance
                     : 0,
@@ -22,10 +22,6 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
         const allDelegations = stakedBalances.filter(
             (balance) =>  balance?.tokenSymbol === tokenData?.tokenSymbol,
         )
-        const aggregatedDollarValue = allDelegations.reduce(
-            (acc, e) => acc + e.tokenSymbol === 'mUSDC' ? 1 : (Number(e?.amount ?? 0) * Number(priceList[e.name] ?? 0)),
-            0,
-        )
         const aggregatedAmount = allDelegations.reduce(
             (acc, e) => acc + Number(e?.amount ?? 0),
             0,
@@ -33,7 +29,7 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
 
         return {
             ...tokenData,
-            dollarValue: Number(aggregatedDollarValue),
+            dollarValue: Number(aggregatedAmount) * (tokenData.tokenSymbol === 'mUSDC' ? 1 : Number(priceList[tokenData.name] ?? 0)),
             value: Number(aggregatedAmount),
         }
     }
