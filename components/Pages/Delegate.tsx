@@ -115,10 +115,6 @@ export const Delegate = ({tokenSymbol}) => {
         return 'Delegate'
     }, [status])
 
-    useEffect(() => {
-
-    }, [])
-
     return (<VStack
             width={{base: '100%', md: '650px'}}
             alignItems="flex-start"
@@ -186,8 +182,7 @@ export const Delegate = ({tokenSymbol}) => {
                                         tokenSymbol: value.tokenSymbol,
                                         amount: value.amount === '' ? 0 : Number(value.amount),
                                         denom: denom,
-                                    });
-
+                                    })
                                 } else {
                                     setCurrentDelegationState({
                                         ...currentDelegationState,
