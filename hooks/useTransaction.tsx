@@ -141,9 +141,7 @@ export const useTransaction = () => {
             onSuccess: (data: any) => {
                 setTxStep(TxStep.Broadcasting)
                 setTimeout(() => {
-                    console.log('data', data)
                     setTxHash(data?.transactionHash ?? data?.result?.txhash)
-
                     toast({
                         title: (() => {
                             switch (delegationAction) {
@@ -156,7 +154,7 @@ export const useTransaction = () => {
                             }
                         })(),
                         description: (
-                            <Finder txHash={data.transactionHash} chainId={chainId}>
+                            <Finder txHash={data?.transactionHash ?? data?.result?.txhash} chainId={chainId}>
                                 {' '}
                             </Finder>
                         ),
@@ -164,7 +162,7 @@ export const useTransaction = () => {
                         duration: 9000,
                         position: 'top-right',
                         isClosable: true,
-                    });
+                    })
                 }, 2000);
             },
         },
