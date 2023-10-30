@@ -1,5 +1,3 @@
-import {Reward} from "components/Pages/Dashboard";
-import whiteListedEcosystemTokens from 'public/mainnet/white_listed_ecosystem_token_info.json'
 import {EnhancedStakeInfo} from "hooks/useQueryStakedBalances";
 import {RewardInfo} from "hooks/useQueryRewards";
 

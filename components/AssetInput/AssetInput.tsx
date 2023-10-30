@@ -81,7 +81,7 @@ const AssetInput = forwardRef((props: AssetInputProps, ref) => {
         onHalfClick={onHalfClick}
       />
     </VStack>
-  );
-});
+  )
+})
 
 export default AssetInput;

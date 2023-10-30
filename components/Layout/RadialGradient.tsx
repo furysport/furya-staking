@@ -1,7 +1,5 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Box } from '@chakra-ui/react';
-import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
 
 const backgrounds = {
   'migaloo-1':

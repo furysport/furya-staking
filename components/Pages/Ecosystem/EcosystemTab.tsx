@@ -16,7 +16,6 @@ export const EcosystemTab = ({
                                  updatedData,
                                  aprs,
                              }) => {
-    const [currentActionType, setCurrentActionType] = useState<ActionType>(null)
     const [currentDelegationState, setCurrentDelegationState] = useRecoilState(delegationState)
     const router = useRouter()
 

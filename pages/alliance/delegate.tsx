@@ -7,7 +7,6 @@ const DelegatePage = () => {
   const validatorDestAddress = router.query.validatorDestAddress;
   const tokenSymbol = router.query.tokenSymbol;
 
-  // @ts-ignore
   return (
     <ActionsComponent
       globalAction={ActionType.delegate}

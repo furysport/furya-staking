@@ -1,6 +1,5 @@
 import {Wallet} from "util/wallet-adapters/index";
 import file from "public/mainnet/contract_addresses.json"
-import {Coin} from "@terra-money/feather.js";
 import {coin} from "@cosmjs/amino";
 
 export const delegate = async (

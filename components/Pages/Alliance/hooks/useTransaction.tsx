@@ -17,7 +17,6 @@ import { nativeRedelegate } from 'components/Pages/Alliance/native-staking/nativ
 import { claimAllRewards } from 'components/Pages/Alliance/hooks/claimRewards';
 import useClient from 'hooks/useTerraStationClient';
 import useDelegations from 'hooks/useDelegations';
-import useValidators from 'hooks/useValidators';
 import {TxStep} from "types/blockchain";
 
 

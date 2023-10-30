@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { Text, VStack } from '@chakra-ui/react';
 import AssetInput from 'components/AssetInput/index';
-import { useRecoilState } from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import { walletState, WalletStatusType } from 'state/walletState';
 import { Controller, useForm } from 'react-hook-form';
 import { delegationState, DelegationState } from 'state/delegationState';
@@ -12,11 +12,9 @@ import useValidators from 'hooks/useValidators';
 import { useRouter } from 'next/router';
 
 const Undelegate = ({ delegations, validatorSrcAddress, tokenSymbol }) => {
-  const [{ status, address }, _] = useRecoilState(walletState);
-  const [currentDelegationState, setCurrentDelegationState] =
+    const { address } = useRecoilValue(walletState);
+    const [currentDelegationState, setCurrentDelegationState] =
     useRecoilState<DelegationState>(delegationState);
-
-  const isWalletConnected = status === WalletStatusType.connected;
 
   const { data: { validators = [] } = {} } = useValidators({ address });
 

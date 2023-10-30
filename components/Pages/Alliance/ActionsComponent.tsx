@@ -8,7 +8,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { useRecoilState } from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import { walletState, WalletStatusType } from 'state/walletState';
 import Redelegate from 'components/Pages/Alliance/Redelegate';
 import Delegate, { TokenBalance } from 'components/Pages/Alliance/Delegate';
@@ -34,8 +34,8 @@ const ActionsComponent = ({
   validatorSrcAddress,
   tokenSymbol = 'ampLUNA',
 }) => {
-  const [{ chainId, status, address }, _] = useRecoilState(walletState);
-  const isWalletConnected: boolean = status === WalletStatusType.connected;
+  const { chainId, status, address } = useRecoilValue(walletState)
+  const isWalletConnected: boolean = status === WalletStatusType.connected
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -90,7 +90,7 @@ const ActionsComponent = ({
     else return ActionType[globalAction];
   }, [isWalletConnected, currentDelegationState, globalAction]);
 
-  const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(false);
+  const [isLoadingSummary, __] = useState<boolean>(false);
 
   const DelegationActionButton = ({ action }) => {
     const actionString = ActionType[action].toString();

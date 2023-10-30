@@ -5,10 +5,10 @@ import {TokenInfo} from 'hooks/useTokenInfo';
 import {tabState, TabType} from "state/tabState";
 
 export const useTokenList = () => {
-    const {chainId, client, network} = useRecoilValue(walletState)
+    const {chainId, network} = useRecoilValue(walletState)
     const tabType = useRecoilValue(tabState)
-    let tokenInfoList = []
-    let isLoading = false
+    let tokenInfoList: TokenInfo[]
+    let isLoading: boolean
     if (tabType === TabType.alliance) {
         const {data, isLoading: loading} = useQuery<TokenInfo[]>(
             ['tokenInfo-alliance', chainId, network],

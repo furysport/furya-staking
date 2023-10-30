@@ -4,13 +4,13 @@ import CosmostationWalletIcon from 'components/icons/CosmostationWalletIcon';
 import KeplrWalletIcon from 'components/icons/KeplrWalletIcon';
 import LeapWalletIcon from 'components/icons/LeapWalletIcon';
 import TerraExtensionIcon from 'components/icons/TerraExtensionIcon';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue} from 'recoil';
 import { walletState } from 'state/walletState';
 
-function ConnectedWalletIcon({ connected }) {
-  const [currentWalletState, setCurrentWalletState] =
-    useRecoilState(walletState);
-  switch (currentWalletState?.activeWallet) {
+function ConnectedWalletIcon() {
+  const {activeWallet} =
+    useRecoilValue(walletState)
+  switch (activeWallet) {
     case 'keplr':
       return <KeplrWalletIcon />;
     case 'leap':
