@@ -1,13 +1,13 @@
 [
   {
     "chainId": "migaloo-1",
-    "token_address": "factory/migaloo1nha6qlam4p92cf9j64qv9he40xyf3akl2m9w5dukftmf2ryrxz5qy650zh/uLP",
+    "token_address": "factory/migaloo1xv4ql6t6r8zawlqn2tyxqsrvjpmjfm6kvdfvytaueqe3qvcwyr7shtx0hj/uLP",
     "symbol": "USDC-WHALE-LP",
     "name": "USDC-WHALE LP",
     "decimals": 6,
     "logoURI": "/logos/whale-usdc-lp.png",
     "tags": ["native"],
-    "denom": "factory/migaloo1nha6qlam4p92cf9j64qv9he40xyf3akl2m9w5dukftmf2ryrxz5qy650zh/uLP",
+    "denom": "factory/migaloo1xv4ql6t6r8zawlqn2tyxqsrvjpmjfm6kvdfvytaueqe3qvcwyr7shtx0hj/uLP",
     "native": true,
     "color": "#7CFB7D"
   }

@@ -26,12 +26,12 @@ export const Delegate = ({tokenSymbol}) => {
     const [currentDelegationState, setCurrentDelegationState] =
         useRecoilState<DelegationState>(delegationState)
     const [_, setTabType] = useRecoilState(tabState)
-    const { status, chainId } = useRecoilValue(walletState)
+    const {status, chainId} = useRecoilValue(walletState)
     const isWalletConnected: boolean = status === WalletStatusType.connected
-    const { submit, txStep } = useTransaction()
+    const {submit, txStep} = useTransaction()
     const router = useRouter()
     const tabFromUrl = router.pathname.split('/')[1].split('/')[0]
-    const { control } = useForm({
+    const {control} = useForm({
         mode: 'onChange',
         defaultValues: {
             currentDelegationState,
@@ -44,22 +44,22 @@ export const Delegate = ({tokenSymbol}) => {
     } = useDisclosure()
 
     const whiteListedTokens = useMemo(() => {
-        if(tabFromUrl === 'ecosystem') {
+        if (tabFromUrl === 'ecosystem') {
             return whiteListedEcosystemTokens
-        } else if(tabFromUrl === 'liquidity') {
+        } else if (tabFromUrl === 'liquidity') {
             return whiteListedLiquidityTokens
         }
     }, [tabFromUrl])
 
     useEffect(() => {
-        if(tabFromUrl === 'ecosystem') {
+        if (tabFromUrl === 'ecosystem') {
             setTabType(TabType.ecosystem)
-        } else if(tabFromUrl === 'liquidity') {
+        } else if (tabFromUrl === 'liquidity') {
             setTabType(TabType.liquidity)
         }
     }, [tabFromUrl])
 
-    const { data: balances } = useMultipleTokenBalance(
+    const {data: balances} = useMultipleTokenBalance(
         whiteListedTokens?.map((e) => e.symbol) ?? [],
     )
     const liquidTokenPriceBalances: TokenBalance[] =
@@ -71,12 +71,12 @@ export const Delegate = ({tokenSymbol}) => {
         (e) => e.tokenSymbol === currentDelegationState.tokenSymbol,
     )
     const [priceList] = usePrices() || []
-    const { lpTokenPrice } = useGetLPTokenPrice()
+    const {lpTokenPrice} = useGetLPTokenPrice()
 
     useEffect(() => {
         if (tokenSymbol) {
             const token = whiteListedTokens.find((e) => e.symbol === tokenSymbol)
-            if(!token) return
+            if (!token) return
             setCurrentDelegationState({
                 ...currentDelegationState,
                 tokenSymbol: token.symbol,
@@ -84,7 +84,7 @@ export const Delegate = ({tokenSymbol}) => {
                 decimals: 6,
                 denom: token?.denom,
             })
-        }else {
+        } else {
             const token = whiteListedTokens.find((e) => e.symbol === currentDelegationState.tokenSymbol) || whiteListedTokens[0]
             setCurrentDelegationState({
                 ...currentDelegationState,
@@ -94,7 +94,14 @@ export const Delegate = ({tokenSymbol}) => {
                 denom: token?.denom,
             })
         }
-    }, [tokenSymbol]);
+    }, [tokenSymbol])
+
+    useEffect(() => {
+        router.push(`/${tabFromUrl}/delegate?tokenSymbol=${currentDelegationState.tokenSymbol}`)
+    }, [tabFromUrl, currentDelegationState])
+
+    console.log("currentDelegationState.tokenSymbol")
+    console.log(currentDelegationState.tokenSymbol)
 
     const price = useMemo(
         () => currentDelegationState?.tokenSymbol === "USDC-WHALE_LP" ? lpTokenPrice :
@@ -116,117 +123,117 @@ export const Delegate = ({tokenSymbol}) => {
     }, [])
 
     return (<VStack
-                    width={{ base: '100%', md: '650px' }}
-                    alignItems="flex-start"
-                    top={200}
-                    position="absolute">
-                    <HStack width={"full"} justifyContent={"space-between"}>
-                        <IconButton
-                            variant="unstyled"
-                            color="white"
-                            fontSize="28px"
-                            aria-label="go back"
-                            icon={<ArrowBackIcon />}
-                            onClick={async () => {
-                                await router.push(`/`)
-                                setCurrentDelegationState({
-                                    ...currentDelegationState,
-                                    amount: 0,
-                                })
-                            }}
-                        />
-                        <Text
-                            fontSize="24"
-                            fontWeight="900"
-                            style={{ textTransform: 'capitalize' }}>
-                            Delegate
-                        </Text>
-                    </HStack>
-                    <VStack
-                        width="full"
-                        background={'#1C1C1C'}
-                        borderRadius={'30px'}
-                        alignItems="flex-start"
-                        verticalAlign="flex-start"
-                        top={50}
-                        maxH={660}
-                        gap={4}
-                        as="form"
-                        position="absolute"
-                        p={7}
-                        left="50%"
-                        transform="translateX(-50%)"
-                        display="flex">
-                        <Controller
-                            name="currentDelegationState"
-                            control={control}
-                            rules={{ required: true }}
-                            render={({ field }) => (
-                                <AssetInput
-                                    hideToken={currentDelegationState.tokenSymbol}
-                                    hideLogo={currentDelegationState.tokenSymbol === "USDC-WHALE-LP"}
-                                    {...field}
-                                    token={currentDelegationState}
-                                    whalePrice={price}
-                                    balance={currentTokenBalance?.balance}
-                                    minMax={false}
-                                    disabled={false}
-                                    onChange={async (value, isTokenChange) => {
-                                        field.onChange(value);
-                                        if (isTokenChange) {
-                                            const denom = whiteListedTokens.find(
-                                                (t) => t.symbol === value.tokenSymbol,
-                                            ).denom;
-                                            setCurrentDelegationState({
-                                                ...currentDelegationState,
-                                                tokenSymbol: value.tokenSymbol,
-                                                amount: value.amount === '' ? 0 : Number(value.amount),
-                                                denom: denom,
-                                            });
+            width={{base: '100%', md: '650px'}}
+            alignItems="flex-start"
+            top={200}
+            position="absolute">
+            <HStack width={"full"} justifyContent={"space-between"}>
+                <IconButton
+                    variant="unstyled"
+                    color="white"
+                    fontSize="28px"
+                    aria-label="go back"
+                    icon={<ArrowBackIcon/>}
+                    onClick={async () => {
+                        await router.push(`/`)
+                        setCurrentDelegationState({
+                            ...currentDelegationState,
+                            amount: 0,
+                        })
+                    }}
+                />
+                <Text
+                    fontSize="24"
+                    fontWeight="900"
+                    style={{textTransform: 'capitalize'}}>
+                    Delegate
+                </Text>
+            </HStack>
+            <VStack
+                width="full"
+                background={'#1C1C1C'}
+                borderRadius={'30px'}
+                alignItems="flex-start"
+                verticalAlign="flex-start"
+                top={50}
+                maxH={660}
+                gap={4}
+                as="form"
+                position="absolute"
+                p={7}
+                left="50%"
+                transform="translateX(-50%)"
+                display="flex">
+                <Controller
+                    name="currentDelegationState"
+                    control={control}
+                    rules={{required: true}}
+                    render={({field}) => (
+                        <AssetInput
+                            hideToken={currentDelegationState.tokenSymbol}
+                            hideLogo={currentDelegationState.tokenSymbol === "USDC-WHALE-LP"}
+                            {...field}
+                            token={currentDelegationState}
+                            whalePrice={price}
+                            balance={currentTokenBalance?.balance}
+                            minMax={false}
+                            disabled={false}
+                            onChange={async (value, isTokenChange) => {
+                                field.onChange(value);
+                                if (isTokenChange) {
+                                    const denom = whiteListedTokens.find(
+                                        (t) => t.symbol === value.tokenSymbol,
+                                    ).denom;
+                                    setCurrentDelegationState({
+                                        ...currentDelegationState,
+                                        tokenSymbol: value.tokenSymbol,
+                                        amount: value.amount === '' ? 0 : Number(value.amount),
+                                        denom: denom,
+                                    });
 
-                                        } else {
-                                            setCurrentDelegationState({
-                                                ...currentDelegationState,
-                                                amount: value.amount === '' ? 0 : value.amount,
-                                            })
-                                        }
-                                    }}
-                                />
-                            )}
-                        />
-                        <CustomButton
-                            buttonLabel={buttonLabel}
-                            onClick={async () => {
-                                if(isWalletConnected){
-                                await submit(ActionType.delegate,
-                                    currentDelegationState.amount,
-                                    currentDelegationState.denom,
-                                    )}
-                                else{
-                                    onOpenModal()
+                                } else {
+                                    setCurrentDelegationState({
+                                        ...currentDelegationState,
+                                        amount: value.amount === '' ? 0 : value.amount,
+                                    })
                                 }
                             }}
-                            disabled={
-                                txStep === TxStep.Estimating ||
-                                txStep === TxStep.Posting ||
-                                txStep === TxStep.Broadcasting ||
-                                (currentDelegationState.amount <= 0 && isWalletConnected)
-                            }
-                            loading={
-                                txStep === TxStep.Estimating ||
-                                txStep === TxStep.Posting ||
-                                txStep === TxStep.Broadcasting
-                            }
-                            height="42px"
-                            width="600px"
                         />
-                    </VStack>
-                    <WalletModal
-                        isOpenModal={isOpenModal}
-                        onCloseModal={onCloseModal}
-                        chainId={chainId}
-                    />
-                </VStack>
+                    )}
+                />
+                <CustomButton
+                    buttonLabel={buttonLabel}
+                    onClick={async () => {
+                        if (isWalletConnected) {
+                            await submit(ActionType.delegate,
+                                currentDelegationState.amount,
+                                currentDelegationState.denom,
+                            )
+                        } else {
+                            onOpenModal()
+                        }
+                    }}
+                    disabled={
+                        txStep === TxStep.Estimating ||
+                        txStep === TxStep.Posting ||
+                        txStep === TxStep.Broadcasting ||
+                        (currentDelegationState.amount <= 0 && isWalletConnected)
+                    }
+                    loading={
+                        txStep === TxStep.Estimating ||
+                        txStep === TxStep.Posting ||
+                        txStep === TxStep.Broadcasting
+                    }
+                    height="42px"
+                    width="600px"
+                />
+            </VStack>
+            <WalletModal
+                isOpenModal={isOpenModal}
+                onCloseModal={onCloseModal}
+                chainId={chainId}
+            />
+        </VStack>
     );
 }
 
