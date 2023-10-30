@@ -271,7 +271,6 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        console.log({allianceBalances, ecosystemBalances, liquidityBalances, isDelegationsLoading, updatedAllianceData, priceList})
         setLoading(
             updatedAllianceData === null ||
             !priceList,

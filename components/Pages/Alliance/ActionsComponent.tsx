@@ -93,7 +93,7 @@ const ActionsComponent = ({
   const [isLoadingSummary, __] = useState<boolean>(false);
 
   const DelegationActionButton = ({ action }) => {
-    const actionString = ActionType[action].toString();
+    const actionString = ActionType[action].toString()
     const onClick = async () => {
        setCurrentDelegationState({
         ...currentDelegationState,
