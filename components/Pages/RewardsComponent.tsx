@@ -31,7 +31,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
     onOpen: onOpenModal,
     onClose: onCloseModal,
   } = useDisclosure();
-  // console.log(data);
+
   const claimableRewards = useMemo(
     () => data?.reduce((acc, e) => acc + (Number(e?.dollarValue) ?? 0), 0),
     [data],
@@ -76,7 +76,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
           >
             <Text fontSize={27} fontWeight={'bold'}>
               {isWalletConnected
-                ? `$${claimableRewards.toFixed(2).toString()}`
+                ? `$${claimableRewards?.toFixed(2).toString()}`
                 : 'n/a'}
             </Text>
             <ClaimButton
