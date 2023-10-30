@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Flex, HStack, useDisclosure } from '@chakra-ui/react';
 import { useWallet } from '@terra-money/wallet-provider';
 import { useRecoilState } from 'recoil';
-import { walletState, WalletStatusType } from 'state/atoms/walletAtoms';
+import { walletState, WalletStatusType } from 'state/walletState';
 
 import Wallet from '../Wallet/Wallet';
 import Logo from './Logo';

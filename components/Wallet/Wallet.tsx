@@ -5,14 +5,11 @@ import Card from 'components/Card';
 import WalletIcon from 'components/icons/WalletIcon';
 import ChainSelectWithBalance from 'components/Wallet/ChainSelectWithBalance/ChainSelectWithBalance';
 import ConnectedWalletWithDisconnect from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWalletWithDisconnect';
-import useConnectCosmostation from 'hooks/useConnectCosmostation';
-import useConnectKeplr from 'hooks/useConnectKeplr';
-import useConnectLeap from 'hooks/useConnectLeap';
 import { useTerraStation } from 'hooks/useTerraStation';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
-import { walletState } from 'state/atoms/walletAtoms';
-import WalletModal from 'components/Wallet/Modal/Modal';
+import { walletState } from 'state/walletState';
+import WalletModal from 'components/Wallet/Modal/WalletModal';
 
 const Wallet: any = ({
   connected,
@@ -29,9 +26,6 @@ const Wallet: any = ({
 
   const connectedWallet = useConnectedWallet();
 
-  const { connectKeplr } = useConnectKeplr();
-  const { connectLeap } = useConnectLeap();
-  const { connectCosmostation } = useConnectCosmostation();
   const { connectTerraAndCloseModal, filterForStation } = useTerraStation(
     () => {},
   );
@@ -54,14 +48,7 @@ const Wallet: any = ({
   useEffect(() => {
     if (!isInitialized) return;
     if (!currentWalletState.chainId) return;
-
-    if (currentWalletState.activeWallet === 'leap') {
-      connectLeap();
-    } else if (currentWalletState.activeWallet === 'keplr') {
-      connectKeplr();
-    } else if (currentWalletState.activeWallet === 'cosmostation') {
-      connectCosmostation();
-    } else if (currentWalletState.activeWallet === 'station') {
+    if (currentWalletState.activeWallet === 'station') {
       const [{ type = null, identifier = null } = {}] =
         availableConnections.filter(filterForStation);
       if (type && identifier) connectTerraAndCloseModal(type, identifier);
@@ -78,7 +65,7 @@ const Wallet: any = ({
           display="flex"
           gap="3"
           color="white"
-          borderColor="whiteAlpha.400"
+          border={"1px solid rgba(255, 255, 255, 0.5)"}
           borderRadius="full"
           onClick={onOpenModal}
         >
@@ -110,7 +97,7 @@ const Wallet: any = ({
         />
       </Card>
     </>
-  );
-};
+  )
+}
 
-export default Wallet;
+export default Wallet

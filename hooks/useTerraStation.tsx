@@ -9,16 +9,14 @@ import {
 } from '@terra-money/wallet-provider';
 
 import { useRecoilState } from 'recoil';
-import { walletState, WalletStatusType } from 'state/atoms/walletAtoms';
+import { walletState, WalletStatusType } from 'state/walletState';
 import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
-import { useChainInfo } from './useChainInfo';
 
 export const useTerraStation = (onCloseModal) => {
   const { connect } = useWallet();
   const connectedWallet = useConnectedWallet();
   const [currentWalletState, setCurrentWalletState] =
     useRecoilState(walletState);
-  let [chainInfo] = useChainInfo(currentWalletState.chainId);
 
   const filterForStation = (connection: Connection) => {
     return connection.identifier === 'station';
@@ -43,7 +41,7 @@ export const useTerraStation = (onCloseModal) => {
         gasPrices: { uluna: 0.015 },
         prefix: 'terra',
       },
-    });
+    })
     // TODO: Make this better and derived from like a config or something
     // Previous pattern we did was passing 1 chain config when on a given chain but here we can pass em all at once
     const mainnet = new LCDClient({

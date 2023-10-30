@@ -1,10 +1,10 @@
-import React from 'react';
+import React from 'react'
 
-import { Spinner, Text } from '@chakra-ui/react';
-import { useTokenBalance } from 'hooks/useTokenBalance';
+import { Spinner, Text } from '@chakra-ui/react'
+import {useGetWhaleBalance} from "hooks/useGetWhaleBalance"
 
 function DisplayBalance() {
-  const { balance, isLoading } = useTokenBalance('WHALE');
+  const { balance, isLoading } = useGetWhaleBalance()
 
   return (
     <>
@@ -16,7 +16,7 @@ function DisplayBalance() {
         </Text>
       )}
     </>
-  );
+  )
 }
 
 export default DisplayBalance;

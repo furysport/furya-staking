@@ -1,9 +1,7 @@
 import { VStack, forwardRef } from '@chakra-ui/react';
 import React, { useMemo } from 'react';
-//import { useTokenDollarValue } from 'hooks/useTokenDollarValue'
 import WhaleInput from './WhaleInput';
 import { num } from 'libs/num';
-//import { useBaseTokenInfo, useTokenInfo } from 'hooks/useTokenInfo'
 import BalanceWithMaxNHalf from './BalanceWithMax';
 
 interface AssetInputProps {
@@ -24,45 +22,38 @@ interface AssetInputProps {
   hideMax?: boolean;
   hideDollarValue?: boolean;
   showBalanceSlider?: boolean;
+  hideLogo?: boolean;
 }
 
 const AssetInput = forwardRef((props: AssetInputProps, ref) => {
   const {
     balance,
-    disabled,
-    isSingleInput,
     whalePrice,
     token,
     onChange,
-    ignoreSlack,
     hideMax,
     hideDollarValue,
-  } = props;
-  // const tokenInfo = useTokenInfo(token?.tokenSymbol)
-  // const baseToken = useBaseTokenInfo()
+  } = props
 
   const onMaxClick = () => {
     onChange({
       ...token,
-      amount: num(balance === 0 ? 0 : balance - 0.1).toFixed(6),
-    });
-  };
+      amount: num(balance === 0 ? 0 : balance).toFixed(6),
+    })
+  }
   const onHalfClick = () => {
     onChange({
       ...token,
       amount: num(balance === 0 ? 0 : balance / 2).toFixed(6),
-    });
-  };
-  // const maxDisabled = useMemo(() => {
-  //   return disabled || (!isSingleInput && !tokenInfo?.symbol)
-  // }, [balance, disabled, isSingleInput, tokenInfo])
+    })
+  }
 
   const numberOfTokens = useMemo(
     () => `${token?.amount} ${token?.tokenSymbol}`,
     [token],
   );
 
-  const [tokenPrice] = [whalePrice]; //whalePrice !== null ? [whalePrice] : useTokenDollarValue(token?.tokenSymbol)
+  const [tokenPrice] = [whalePrice]
 
   const dollarValue = useMemo(() => {
     return num(tokenPrice).times(token?.amount).dp(6).toString();
@@ -90,7 +81,7 @@ const AssetInput = forwardRef((props: AssetInputProps, ref) => {
         onHalfClick={onHalfClick}
       />
     </VStack>
-  );
-});
+  )
+})
 
 export default AssetInput;

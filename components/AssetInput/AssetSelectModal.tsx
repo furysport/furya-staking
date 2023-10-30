@@ -12,14 +12,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Asset } from 'types/blockchain';
-
 import AssetList from './AssetList';
 import SearchInput from './SearchInput';
 
 interface AssetSelectModalProps {
   children: ReactNode;
   currentTokenSymbol: string;
-  edgeTokenList: string[];
   onChange: (asset: Asset, isTokenChange?: boolean) => void;
   disabled: boolean;
   amount?: number;
@@ -29,19 +27,18 @@ const AssetSelectModal: FC<AssetSelectModalProps> = ({
   children,
   onChange,
   currentTokenSymbol,
-  edgeTokenList = [],
   disabled,
   amount,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [search, setSearch] = useState<string>('');
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [search, setSearch] = useState<string>('')
 
   const onAssetChange = (asset, isTokenChange) => {
-    setSearch(asset?.asset);
-    const newAsset = { ...asset, amount };
-    onChange(newAsset, isTokenChange);
+    setSearch(asset?.asset)
+    const newAsset = { ...asset, amount }
+    onChange(newAsset, isTokenChange)
     onClose();
-  };
+  }
   return (
     <>
       <HStack
@@ -74,7 +71,6 @@ const AssetSelectModal: FC<AssetSelectModalProps> = ({
               amount={amount}
               onChange={onAssetChange}
               search={search}
-              edgeTokenList={edgeTokenList}
               currentTokenSymbol={currentTokenSymbol}
             />
           </ModalBody>

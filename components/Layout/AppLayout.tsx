@@ -1,17 +1,13 @@
 import { FC, ReactNode } from 'react';
 import { isMobile } from 'react-device-detect';
-
 import { Flex, useMediaQuery } from '@chakra-ui/react';
 import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/atoms/walletAtoms';
-
-//import Status from '../Status'
+import { walletState } from 'state/walletState';
 import MobileNotSupportedModal from '../Wallet/Modal/MobileNotSupportedModal';
 import RadialGradient from './RadialGradient';
 import Header from 'components/Header/Header';
 import Status from 'components/Status';
 
-// import { useRouter } from "next/router";
 interface Props {
   children: ReactNode;
 }
@@ -48,7 +44,7 @@ const AppLayout: FC<Props> = ({ children }) => {
         </Flex>
       )}
     </>
-  );
-};
+  )
+}
 
-export default AppLayout;
+export default AppLayout

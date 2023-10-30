@@ -1,8 +1,8 @@
 import useClient from 'hooks/useClient';
-import usePrice from 'hooks/usePrice';
+import usePrices from 'hooks/usePrices';
 import { useQuery } from 'react-query';
 import { LCDClient } from '@terra-money/feather.js';
-import whiteListedTokens from 'public/mainnet/white_listed_token_info.json';
+import whiteListedTokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { AllianceAsset } from '@terra-money/feather.js/dist/client/lcd/api/AllianceAPI';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
@@ -16,7 +16,9 @@ export interface Alliance {
 }
 export const useAlliances = () => {
   const client = useClient();
-  const [priceList] = usePrice() || [];
+  const [priceList] = usePrices() || [];
+
+
   const { data: alliances } = useQuery({
     queryKey: ['alliances', priceList],
     queryFn: () => fetchAlliances(client, priceList),

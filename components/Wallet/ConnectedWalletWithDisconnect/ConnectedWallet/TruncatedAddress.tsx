@@ -3,7 +3,7 @@ import React from 'react';
 import { Text } from '@chakra-ui/react';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
 import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/atoms/walletAtoms';
+import { walletState } from 'state/walletState';
 import { truncate } from 'util/truncate';
 
 function TruncatedAddress({ connected }) {

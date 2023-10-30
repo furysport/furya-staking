@@ -1,10 +1,10 @@
-import { LCDClient } from '@terra-money/feather.js';
-import tokens from './tokens.json';
-import { num } from 'libs/num';
+import { LCDClient } from '@terra-money/feather.js'
+import tokens from 'public/mainnet/tokens.json'
+import { num } from 'libs/num'
 
 type PoolInfo = {
   denom: string;
-  deimals: number;
+  decimals: number;
   contract: string;
   base?: boolean;
   basedOn?: string;
@@ -16,7 +16,7 @@ type TokenPrice = {
   [key: string]: number;
 };
 
-const getLCDClient = (chainId: string) => {
+const getLCDClient = () => {
   return new LCDClient({
     'migaloo-1': {
       lcd: 'https://ww-migaloo-rest.polkachu.com/',
@@ -36,10 +36,10 @@ const getLCDClient = (chainId: string) => {
 };
 
 const getPriceFromPool = (
-  { denom, deimals, contract, base, basedOn, chainId }: PoolInfo,
+  { denom, decimals, contract, base, basedOn }: PoolInfo,
   basePrice?: TokenPrice,
 ): Promise<number> => {
-  const client = getLCDClient(chainId);
+  const client = getLCDClient();
 
   return client.wasm
     .contractQuery(contract, { pool: {} })
@@ -48,9 +48,9 @@ const getPriceFromPool = (
         const [asset1, asset2] = response?.assets || [];
         const isAB = asset1.info.native_token?.denom === denom;
         if (isAB)
-          return num(asset2.amount).div(asset1.amount).dp(deimals).toNumber();
+          return num(asset2.amount).div(asset1.amount).dp(decimals).toNumber();
         else
-          return num(asset1.amount).div(asset2.amount).dp(deimals).toNumber();
+          return num(asset1.amount).div(asset2.amount).dp(decimals).toNumber();
       } else {
         const [asset1, asset2] = response?.assets || [];
         const aToken =
@@ -65,13 +65,13 @@ const getPriceFromPool = (
           return num(asset1.amount)
             .div(asset2.amount)
             .times(basePrice[basedOn])
-            .dp(deimals)
+            .dp(decimals)
             .toNumber();
         else
           return num(asset2.amount)
             .div(asset1.amount)
             .times(basePrice[basedOn])
-            .dp(deimals)
+            .dp(decimals)
             .toNumber();
       }
     });

@@ -1,7 +1,7 @@
-import Dashboard from '../components/Pages/Delegations';
+import Dashboard from 'components/Pages/index';
 
 const Index = () => {
-  return <Dashboard />;
+  return <Dashboard />
 };
 
 export default Index;
