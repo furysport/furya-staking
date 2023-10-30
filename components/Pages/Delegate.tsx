@@ -31,6 +31,7 @@ export const Delegate = ({tokenSymbol}) => {
     const {submit, txStep} = useTransaction()
     const router = useRouter()
     const tabFromUrl = router.pathname.split('/')?.[1].split('/')?.[0]
+    console.log(tabFromUrl)
     const {control} = useForm({
         mode: 'onChange',
         defaultValues: {
