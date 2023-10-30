@@ -9,6 +9,7 @@ import { Wallet } from '../util/wallet-adapters';
 import { getTokenInfoFromTokenList } from './useTokenInfo';
 import { useTokenList } from './useTokenList';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
+import {CW20} from "services/cw20";
 
 async function fetchTokenBalance({
   client,
@@ -29,6 +30,16 @@ async function fetchTokenBalance({
     const coin = await client.getBalance(address, denom);
     const amount = coin ? Number(coin.amount) : 0;
     return convertMicroDenomToDenom(amount, decimals);
+  }
+  if (token_address) {
+    try {
+      const balance = await CW20(client, null).
+      use(token_address).
+      balance(address)
+      return convertMicroDenomToDenom(Number(balance), decimals)
+    } catch (err) {
+      return 0
+    }
   }
   return 0;
 }
