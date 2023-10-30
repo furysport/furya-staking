@@ -84,5 +84,11 @@ const MyApp: FC<AppProps> = ({
   )
 }
 
+MyApp.getInitialProps = async () => {
+  const chainOptions = await getChainOptions()
+  return {
+    ...chainOptions,
+  }
+}
 
 export default MyApp

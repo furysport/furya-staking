@@ -92,7 +92,6 @@ export const Undelegate = ({tokenSymbol}) => {
             setCurrentDelegationState({
                 ...currentDelegationState,
                 tokenSymbol: token.symbol,
-                amount: 0,
                 decimals: 6,
                 denom: token?.denom,
             })
@@ -101,7 +100,6 @@ export const Undelegate = ({tokenSymbol}) => {
             setCurrentDelegationState({
                 ...currentDelegationState,
                 tokenSymbol: token?.symbol,
-                amount: 0,
                 decimals: 6,
                 denom: token?.denom,
             })
