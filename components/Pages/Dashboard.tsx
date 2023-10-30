@@ -23,7 +23,6 @@ import {calculateAllianceData} from "components/Pages/Alliance/hooks/alliance/ca
 import {calculateEcosystemData} from "components/Pages/Ecosystem/calculateEcosystemData";
 import {calculateLiquidityData} from "components/Pages/Liquidity/calculateLiquidityData";
 import {useGetLPTokenPrice} from "hooks/useGetLPTokenPrice";
-import {useGetTotalStakedBalances} from "hooks/useGetTotalStakedBalances";
 
 export interface Reward {
     amount: number;
