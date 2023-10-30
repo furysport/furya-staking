@@ -69,7 +69,7 @@ export const Undelegate = ({tokenSymbol}) => {
             tokenSymbol: info?.tokenSymbol,
             balance: info?.amount,
         }
-    }).find(
+    })?.find(
         (e) => e.tokenSymbol === currentDelegationState.tokenSymbol,
     ), [stakedInfos, currentDelegationState.tokenSymbol])
 
