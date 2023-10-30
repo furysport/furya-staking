@@ -3,7 +3,7 @@ import {EnhancedStakeInfo} from "hooks/useQueryStakedBalances";
 
 export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liquidityBalances,  stakedBalances: EnhancedStakeInfo[], rewards, setLiquidityData) => {
     // Calculate data when dependencies change
-    if (!lpTokenPrice || !liquidityBalances || !rewards) return
+    if (!lpTokenPrice || !liquidityBalances || !rewards || !stakedBalances) return
 
     const liquidData = rawLiquidityTokenData.map((token, index) => {
         const balance = liquidityBalances?.[index] !== undefined ? liquidityBalances?.[index] : 0
