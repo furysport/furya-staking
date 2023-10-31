@@ -2,6 +2,7 @@ import React, {CSSProperties} from 'react';
 import {CircularProgress} from '@chakra-ui/react';
 interface CustomButtonProps {
     isTransparent?: boolean
+    isBold?: boolean;
     onClick: (event: React.MouseEvent) => void;
     disabled?: boolean;
     loading?: boolean;
@@ -13,6 +14,7 @@ interface CustomButtonProps {
 
 const CustomButton: React.FC<CustomButtonProps> = ({
                                                        isTransparent = false,
+                                                       isBold = true,
                                                        onClick,
                                                        disabled = false,
                                                        loading = false,
@@ -29,7 +31,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
         padding: '1rem 1.5rem',
         background: isTransparent ? 'transparent' : disabled ? 'gray' : '#6ACA70',
         color: 'white',
-        fontWeight: 'bold',
+        fontWeight: isBold ? 'bold' : 'normal',
         transform: transform,
         outline: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',

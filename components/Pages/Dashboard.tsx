@@ -258,7 +258,6 @@ const Dashboard = () => {
         calculateAllianceData(rawAllianceTokenData, priceList, allianceBalances, delegations, undelegations, setAllianceData)
     }, [allianceBalances, delegations, rawAllianceTokenData, allianceRewardsTokenData, undelegations, priceList])
 
-
     useEffect(() => {
         calculateEcosystemData(rawEcosystemTokenData, priceList, ecosystemBalances, stakedBalances,rewards, setEcosystemData)
     }, [ecosystemBalances,stakedBalances, rewards, rawEcosystemTokenData, ecosystemRewardsTokenData, priceList])
