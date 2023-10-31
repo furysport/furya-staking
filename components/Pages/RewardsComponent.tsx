@@ -20,7 +20,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                                                       isLoading,
                                                       data,
                                                   }) => {
-    const {chainId, status} = useRecoilValue(walletState)
+    const {chainId} = useRecoilValue(walletState)
     const currentTabState = useRecoilValue(tabState)
     const {
         isOpen: isOpenModal,
@@ -76,10 +76,9 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                                 : 'n/a'}
                         </Text>
                         <HStack gap={1}>
-                            {(currentTabState !== TabType.alliance && isWalletConnected) &&
+                            {currentTabState !== TabType.alliance &&
                              <UpdateRewardsButton
                               isWalletConnected={isWalletConnected}
-                              onOpenModal={onOpenModal}
                              />}
                             <ClaimButton
                                 isWalletConnected={isWalletConnected}
