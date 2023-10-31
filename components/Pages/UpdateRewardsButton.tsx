@@ -19,7 +19,7 @@ const UpdateRewardsButton = ({isWalletConnected}) => {
             isBold={false}
             buttonLabel={'Update'}
             transform={'translateY(-8px)'}
-            onClick={() => onUpdate}
+            onClick={() => onUpdate()}
             disabled={!isWalletConnected || isLoading}
             loading={isLoading}
             height="25px"
