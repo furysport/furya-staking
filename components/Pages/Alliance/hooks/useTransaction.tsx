@@ -210,7 +210,8 @@ export const useTransaction = () => {
       onSuccess: (data: any) => {
         setTxStep(TxStep.Broadcasting);
         setTimeout(() => {
-          setTxHash(data?.result.txhash);
+          const hash = data?.result?.txhash ?? data?.transactionHash
+          setTxHash(hash);
 
           toast({
             title: (() => {
@@ -230,7 +231,7 @@ export const useTransaction = () => {
               }
             })(),
             description: (
-              <Finder txHash={data?.result.txhash} chainId={chainId}>
+              <Finder txHash={hash} chainId={chainId}>
                 {' '}
               </Finder>
             ),

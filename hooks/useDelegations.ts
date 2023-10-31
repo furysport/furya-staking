@@ -26,7 +26,7 @@ const getDelegation = async (
                 {},
               )
               .then(({ rewards }) => {
-                // Rewards end result must look like this
+                // Rewards result must look like this
                 // [
                 //     {
                 //         "denom": "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A",
