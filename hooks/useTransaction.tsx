@@ -1,23 +1,23 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {useMutation, useQuery} from 'react-query';
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
+import {useMutation, useQuery} from 'react-query'
 
-import {useToast} from '@chakra-ui/react';
-import Finder from 'components/Finder';
-import {useRecoilValue} from 'recoil';
-import {walletState} from 'state/walletState';
-import {convertDenomToMicroDenom} from 'util/conversion';
-import {ActionType} from 'components/Pages/Dashboard';
-import useClient from 'hooks/useTerraStationClient';
-import {TxStep} from 'types/blockchain';
-import {delegate} from "hooks/delegate";
-import {undelegate} from "hooks/undelegate";
-import {claimRewards} from "hooks/claimRewards";
-import {isNativeToken} from "util/isNative";
+import {useToast} from '@chakra-ui/react'
+import Finder from 'components/Finder'
+import {useRecoilValue} from 'recoil'
+import {walletState} from 'state/walletState'
+import {convertDenomToMicroDenom} from 'util/conversion'
+import {ActionType} from 'components/Pages/Dashboard'
+import useClient from 'hooks/useTerraStationClient'
+import {TxStep} from 'types/blockchain'
+import {delegate} from "hooks/delegate"
+import {undelegate} from "hooks/undelegate"
+import {claimRewards} from "hooks/claimRewards"
+import {isNativeToken} from "util/isNative"
 
 export const useTransaction = () => {
-    const toast = useToast();
-    const {chainId, address} = useRecoilValue(walletState);
-    const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle);
+    const toast = useToast()
+    const {chainId, address} = useRecoilValue(walletState)
+    const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle)
     const [delegationAction, setDelegationAction] = useState<ActionType>(ActionType.delegate)
     const [txHash, setTxHash] = useState<string>(null)
     const [error, setError] = useState(null)
@@ -28,32 +28,32 @@ export const useTransaction = () => {
         ['fee', error],
         async () => {
             setError(null);
-            setTxStep(TxStep.Estimating);
+            setTxStep(TxStep.Estimating)
             try {
                 const response = 0; //await client.simulate(address, [delegationMsg], '')
 
-                if (!!buttonLabel) setButtonLabel(null);
-                setTxStep(TxStep.Ready);
-                return response;
+                if (!!buttonLabel) setButtonLabel(null)
+                setTxStep(TxStep.Ready)
+                return response
             } catch (error) {
                 if (
                     /insufficient funds/i.test(error.toString()) ||
                     /Overflow: Cannot Sub with/i.test(error.toString())
                 ) {
-                    console.error(error);
-                    setTxStep(TxStep.Idle);
-                    setError('Insufficient Funds');
-                    setButtonLabel('Insufficient Funds');
-                    throw new Error('Insufficient Funds');
+                    console.error(error)
+                    setTxStep(TxStep.Idle)
+                    setError('Insufficient Funds')
+                    setButtonLabel('Insufficient Funds')
+                    throw new Error('Insufficient Funds')
                 } else if (/account sequence mismatch/i.test(error?.toString())) {
-                    setError('You have pending transaction');
-                    setButtonLabel('You have pending transaction');
-                    throw new Error('You have pending transaction');
+                    setError('You have pending transaction')
+                    setButtonLabel('You have pending transaction')
+                    throw new Error('You have pending transaction')
                 } else {
-                    console.error({error});
-                    setTxStep(TxStep.Idle);
-                    setError(error?.message);
-                    throw Error(error?.message);
+                    console.error({error})
+                    setTxStep(TxStep.Idle)
+                    setError(error?.message)
+                    throw Error(error?.message)
                 }
             }
         },
@@ -62,10 +62,10 @@ export const useTransaction = () => {
             refetchOnWindowFocus: false,
             retry: false,
             onSuccess: () => {
-                setTxStep(TxStep.Ready);
+                setTxStep(TxStep.Ready)
             },
             onError: () => {
-                setTxStep(TxStep.Idle);
+                setTxStep(TxStep.Idle)
             },
         },
     )
@@ -78,7 +78,7 @@ export const useTransaction = () => {
             } else if (data.action === ActionType.undelegate) {
                 return undelegate(client, address, adjustedAmount, data.denom, isNativeToken(data.denom))
             } else {
-                return claimRewards(client, address, data.denom, isNativeToken(data.denom))
+                return claimRewards(client, address, data.rewardDenoms)
             }
         },
         {
@@ -163,7 +163,7 @@ export const useTransaction = () => {
                         position: 'top-right',
                         isClosable: true,
                     })
-                }, 2000);
+                }, 2000)
             },
         },
     );
@@ -191,8 +191,9 @@ export const useTransaction = () => {
     const submit = useCallback(
         async (
             action: ActionType,
-            amount: number | null,
-            denom: string | null,
+            amount?: number,
+            denom?: string,
+            rewardDenoms?: string[]
         ) => {
 
             setDelegationAction(action)
@@ -215,7 +216,7 @@ export const useTransaction = () => {
                 setTxStep(TxStep.Successful);
             }
         }
-    }, [txInfo, txHash, error]);
+    }, [txInfo, txHash, error])
 
     useEffect(() => {
         if (error) {
@@ -223,10 +224,9 @@ export const useTransaction = () => {
         }
 
         if (txStep !== TxStep.Idle) {
-            setTxStep(TxStep.Idle);
+            setTxStep(TxStep.Idle)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); //debouncedMsgs
+    }, [])
 
     return useMemo(() => {
         return {
@@ -240,6 +240,6 @@ export const useTransaction = () => {
             reset,
         };
     }, [fee, buttonLabel, submit, txStep, txInfo, txHash, error]);
-};
+}
 
-export default useTransaction;
+export default useTransaction

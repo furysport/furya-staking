@@ -33,6 +33,8 @@ const RewardsComponent: FC<UndelegationsProps> = ({
         [data],
     ) || 0
 
+    const rewardDenoms = useMemo(() => data.map((r: { denom: string })=>r.denom), [data])
+
     return (
         <VStack
             width="full"
@@ -84,6 +86,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                                 isWalletConnected={isWalletConnected}
                                 onOpenModal={onOpenModal}
                                 totalRewards={claimableRewards}
+                                rewardDenoms={rewardDenoms}
                             />
                         </HStack>
                         <WalletModal
@@ -129,4 +132,4 @@ const RewardsComponent: FC<UndelegationsProps> = ({
     )
 }
 
-export default RewardsComponent;
+export default RewardsComponent
