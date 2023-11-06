@@ -198,6 +198,7 @@ export const Delegate = ({tokenSymbol}) => {
                             await submit(ActionType.delegate,
                                 currentDelegationState.amount,
                                 currentDelegationState.denom,
+                                null
                             )
                         } else {
                             onOpenModal()
@@ -224,6 +225,6 @@ export const Delegate = ({tokenSymbol}) => {
                 chainId={chainId}
             />
         </VStack>
-    );
+    )
 }
 

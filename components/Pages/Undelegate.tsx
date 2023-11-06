@@ -195,6 +195,7 @@ export const Undelegate = ({tokenSymbol}) => {
                             await submit(ActionType.undelegate,
                                 currentDelegationState.amount,
                                 currentDelegationState.denom,
+                                null
                             )
                         } else {
                             onOpenModal()
@@ -221,6 +222,6 @@ export const Undelegate = ({tokenSymbol}) => {
                 chainId={chainId}
             />
         </VStack>
-    );
+    )
 }
 
