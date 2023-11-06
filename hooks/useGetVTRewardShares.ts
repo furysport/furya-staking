@@ -17,7 +17,7 @@ export interface AssetDistribution {
     tokenSymbol: string
     distribution: number
 }
-const fetchVTRewardShares = async (client: LCDClient): Promise<AssetDistribution[]> => {
+export const fetchVTRewardShares = async (client: LCDClient): Promise<AssetDistribution[]> => {
     if (!client) {
         return
     }

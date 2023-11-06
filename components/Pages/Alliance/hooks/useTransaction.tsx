@@ -24,19 +24,19 @@ import {updateRewards} from "hooks/updateRewards";
 export const useTransaction = () => {
   const toast = useToast();
   const { chainId, address } = useRecoilValue(walletState)
-  const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle);
-  const [delegationAction, setDelegationAction] = useState<ActionType>(null);
-  const [txHash, setTxHash] = useState<string>(null);
-  const [error, setError] = useState(null);
-  const [buttonLabel, setButtonLabel] = useState<string>(null);
-  const client = useClient();
+  const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle)
+  const [delegationAction, setDelegationAction] = useState<ActionType>(null)
+  const [txHash, setTxHash] = useState<string>(null)
+  const [error, setError] = useState(null)
+  const [buttonLabel, setButtonLabel] = useState<string>(null)
+  const client = useClient()
   const { data: { delegations = [] } = {} } = useDelegations({ address });
 
   const { data: fee } = useQuery(
     ['fee', error],
     async () => {
       setError(null);
-      setTxStep(TxStep.Estimating);
+      setTxStep(TxStep.Estimating)
       try {
         const response = 0; //await client.simulate(address, [delegationMsg], '')
 

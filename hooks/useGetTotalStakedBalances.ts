@@ -20,7 +20,7 @@ export interface TotalStakedBalance {
     totalAmount: number
 }
 
-const fetchTotalStakedBalances = async (client: LCDClient) => {
+export const fetchTotalStakedBalances = async (client: LCDClient) => {
     if (!client) return null
     const msg = {
         total_staked_balances: {}
