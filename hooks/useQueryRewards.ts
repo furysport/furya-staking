@@ -24,6 +24,7 @@ export interface RewardInfo {
     name: string
     denom: string
     amount: number
+    stakedDenom: string
 }
 const getRewards = async (contractAddress: string, address: string, client: Wallet): Promise<RewardInfo[]> => {
     const msg = {
@@ -42,6 +43,7 @@ const getRewards = async (contractAddress: string, address: string, client: Wall
             name: rewardToken?.name,
             denom: rewardToken?.denom,
             amount: convertMicroDenomToDenom(info?.rewards, 6),
+            stakedDenom: stakedToken?.denom,
         }
     }).filter((info) => info !== null)
         .reduce((acc, current) => {

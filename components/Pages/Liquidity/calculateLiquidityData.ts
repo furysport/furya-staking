@@ -39,6 +39,8 @@ export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liqu
                 symbol: reward.tokenSymbol,
                 amount: reward.amount,
                 dollarValue: (Number(reward.amount) * Number(lpTokenPrice ?? 0)),
+                denom: reward.denom,
+                stakedDenom: reward.stakedDenom,
             }
         })
     }
