@@ -33,7 +33,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
         [data],
     ) || 0
 
-    const rewardDenoms = useMemo(() => data.map((r: { denom: string })=>r.denom), [data])
+    const rewardDenoms = useMemo(() => data?.map((r: { denom: string })=>r.denom), [data])
 
     return (
         <VStack
