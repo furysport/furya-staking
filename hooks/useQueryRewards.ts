@@ -45,16 +45,7 @@ const getRewards = async (contractAddress: string, address: string, client: Wall
             amount: convertMicroDenomToDenom(info?.rewards, 6),
             stakedDenom: stakedToken?.denom,
         }
-    }).filter((info) => info !== null)
-        .reduce((acc, current) => {
-            const existingEntry = acc?.find((entry) => entry.tabType === current.tabType && entry.tokenSymbol === current.tokenSymbol);
-            if (existingEntry) {
-                existingEntry.amount += current.amount // Add up the amounts
-            } else {
-                acc.push(current) // Add new entry
-            }
-            return acc
-        }, [])
+    })
 }
 export const useQueryRewards = () => {
     const {client, address} = useRecoilValue(walletState)

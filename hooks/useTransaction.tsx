@@ -78,7 +78,7 @@ export const useTransaction = () => {
             } else if (data.action === ActionType.undelegate) {
                 return undelegate(client, address, adjustedAmount, data.denom, isNativeToken(data.denom))
             } else {
-                return claimRewards(client, address, data.rewardDenoms)
+                return claimRewards(client, address, data.stakedDenoms)
             }
         },
         {
@@ -197,7 +197,7 @@ export const useTransaction = () => {
             action: ActionType,
             amount?: number,
             denom?: string,
-            rewardDenoms?: string[]
+            stakedDenoms?: string[]
         ) => {
 
             setDelegationAction(action)
@@ -207,7 +207,7 @@ export const useTransaction = () => {
                 action,
                 denom,
                 amount,
-                rewardDenoms
+                stakedDenoms
             });
         },
         [fee, mutate, client],
