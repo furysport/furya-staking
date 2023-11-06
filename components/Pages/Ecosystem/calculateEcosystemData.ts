@@ -36,7 +36,7 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
 
     const calculateRewardData = () => {
 
-        return rewards?.filter(reward=> reward.tabType === TabType.ecosystem).map((reward) => {
+        return rewards?.filter(reward=> reward.tabType === TabType.ecosystem && reward.amount > 0).map((reward) => {
             return {
                 symbol: reward.tokenSymbol,
                 amount: reward.amount || 0,

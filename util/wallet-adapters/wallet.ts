@@ -13,7 +13,7 @@ export interface Wallet {
   execute: (
     senderAddress: string,
     contractAddress: string,
-    msg: Record<string, unknown>,
+    msgs: [Record<string, unknown>],
     funds?: readonly Coin[],
   ) => Promise<ExecuteResult>;
   queryContractSmart: (

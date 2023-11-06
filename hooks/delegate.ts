@@ -3,8 +3,9 @@ import {coin} from "@cosmjs/amino";
 import {isNativeToken} from "util/isNative";
 import {MsgExecuteContract} from "@terra-money/feather.js";
 import {toBase64} from "util/toBase64";
+import {TerraStationWallet} from "util/wallet-adapters/terraStationWallet";
 export const delegate = async (
-    client: any,
+    client: TerraStationWallet,
     address: string,
     amount: string,
     denom: string,
@@ -13,7 +14,7 @@ export const delegate = async (
         const msg = {
             stake: {}
         }
-        return await client.execute(address, file.alliance_contract, msg, [coin(amount, denom)])
+        return await client.execute(address, file.alliance_contract, [msg], [coin(amount, denom)])
 
     } else {
         const stakeMessage = {

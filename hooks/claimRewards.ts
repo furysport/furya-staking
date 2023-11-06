@@ -1,23 +1,21 @@
 import {Wallet} from "util/wallet-adapters/index"
 import file from "public/mainnet/contract_addresses.json"
 import {isNativeToken} from "util/isNative";
+import {TerraStationWallet} from "util/wallet-adapters/terraStationWallet";
 
 export const claimRewards = async (
-    client: Wallet,
+    client: TerraStationWallet,
     address: string,
-    rewardDenoms: string[],
+    stakedDenoms: string[],
 ) => {
-    const denom = rewardDenoms[0]
-    const nativeMsg = {
+    const msgs = stakedDenoms.map((denom) => isNativeToken(denom) ? {
         claim_rewards: {
             native: denom
         }
-    }
-    const nonNativeMsg = {
+    } : {
         claim_rewards: {
             cw20: denom
         }
-    }
-
-    return await client.execute(address, file.alliance_contract,isNativeToken(denom) ? nativeMsg: nonNativeMsg, null)
+    })
+    return await client.execute(address, file.alliance_contract, msgs, null)
 };

@@ -8,6 +8,5 @@ export const updateRewards = async (
     const msg = {
         update_rewards: {}
     }
-
-    return await client.execute(address, file.alliance_contract, msg, null)
+    return await client.execute(address, file.alliance_contract, [msg], null)
 };

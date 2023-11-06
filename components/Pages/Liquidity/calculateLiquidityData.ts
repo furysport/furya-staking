@@ -1,5 +1,6 @@
 import {TabType} from "state/tabState";
 import {EnhancedStakeInfo} from "hooks/useQueryStakedBalances";
+import {RewardInfo} from "hooks/useQueryRewards";
 
 export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liquidityBalances,  stakedBalances: EnhancedStakeInfo[], rewards, setLiquidityData) => {
     // Calculate data when dependencies change
@@ -34,7 +35,7 @@ export const calculateLiquidityData = (rawLiquidityTokenData, lpTokenPrice, liqu
     }
     const calculateRewardData = () => {
         if (rewards.length === 0) return
-        return rewards.filter((reward: { tabType: TabType })=>reward.tabType === TabType.liquidity).map((reward) => {
+        return rewards.filter((reward: RewardInfo)=>reward.tabType === TabType.liquidity && reward.amount > 0).map((reward) => {
             return {
                 symbol: reward.tokenSymbol,
                 amount: reward.amount,
