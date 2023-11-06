@@ -7,17 +7,17 @@ import useTransaction from "hooks/useTransaction"
 import {useRecoilValue} from "recoil"
 import {tabState, TabType} from "state/tabState"
 
-const ClaimButton = ({isWalletConnected, onOpenModal, totalRewards, rewardDenoms = null}) => {
+const ClaimButton = ({isWalletConnected, onOpenModal, totalRewards, stakedDenoms = null}) => {
     const {submit: allianceSubmit, txStep: allianceTxStep} = useAllianceTransaction()
     const {submit, txStep: contractTxStep} = useTransaction()
     const tabType = useRecoilValue(tabState)
 
     const txStep = useMemo(() => tabType === TabType.alliance ? allianceTxStep : contractTxStep, [tabType, allianceTxStep, contractTxStep])
-    const onClaim = async () => {
+    const onClaim = () => {
         if (tabType === TabType.alliance) {
-            await allianceSubmit(ActionType.claim, null, null, null, null);
+            allianceSubmit(ActionType.claim, null, null, null, null);
         } else {
-            await submit(ActionType.claim, null, null, rewardDenoms)
+            submit(ActionType.claim, null, null, stakedDenoms)
         }
     };
     const buttonLabel = useMemo(() => {

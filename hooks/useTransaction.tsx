@@ -127,6 +127,8 @@ export const useTransaction = () => {
                                 return 'Delegation Failed.'
                             case ActionType.undelegate:
                                 return 'Undelegation Failed'
+                            case ActionType.claim:
+                                return 'Claiming Failed'
                             default:
                                 return '';
                         }
@@ -149,6 +151,8 @@ export const useTransaction = () => {
                                     return 'Delegation Successful.'
                                 case ActionType.undelegate:
                                     return 'Undelegation Successful.'
+                                case ActionType.claim:
+                                    return 'Claiming Successful.'
                                 default:
                                     return '';
                             }
@@ -189,7 +193,7 @@ export const useTransaction = () => {
     };
 
     const submit = useCallback(
-        async (
+        (
             action: ActionType,
             amount?: number,
             denom?: string,
