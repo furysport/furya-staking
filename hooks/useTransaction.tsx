@@ -203,6 +203,7 @@ export const useTransaction = () => {
                 action,
                 denom,
                 amount,
+                rewardDenoms
             });
         },
         [fee, mutate, client],
