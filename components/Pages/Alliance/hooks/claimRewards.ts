@@ -3,6 +3,7 @@ import {
   MsgWithdrawDelegatorReward,
   MsgClaimDelegationRewards,
 } from '@terra-money/feather.js';
+import {ActionType} from "components/Pages/Dashboard";
 
 export const claimAllRewards = async (
   wallet: TerraStationWallet,
@@ -21,7 +22,8 @@ export const claimAllRewards = async (
         delegation.denom,
       );
     }
-  });
-
-  return await wallet.client.post({ chainID: 'migaloo-1', msgs: msgs });
-};
+  })
+  const result = await wallet.client.post({ chainID: 'migaloo-1', msgs: msgs })
+  const actionType = ActionType.claim
+  return { result, actionType }
+}

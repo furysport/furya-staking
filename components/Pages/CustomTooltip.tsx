@@ -24,7 +24,7 @@ export const CustomTooltip = ({
           {Token[tokenType]}
         </Text>
         <Text fontSize={14}>
-          {isWalletConnected ? `${value.toLocaleString()}` : 'n/a'}
+          {isWalletConnected ? `${value.toLocaleString()}` : '$0'}
         </Text>
       </HStack>
     );
@@ -81,7 +81,7 @@ export const CustomTooltip = ({
           {label}
         </Text>
         <Box pb={1}>
-          {label !== 'n/a' && (
+          {label !== '$0' && (
             <div
               style={{
                 width: `${textWidth}px`,

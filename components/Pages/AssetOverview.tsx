@@ -102,7 +102,7 @@ const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
               <Text key={e.color}>
                 {isWalletConnected
                   ? `$${e.dollarValue?.toFixed(2)}`
-                  : 'n/a'}
+                  : '$0'}
               </Text>
             ))}
           </VStack>

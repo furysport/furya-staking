@@ -1,7 +1,7 @@
-import {Wallet} from "util/wallet-adapters/index"
 import file from "public/mainnet/contract_addresses.json"
 import {isNativeToken} from "util/isNative";
 import {TerraStationWallet} from "util/wallet-adapters/terraStationWallet";
+import {ActionType} from "components/Pages/Dashboard";
 
 export const claimRewards = async (
     client: TerraStationWallet,
@@ -17,5 +17,7 @@ export const claimRewards = async (
             cw20: denom
         }
     })
-    return await client.execute(address, file.alliance_contract, msgs, null)
-};
+    const result = await client.execute(address, file.alliance_contract, msgs, null)
+    const actionType = ActionType.claim
+    return { result, actionType }
+}

@@ -52,7 +52,7 @@ export const useQueryRewards = () => {
     const {data, isLoading} = useQuery({
         queryKey: ['rewards', file.alliance_contract, address],
         queryFn: () => getRewards(file.alliance_contract, address, client),
-        refetchInterval: 60000,
+        refetchInterval: 15000,
         enabled: Boolean(file.alliance_contract) && Boolean(client) && Boolean(address),
     })
     return {data, isLoading}
