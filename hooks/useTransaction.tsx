@@ -142,11 +142,12 @@ export const useTransaction = () => {
             },
             onSuccess: (data: any) => {
                 setTxStep(TxStep.Broadcasting)
+                const txHash = data?.result?.transactionHash ?? data?.result?.txhash
+                setTxHash(txHash)
                 setTimeout(() => {
-                    setTxHash(data?.transactionHash ?? data?.result?.txhash)
                     toast({
                         title: (() => {
-                            switch (delegationAction) {
+                            switch (data.actionType) {
                                 case ActionType.delegate:
                                     return 'Delegation Successful.'
                                 case ActionType.undelegate:
@@ -154,11 +155,11 @@ export const useTransaction = () => {
                                 case ActionType.claim:
                                     return 'Claiming Successful.'
                                 default:
-                                    return '';
+                                    return ''
                             }
                         })(),
                         description: (
-                            <Finder txHash={data?.transactionHash ?? data?.result?.txhash} chainId={chainId}>
+                            <Finder txHash={txHash} chainId={chainId}>
                                 {' '}
                             </Finder>
                         ),
@@ -170,7 +171,7 @@ export const useTransaction = () => {
                 }, 2000)
             },
         },
-    );
+    )
 
     const {data: txInfo} = useQuery(
         ['txInfo', txHash],
@@ -199,7 +200,6 @@ export const useTransaction = () => {
             denom?: string,
             stakedDenoms?: string[]
         ) => {
-
             setDelegationAction(action)
 
             mutate({
@@ -208,7 +208,7 @@ export const useTransaction = () => {
                 denom,
                 amount,
                 stakedDenoms
-            });
+            })
         },
         [fee, mutate, client],
     );

@@ -67,6 +67,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                 <>
                     <Text color={'grey'}>Rewards</Text>
                     <HStack
+                        alignItems={"start"}
                         justifyContent="space-between"
                         width="100%"
                         height="100%"
@@ -75,7 +76,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                         <Text fontSize={27} fontWeight={'bold'} transform={'translateY(-3px)'}>
                             {isWalletConnected
                                 ? `$${claimableRewards?.toFixed(2).toString()}`
-                                : 'n/a'}
+                                : '$0'}
                         </Text>
                         <HStack gap={1}>
                             {currentTabState !== TabType.alliance &&
@@ -112,7 +113,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                                     <Text>
                                         {isWalletConnected
                                             ? `${reward.amount === 0 ? 0 : reward.amount?.toFixed(6)}`
-                                            : 'n/a'}
+                                            : '$0'}
                                     </Text>
                                 </HStack>
                                 <HStack justifyContent="flex-end" pr={3}>

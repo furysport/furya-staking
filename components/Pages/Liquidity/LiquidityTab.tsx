@@ -58,11 +58,13 @@ export const LiquidityTab = ({
             <HStack pr={2}>
                 <CustomButton isTransparent={true}
                               onClick={()=>openDelegate()}
+                              disabled={!isWalletConnected}
                               buttonLabel={"Delegate"}
                               height={"42px"}
                               width={"198px"}/>
                 <CustomButton isTransparent={true}
                               onClick={()=>openUndelegate()}
+                              disabled={!isWalletConnected}
                               buttonLabel={"Undelegate"}
                               height={"42px"}
                               width={"198px"}/>

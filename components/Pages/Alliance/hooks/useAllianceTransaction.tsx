@@ -149,7 +149,6 @@ export const useAllianceTransaction = () => {
       },
       onError: (e) => {
         let message: any = '';
-        console.error(e?.toString());
         setTxStep(TxStep.Failed);
         if (
           /insufficient funds/i.test(e?.toString()) ||
@@ -207,13 +206,13 @@ export const useAllianceTransaction = () => {
         })
       },
       onSuccess: (data: any) => {
-        setTxStep(TxStep.Broadcasting);
+        setTxStep(TxStep.Broadcasting)
         setTimeout(() => {
-          const hash = data?.result?.txhash ?? data?.transactionHash
+          const hash = data?.result?.result?.txhash ?? data?.result?.transactionHash
           setTxHash(hash)
           toast({
             title: (() => {
-              switch (delegationAction) {
+              switch (data.actionType) {
                 case ActionType.delegate:
                   return 'Delegation Successful.'
                 case ActionType.undelegate:

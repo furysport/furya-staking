@@ -1,6 +1,7 @@
 import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 import { Coin } from '@terra-money/feather.js';
 import { MsgUndelegate } from '@terra-money/feather.js/dist/core/alliance/msgs';
+import {ActionType} from "components/Pages/Dashboard";
 
 export const allianceUndelegate = async (
   wallet: TerraStationWallet,
@@ -16,8 +17,10 @@ export const allianceUndelegate = async (
     new Coin(allianceDenom, amount),
   );
 
-  return await wallet.client.post({
+  const result = await wallet.client.post({
     chainID: destBlockchain,
     msgs: [handleMsg],
-  });
+  })
+  const actionType = ActionType.undelegate
+  return { result, actionType }
 };
