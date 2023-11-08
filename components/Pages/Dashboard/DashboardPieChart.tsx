@@ -22,15 +22,6 @@ const TokenBox = ({ symbol, color }) => {
     )
 }
 
-const renderCustomizedLabel = ({ x, y, value }) => {
-    return (
-        <text x={x} y={y} color="black" textAnchor="middle" dominantBaseline="central">
-            {value}
-        </text>
-    );
-};
-
-
 export const DashboardPieChart = ({ dashboardData }) => {
     const [data, setData] = useState([]);
 

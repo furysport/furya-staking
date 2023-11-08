@@ -21,7 +21,7 @@ export const DashboardTab = ({priceList}) => {
     const {lpTokenPrice} = useGetLPTokenPrice()
     const [initialized, setInitialized] = useState<boolean>(false)
 
-    const {vtRewardShares, totalStakedBalances, isLoading} = useAssetsData()
+    const {vtRewardShares, totalStakedBalances} = useAssetsData()
 
     const {data: {stakedAmpLuna, stakedBLuna, stakedWhale}} = useValidators({address})
     const [aprs, setAprs] = useState<Apr[]>([])

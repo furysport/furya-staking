@@ -1,7 +1,6 @@
 import {useMemo} from "react";
 import {useTotalYearlyWhaleEmission} from "hooks/useWhaleInfo";
 import useValidators from "hooks/useValidators";
-import useUndelegations from "hooks/useUndelegations";
 import usePrices from "hooks/usePrices";
 import {useAlliances} from "hooks/useAlliances";
 import {Apr} from "components/Pages/Ecosystem/hooks/useCalculateAprs";
@@ -19,11 +18,6 @@ export const useCalculateAllianceAprs = ({address}) => {
         [allianceData?.alliances],
     )
 
-    const {data: undelegationData} = useUndelegations({address})
-    const undelegations = useMemo(
-        () => undelegationData?.undelegations || [],
-        [undelegationData],
-    )
     const summedAllianceWeights = useMemo(
         () =>
             alliances

@@ -7,7 +7,7 @@ import useClient from "hooks/useClient";
 import { debounce } from 'lodash'
 
 export const useAssetsData = () => {
-    const [priceList] = usePrices() || []
+
     const client = useClient()
     const queries = useQueries([{
         queryKey: 'totalStakeBalances',
