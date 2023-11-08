@@ -1,6 +1,5 @@
 import {useQueries} from "react-query";
 import {fetchTotalStakedBalances} from "hooks/useGetTotalStakedBalances";
-import usePrices from "hooks/usePrices";
 import {fetchVTRewardShares} from "hooks/useGetVTRewardShares";
 import {useMemo} from "react";
 import useClient from "hooks/useClient";

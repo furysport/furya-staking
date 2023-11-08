@@ -7,8 +7,6 @@ import { walletState, WalletStatusType } from 'state/walletState';
 import { DEFAULT_TOKEN_BALANCE_REFETCH_INTERVAL } from 'util/constants';
 import { Wallet } from '../util/wallet-adapters';
 import { getTokenInfoFromTokenList } from './useTokenInfo';
-import { useTokenList } from './useTokenList';
-import { useConnectedWallet } from '@terra-money/wallet-provider';
 import {CW20} from "services/cw20";
 import {useAllTokenList} from "hooks/useAllTokenList";
 
