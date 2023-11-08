@@ -24,6 +24,7 @@ export interface RewardInfo {
     name: string
     denom: string
     amount: number
+    stakedDenom: string
 }
 const getRewards = async (contractAddress: string, address: string, client: Wallet): Promise<RewardInfo[]> => {
     const msg = {
@@ -42,24 +43,16 @@ const getRewards = async (contractAddress: string, address: string, client: Wall
             name: rewardToken?.name,
             denom: rewardToken?.denom,
             amount: convertMicroDenomToDenom(info?.rewards, 6),
+            stakedDenom: stakedToken?.denom,
         }
-    }).filter((info) => info !== null)
-        .reduce((acc, current) => {
-            const existingEntry = acc?.find((entry) => entry.tabType === current.tabType && entry.tokenSymbol === current.tokenSymbol);
-            if (existingEntry) {
-                existingEntry.amount += current.amount // Add up the amounts
-            } else {
-                acc.push(current) // Add new entry
-            }
-            return acc
-        }, [])
+    })
 }
 export const useQueryRewards = () => {
     const {client, address} = useRecoilValue(walletState)
     const {data, isLoading} = useQuery({
         queryKey: ['rewards', file.alliance_contract, address],
         queryFn: () => getRewards(file.alliance_contract, address, client),
-        refetchInterval: 60000,
+        refetchInterval: 15000,
         enabled: Boolean(file.alliance_contract) && Boolean(client) && Boolean(address),
     })
     return {data, isLoading}

@@ -32,13 +32,11 @@ export const useAssetsData = () => {
     }
 
     const data = useMemo(() => {
-        const bondedData = queries[0].data
-        const unbondingData = queries[1].data
-        const withdrawableData = queries[2].data
+        const totalStakedBalances = queries[0].data
+        const rewardShares = queries[1].data
         return {
-            ...bondedData,
-            ...unbondingData,
-            ...withdrawableData,
+            ...totalStakedBalances,
+            ...rewardShares,
         }
     }, [queries])
 

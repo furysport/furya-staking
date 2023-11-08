@@ -40,12 +40,12 @@ const CardComponent: FC<CardComponentProps> = ({
   const summedAndMultipliedValues = useMemo(() => {
     return isWalletConnected
       ? `$${sumAndMultiplyValues.toFixed(2).toString()}`
-      : 'n/a';
+      : '$0'
   }, [isWalletConnected, sumAndMultiplyValues]);
   return (
     <VStack
       width="full"
-      background={'#1C1C1C'}
+      backgroundColor="rgba(0, 0, 0, 0.5)"
       pl={7}
       spacing={1}
       borderRadius={'20px'}
@@ -112,7 +112,7 @@ const CardComponent: FC<CardComponentProps> = ({
         </>
       )}
     </VStack>
-  );
-};
+  )
+}
 
-export default CardComponent;
+export default CardComponent

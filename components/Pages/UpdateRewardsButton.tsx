@@ -1,11 +1,10 @@
-import {useMemo} from 'react'
-import {ActionType} from 'components/Pages/Dashboard';
-import CustomButton from 'components/CustomButton';
-import useTransaction from "components/Pages/Alliance/hooks/useTransaction";
-import {TxStep} from "types/blockchain";
+import {ActionType} from 'components/Pages/Dashboard'
+import CustomButton from 'components/CustomButton'
+import useAllianceTransaction from "components/Pages/Alliance/hooks/useAllianceTransaction"
+import {TxStep} from "types/blockchain"
 
 const UpdateRewardsButton = ({isWalletConnected}) => {
-    const {submit, txStep} = useTransaction()
+    const {submit, txStep} = useAllianceTransaction()
     const onUpdate = () => submit(ActionType.updateRewards, null, null, null, null)
 
     const isLoading =
@@ -27,4 +26,4 @@ const UpdateRewardsButton = ({isWalletConnected}) => {
         />
     );
 };
-export default UpdateRewardsButton;
+export default UpdateRewardsButton

@@ -36,11 +36,13 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
 
     const calculateRewardData = () => {
 
-        return rewards?.filter(reward=> reward.tabType === TabType.ecosystem).map((reward) => {
+        return rewards?.filter(reward=> reward.tabType === TabType.ecosystem && reward.amount > 0).map((reward) => {
             return {
                 symbol: reward.tokenSymbol,
                 amount: reward.amount || 0,
                 dollarValue: reward.tokenSymbol === 'mUSDC' ? 1 : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
+                denom: reward.denom,
+                stakedDenom: reward.stakedDenom,
             }
         })
     }
@@ -74,5 +76,5 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
         total,
     }
 
-    setEcosystemData(delegationData);
+    setEcosystemData(delegationData)
 }

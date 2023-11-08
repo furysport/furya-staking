@@ -7,22 +7,21 @@ import { useRecoilValue } from 'recoil';
 import { walletState } from 'state/walletState';
 import { convertDenomToMicroDenom } from 'util/conversion';
 import { ActionType } from 'components/Pages/Dashboard';
-import { allianceDelegate } from 'components/Pages/Alliance/hooks/alliance/allianceDelegate';
-import { allianceUndelegate } from 'components/Pages/Alliance/hooks/alliance/allianceUndelegate';
-import { allianceRedelegate } from 'components/Pages/Alliance/hooks/alliance/allianceRedelegate';
+import { allianceDelegate } from 'components/Pages/Alliance/hooks/allianceDelegate';
+import { allianceUndelegate } from 'components/Pages/Alliance/hooks/allianceUndelegate';
+import { allianceRedelegate } from 'components/Pages/Alliance/hooks/allianceRedelegate';
 // Native staking
 import { nativeDelegate } from 'components/Pages/Alliance/native-staking/nativeDelegate';
 import { nativeUndelegate } from 'components/Pages/Alliance/native-staking/nativeUndelegate';
 import { nativeRedelegate } from 'components/Pages/Alliance/native-staking/nativeRedelegate';
-import { claimAllRewards } from 'components/Pages/Alliance/hooks/claimRewards';
+import { claimAllRewards } from 'components/Pages/Alliance/hooks/claimAllRewards';
 import useClient from 'hooks/useTerraStationClient';
 import useDelegations from 'hooks/useDelegations';
 import {TxStep} from "types/blockchain";
 import {updateRewards} from "hooks/updateRewards";
 
-
-export const useTransaction = () => {
-  const toast = useToast();
+export const useAllianceTransaction = () => {
+  const toast = useToast()
   const { chainId, address } = useRecoilValue(walletState)
   const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle)
   const [delegationAction, setDelegationAction] = useState<ActionType>(null)
@@ -30,12 +29,12 @@ export const useTransaction = () => {
   const [error, setError] = useState(null)
   const [buttonLabel, setButtonLabel] = useState<string>(null)
   const client = useClient()
-  const { data: { delegations = [] } = {} } = useDelegations({ address });
+  const { data: { delegations = [] } = {} } = useDelegations({ address })
 
   const { data: fee } = useQuery(
     ['fee', error],
     async () => {
-      setError(null);
+      setError(null)
       setTxStep(TxStep.Estimating)
       try {
         const response = 0; //await client.simulate(address, [delegationMsg], '')
@@ -71,10 +70,10 @@ export const useTransaction = () => {
       retry: false,
       staleTime: 0,
       onSuccess: () => {
-        setTxStep(TxStep.Ready);
+        setTxStep(TxStep.Ready)
       },
       onError: () => {
-        setTxStep(TxStep.Idle);
+        setTxStep(TxStep.Idle)
       },
     },
   );
@@ -99,7 +98,7 @@ export const useTransaction = () => {
               address,
               adjustedAmount,
               data.denom,
-            );
+            )
       } else if (data.action === ActionType.undelegate) {
         return data.denom == 'uwhale'
           ? nativeUndelegate(
@@ -117,7 +116,7 @@ export const useTransaction = () => {
               address,
               adjustedAmount,
               data.denom,
-            );
+            )
       } else if (data.action === ActionType.redelegate) {
         return data.denom == 'uwhale'
           ? nativeRedelegate(
@@ -137,9 +136,9 @@ export const useTransaction = () => {
               address,
               adjustedAmount,
               data.denom,
-            );
+            )
       } else if(data.action === ActionType.claim) {
-        return claimAllRewards(client, delegations);
+        return claimAllRewards(client, delegations)
       } else {
         return updateRewards(client, address)
       }
@@ -150,7 +149,6 @@ export const useTransaction = () => {
       },
       onError: (e) => {
         let message: any = '';
-        console.error(e?.toString());
         setTxStep(TxStep.Failed);
         if (
           /insufficient funds/i.test(e?.toString()) ||
@@ -177,25 +175,25 @@ export const useTransaction = () => {
             <Finder txHash={txInfo?.txhash} chainId={chainId}>
               {' '}
             </Finder>
-          );
+          )
         } else {
-          setError('Failed to post transaction.');
-          message = 'Failed to post transaction.';
+          setError('Failed to post transaction.')
+          message = 'Failed to post transaction.'
         }
 
         toast({
           title: (() => {
             switch (delegationAction) {
               case ActionType.delegate:
-                return 'Delegation Failed.';
+                return 'Delegation Failed.'
               case ActionType.undelegate:
-                return 'Undelegation Failed';
+                return 'Undelegation Failed'
               case ActionType.redelegate:
-                return 'Redelegation Failed.';
+                return 'Redelegation Failed.'
               case ActionType.claim:
-                return 'Claiming Failed.';
+                return 'Claiming Failed.'
               case ActionType.updateRewards:
-                return 'Updating Failed.';
+                return 'Updating Failed.'
               default:
                 return '';
             }
@@ -205,17 +203,16 @@ export const useTransaction = () => {
           duration: 9000,
           position: 'top-right',
           isClosable: true,
-        });
+        })
       },
       onSuccess: (data: any) => {
-        setTxStep(TxStep.Broadcasting);
+        setTxStep(TxStep.Broadcasting)
         setTimeout(() => {
-          const hash = data?.result?.txhash ?? data?.transactionHash
-          setTxHash(hash);
-
+          const hash = data?.result?.result?.txhash ?? data?.result?.transactionHash
+          setTxHash(hash)
           toast({
             title: (() => {
-              switch (delegationAction) {
+              switch (data.actionType) {
                 case ActionType.delegate:
                   return 'Delegation Successful.'
                 case ActionType.undelegate:
@@ -227,7 +224,7 @@ export const useTransaction = () => {
                 case ActionType.updateRewards:
                   return 'Updating Rewards Successful.'
                 default:
-                  return '';
+                  return ''
               }
             })(),
             description: (
@@ -239,17 +236,17 @@ export const useTransaction = () => {
             duration: 9000,
             position: 'top-right',
             isClosable: true,
-          });
-        }, 2000);
+          })
+        }, 2000)
       },
     },
-  );
+  )
 
   const { data: txInfo } = useQuery(
     ['txInfo', txHash],
     async () => {
       if (txHash == null) {
-        return;
+        return
       }
       return await client.getTx(txHash);
     },
@@ -257,16 +254,16 @@ export const useTransaction = () => {
       enabled: txHash != null,
       retry: true,
     },
-  );
+  )
 
   const reset = () => {
     setError(null);
     setTxHash(undefined);
     setTxStep(TxStep.Idle);
-  };
+  }
 
   const submit = useCallback(
-    async (
+    (
       action: ActionType,
       validatorDestAddress: string | null,
       validatorSrcAddress: string | null,
@@ -274,9 +271,9 @@ export const useTransaction = () => {
       denom: string | null,
     ) => {
       if (fee == null) {
-        return;
+        return
       }
-      await setDelegationAction(action);
+      setDelegationAction(action)
 
       mutate({
         fee,
@@ -285,20 +282,20 @@ export const useTransaction = () => {
         validatorSrcAddress,
         denom,
         amount,
-      });
+      })
     },
     [fee, mutate, client],
-  );
+  )
 
   useEffect(() => {
     if (txInfo != null && txHash != null) {
       if (txInfo?.code) {
-        setTxStep(TxStep.Failed);
+        setTxStep(TxStep.Failed)
       } else {
-        setTxStep(TxStep.Successful);
+        setTxStep(TxStep.Successful)
       }
     }
-  }, [txInfo, txHash, error]);
+  }, [txInfo, txHash, error])
 
   useEffect(() => {
     if (error) {
@@ -308,8 +305,7 @@ export const useTransaction = () => {
     if (txStep != TxStep.Idle) {
       setTxStep(TxStep.Idle);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); //debouncedMsgs
+  }, [])
 
   return useMemo(() => {
     return {
@@ -321,8 +317,8 @@ export const useTransaction = () => {
       txHash,
       error,
       reset,
-    };
-  }, [fee, buttonLabel, submit, txStep, txInfo, txHash, error]);
-};
+    }
+  }, [fee, buttonLabel, submit, txStep, txInfo, txHash, error])
+}
 
-export default useTransaction;
+export default useAllianceTransaction

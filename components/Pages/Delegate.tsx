@@ -142,7 +142,7 @@ export const Delegate = ({tokenSymbol}) => {
             </HStack>
             <VStack
                 width="full"
-                background={'#1C1C1C'}
+                backgroundColor="rgba(0, 0, 0, 0.5)"
                 borderRadius={'30px'}
                 alignItems="flex-start"
                 verticalAlign="flex-start"
@@ -198,6 +198,7 @@ export const Delegate = ({tokenSymbol}) => {
                             await submit(ActionType.delegate,
                                 currentDelegationState.amount,
                                 currentDelegationState.denom,
+                                null
                             )
                         } else {
                             onOpenModal()
@@ -224,6 +225,6 @@ export const Delegate = ({tokenSymbol}) => {
                 chainId={chainId}
             />
         </VStack>
-    );
+    )
 }
 

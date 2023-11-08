@@ -138,7 +138,7 @@ export const Undelegate = ({tokenSymbol}) => {
             </HStack>
             <VStack
                 width="full"
-                background={'#1C1C1C'}
+                backgroundColor="rgba(0, 0, 0, 0.5)"
                 borderRadius={'30px'}
                 alignItems="flex-start"
                 verticalAlign="flex-start"
@@ -195,6 +195,7 @@ export const Undelegate = ({tokenSymbol}) => {
                             await submit(ActionType.undelegate,
                                 currentDelegationState.amount,
                                 currentDelegationState.denom,
+                                null
                             )
                         } else {
                             onOpenModal()
@@ -221,6 +222,6 @@ export const Undelegate = ({tokenSymbol}) => {
                 chainId={chainId}
             />
         </VStack>
-    );
+    )
 }
 

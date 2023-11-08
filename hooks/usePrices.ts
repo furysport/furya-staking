@@ -6,6 +6,7 @@ const usePrices = () => {
   const { data: priceList } = useQuery({
     queryKey: ['priceList'],
     queryFn: getTokenPrice,
+    refetchInterval: 10000,
   });
 
   return useMemo(() => priceList, [priceList]);

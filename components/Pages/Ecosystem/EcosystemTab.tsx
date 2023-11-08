@@ -2,15 +2,9 @@ import {HStack, Text, VStack} from "@chakra-ui/react"
 import CardComponent, {AssetType} from "components/Pages/CardComponent"
 import AssetOverview, {TokenType} from "components/Pages/AssetOverview"
 import RewardsComponent from "components/Pages/RewardsComponent"
-import React, {useEffect, useMemo, useState} from "react"
 import CustomButton from "components/CustomButton"
 import {useRouter} from "next/router"
-import {useGetTotalStakedBalances} from "hooks/useGetTotalStakedBalances";
-import {useGetVTRewardShares} from "hooks/useGetVTRewardShares";
-import {useTotalYearlyWhaleEmission} from "hooks/useWhaleInfo";
-import usePrices from "hooks/usePrices";
-import {useGetLPTokenPrice} from "hooks/useGetLPTokenPrice";
-import {getTokenPrice} from "util/getTokenPrice";
+import {useCalculateAprs} from "components/Pages/Ecosystem/hooks/useCalculateAprs";
 
 export const EcosystemTab = ({
                                  isWalletConnected,
@@ -22,28 +16,7 @@ export const EcosystemTab = ({
     const openDelegate = async () => await router.push('/ecosystem/delegate?tokenSymbol=mUSDC')
     const openUndelegate = async () => await router.push(`/ecosystem/undelegate?tokenSymbol=mUSDC`)
 
-    const [aprs, setAprs] = useState([])
-    const {data: totalStakedBalances} = useGetTotalStakedBalances()
-    const {data: rewardDistribution} = useGetVTRewardShares()
-    const {totalYearlyWhaleEmission} = useTotalYearlyWhaleEmission()
-    const vtEmission = useMemo(() => 0.05 / 1.1 * totalYearlyWhaleEmission, [totalYearlyWhaleEmission])
-    const [priceList] = usePrices() || []
-    const { lpTokenPrice} = useGetLPTokenPrice()
-
-    useEffect(() => {
-        if (!totalStakedBalances || !rewardDistribution || !vtEmission || !priceList || !lpTokenPrice) {
-            return
-        }
-        setAprs(rewardDistribution?.map((info) => {
-            const stakedBalance = totalStakedBalances?.find((balance) => balance.denom === info.denom)
-            const stakedTokenPrice = getTokenPrice(stakedBalance, priceList, lpTokenPrice)
-            return {
-                name: info.tokenSymbol,
-                apr: (info.distribution * vtEmission * priceList['Whale'] / ((stakedBalance?.totalAmount || 0) * stakedTokenPrice)) * 100,
-            }
-        }))
-    }, [totalStakedBalances, rewardDistribution, priceList, lpTokenPrice])
-
+    const aprs = useCalculateAprs()
     return <VStack
         pt={12}
         maxW={1270}

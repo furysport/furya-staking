@@ -6,7 +6,6 @@ import { useRecoilState } from 'recoil';
 import { walletState, WalletStatusType } from 'state/walletState';
 
 import Wallet from '../Wallet/Wallet';
-import Logo from './Logo';
 
 const Header = () => {
   const { disconnect } = useWallet();
@@ -40,9 +39,6 @@ const Header = () => {
         display={{ base: 'none', md: 'flex' }}
         alignItems="center"
       >
-        <Box flex="1">
-          <Logo />
-        </Box>
         <HStack flex="1" spacing="6" justify="flex-end">
           <Wallet
             connected={Boolean(key?.name)}

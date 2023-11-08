@@ -1,44 +1,34 @@
-import {Box, HStack, Image, Text, VStack} from '@chakra-ui/react';
+import {Box, HStack, Text, VStack} from '@chakra-ui/react';
 import {
     ColumnDef,
-    createColumnHelper,
-    flexRender,
+    createColumnHelper, flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import React, { useState } from 'react';
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { useRouter } from 'next/router';
-import {useRecoilValue} from "recoil";
-import {walletState} from "state/walletState";
-import {useAssetsData} from "components/Pages/Dashboard/hooks/useAssetsData";
+import React, {useState} from 'react';
+import {TriangleDownIcon, TriangleUpIcon} from "@chakra-ui/icons";
+import Loader from "components/Loader";
 
-type TableProps = {
-    logo: string
+export type DashboardData = {
+    logo: JSX.Element
     symbol: string
+    category: string
     totalStaked: number
     totalValueStaked: number
-    takeRate: number
     rewardWeight: number
-    additionalAPY: number
+    apr: number
 }
 
-const columnHelper = createColumnHelper<TableProps>();
+const columnHelper = createColumnHelper<DashboardData>()
 
-const columns: ColumnDef<TableProps, any>[] = [
+const columns: ColumnDef<DashboardData, any>[] = [
     columnHelper.accessor('logo', {
         header: () => null,
         cell: (info) => (
-            <Image
-                src={info.getValue()}
-                alt="logo-small"
-                width="auto"
-                maxW="1.5rem"
-                maxH="1.5rem"
-            />
+            info.getValue()
         ),
     }),
     columnHelper.accessor('symbol', {
@@ -46,7 +36,6 @@ const columns: ColumnDef<TableProps, any>[] = [
             <Text
                 as="span"
                 color="brand.50"
-                flex={1}
                 fontSize="sm"
                 textTransform="capitalize">
                 Symbol
@@ -54,20 +43,33 @@ const columns: ColumnDef<TableProps, any>[] = [
         ),
         cell: (info) => info.getValue(),
     }),
+    columnHelper.accessor('category', {
+        header: () => (
+            <Text
+                as="span"
+                color="brand.50"
+                fontSize="sm">
+                Category
+            </Text>
+        ),
+        cell: (info) => info.getValue().charAt(0).toUpperCase() + info.getValue().slice(1)
+    }),
     columnHelper.accessor('totalStaked', {
         enableSorting: true,
         header: () => (
             <Text
                 as="span"
                 color="brand.50"
-                minW="200px"
+                minW="150px"
                 fontSize="sm"
-                textTransform="capitalize"
             >
                 Total Staked
             </Text>
         ),
-        cell: (info) => info.getValue() + '%',
+        cell: (info) => info.getValue()?.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    })
     }),
     columnHelper.accessor('totalValueStaked', {
         enableSorting: true,
@@ -75,28 +77,16 @@ const columns: ColumnDef<TableProps, any>[] = [
             <Text
                 as="span"
                 color="brand.50"
-                minW="200px"
+                minW="150px"
                 fontSize="sm"
-                textTransform="capitalize"
             >
                 Total Value Staked
             </Text>
         ),
-        cell: (info) => '$' + info.getValue(),
-    }),
-    columnHelper.accessor('takeRate', {
-        enableSorting: true,
-        header: () => (
-            <Text
-                as="span"
-                color="brand.50"
-                flex={1}
-                fontSize="sm"
-                textTransform="capitalize">
-                Take Rate
-            </Text>
-        ),
-        cell: (info) => info.getValue() + '%' ,
+        cell: (info) => '$' + info.getValue()?.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }),
     }),
     columnHelper.accessor('rewardWeight', {
         enableSorting: true,
@@ -105,14 +95,16 @@ const columns: ColumnDef<TableProps, any>[] = [
                 as="span"
                 color="brand.50"
                 flex={1}
-                fontSize="sm"
-                textTransform="capitalize">
+                fontSize="sm">
                 Reward Weight
             </Text>
         ),
-        cell: (info) => info.getValue() + '%' ,
+        cell: (info) => info.getValue()?.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + '%' ,
     }),
-    columnHelper.accessor('additionalAPY', {
+    columnHelper.accessor('apr', {
         enableSorting: true,
         header: () => (
             <Text
@@ -121,27 +113,28 @@ const columns: ColumnDef<TableProps, any>[] = [
                 flex={1}
                 fontSize="sm"
                 textTransform="capitalize">
-                Additional APY
+                APR
             </Text>
         ),
-        cell: (info) => info.getValue() + '%',
+        cell: (info) => info.getValue()?.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + '%',
     }),
 ]
 
-const AssetTable = () => {
-    const { address } = useRecoilValue(walletState)
+
+const AssetTable = ({dashboardData, initialized}) => {
     const [sorting, setSorting] = useState<any>([
         {
             desc: false,
-            id: 'status',
+            id: 'symbol',
         },
-    ]);
-    const router = useRouter();
+    ])
 
-    const { data: assets} = useAssetsData()
 
     const table = useReactTable({
-        data: dataRows,
+        data: dashboardData,
         columns,
         state: {
             sorting,
@@ -162,8 +155,8 @@ const AssetTable = () => {
 
 
     return (
-        <VStack width="full" minW="800px" overflowX="auto">
-            {table.getHeaderGroups()?.map((headerGroup) => (
+        <VStack width="full" minW="1270px"  borderRadius={"30px"} pr={5} pb={5}>
+            {initialized && table.getHeaderGroups()?.map((headerGroup) => (
                 <HStack
                     key={headerGroup.id}
                     width="full"
@@ -174,8 +167,7 @@ const AssetTable = () => {
                     {headerGroup.headers.map((header, index) => (
                         <Box
                             key={header.id}
-                            flex={index == 0 || index == 3 ? 1 : 'unset'}
-                            minW={index == 1 || index == 2 ? '200px' : 'unset'}
+                            minW={index === 0 ? "15px" : index === 1 ? '180px' : index === 2 ? "145px": index === 3 ? "145px": index === 4 ? "180px": index === 5 ? "180px": 'unset'}
                             cursor={header.column.getCanSort() ? 'pointer' : 'default'}
                             onClick={header.column.getToggleSortingHandler()}
                         >
@@ -222,9 +214,7 @@ const AssetTable = () => {
                         return (
                             <Text
                                 key={cell.id}
-                                as={index == 3 ? HStack : 'span'}
-                                flex={index == 0 || index == 3 ? 1 : 'unset'}
-                                minW={index == 1 || index == 2 ? '200px' : 'unset'}
+                                minW={index === 0 ? "20px" : index === 1 ? "185px" :  index == 2 ? '145px' : index == 3 ? '145px' : index == 4 ? '180px' : index == 5 ? '180px' : 'unset'}
                             >
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </Text>
@@ -232,7 +222,8 @@ const AssetTable = () => {
                     })}
                 </HStack>
             ))}
-            {!tableData?.length && (
+            {!initialized &&  <Loader height={'7rem'} width={'7rem'} /> }
+            {(dashboardData.length === 0 && initialized) && (
                 <Text color="brand.50" fontSize="sm" textTransform="capitalize">
                     No whitelisted assets found
                 </Text>
@@ -241,4 +232,4 @@ const AssetTable = () => {
     );
 };
 
-export default ValidatorTable
+export default AssetTable

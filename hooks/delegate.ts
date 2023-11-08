@@ -3,8 +3,10 @@ import {coin} from "@cosmjs/amino";
 import {isNativeToken} from "util/isNative";
 import {MsgExecuteContract} from "@terra-money/feather.js";
 import {toBase64} from "util/toBase64";
+import {TerraStationWallet} from "util/wallet-adapters/terraStationWallet";
+import {ActionType} from "components/Pages/Dashboard";
 export const delegate = async (
-    client: any,
+    client: TerraStationWallet,
     address: string,
     amount: string,
     denom: string,
@@ -13,7 +15,9 @@ export const delegate = async (
         const msg = {
             stake: {}
         }
-        return await client.execute(address, file.alliance_contract, msg, [coin(amount, denom)])
+        const result = await client.execute(address, file.alliance_contract, [msg], [coin(amount, denom)])
+        const actionType = ActionType.delegate
+        return { result, actionType }
 
     } else {
         const stakeMessage = {
@@ -43,8 +47,8 @@ export const delegate = async (
                 },
                 [],
             )]
-
-        return await client.client.post({chainID: 'migaloo-1', msgs: msgs});
+        const result = await client.client.post({chainID: 'migaloo-1', msgs: msgs})
+        const actionType = ActionType.delegate
+        return { result, actionType }
     }
-
 }

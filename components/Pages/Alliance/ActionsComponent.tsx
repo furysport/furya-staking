@@ -22,7 +22,7 @@ import Loader from 'components/Loader';
 import { ActionType } from 'components/Pages/Dashboard';
 import Undelegate from 'components/Pages/Alliance/Undelegate';
 import { useMultipleTokenBalance } from 'hooks/useTokenBalance';
-import useTransaction from 'components/Pages/Alliance/hooks/useTransaction';
+import useAllianceTransaction from 'components/Pages/Alliance/hooks/useAllianceTransaction';
 import whiteListedTokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import useDelegations from 'hooks/useDelegations';
 import CustomButton from 'components/CustomButton';
@@ -40,26 +40,26 @@ const ActionsComponent = ({
     isOpen: isOpenModal,
     onOpen: onOpenModal,
     onClose: onCloseModal,
-  } = useDisclosure();
+  } = useDisclosure()
 
-  const router = useRouter();
+  const router = useRouter()
 
   const [currentDelegationState, setCurrentDelegationState] =
-    useRecoilState<DelegationState>(delegationState);
+    useRecoilState<DelegationState>(delegationState)
 
-  const { submit, txStep } = useTransaction();
+  const { submit, txStep } = useAllianceTransaction()
 
-  const { data: { delegations = [] } = {} } = useDelegations({ address });
+  const { data: { delegations = [] } = {} } = useDelegations({ address })
 
   const { data: balances } = useMultipleTokenBalance(
     whiteListedTokens?.map((e) => e.symbol) ?? [],
-  );
+  )
 
   const liquidTokenPriceBalances: TokenBalance[] =
     whiteListedTokens?.map((tokenInfo, index) => ({
       balance: balances?.[index],
       tokenSymbol: tokenInfo.symbol,
-    })) ?? [];
+    })) ?? []
 
   const buttonLabel = useMemo(() => {
     const valSrc =
@@ -77,20 +77,20 @@ const ActionsComponent = ({
       valDest === null &&
       globalAction === ActionType.redelegate
     )
-      return 'Choose Validators';
+      return 'Choose Validators'
     else if (
       valSrc === null &&
       (globalAction === ActionType.undelegate ||
         globalAction === ActionType.redelegate)
     )
-      return 'Choose Validator';
+      return 'Choose Validator'
     else if (valDest === null && globalAction !== ActionType.undelegate)
-      return 'Choose Validator';
-    else if (currentDelegationState?.amount === 0) return 'Enter Amount';
-    else return ActionType[globalAction];
-  }, [isWalletConnected, currentDelegationState, globalAction]);
+      return 'Choose Validator'
+    else if (currentDelegationState?.amount === 0) return 'Enter Amount'
+    else return ActionType[globalAction]
+  }, [isWalletConnected, currentDelegationState, globalAction])
 
-  const [isLoadingSummary, __] = useState<boolean>(false);
+  const [isLoadingSummary, __] = useState<boolean>(false)
 
   const DelegationActionButton = ({ action }) => {
     const actionString = ActionType[action].toString()
@@ -111,12 +111,12 @@ const ActionsComponent = ({
       <Button
         sx={{
           '&:hover': {
-            backgroundColor: '#1C1C1C',
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
             color: '#6ACA70',
           },
         }}
         color={globalAction === action ? 'white' : 'grey'}
-        bg={'#1C1C1C'}
+        backgroundColor="rgba(0, 0, 0, 0.5)"
         fontSize={20}
         px={5}
         transform="translate(0%, -55%)"
@@ -168,7 +168,7 @@ const ActionsComponent = ({
       {isLoadingSummary && isWalletConnected ? (
         <VStack
           width="full"
-          background={'#1C1C1C'}
+          backgroundColor="rgba(0, 0, 0, 0.5)"
           borderRadius={'30px'}
           justifyContent="center"
           top={70}
@@ -195,7 +195,7 @@ const ActionsComponent = ({
       ) : (
         <VStack
           width="full"
-          background={'#1C1C1C'}
+          backgroundColor="rgba(0, 0, 0, 0.5)"
           borderRadius={'30px'}
           alignItems="flex-start"
           verticalAlign="flex-start"

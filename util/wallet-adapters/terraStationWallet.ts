@@ -110,18 +110,18 @@ export class TerraStationWallet implements Wallet {
   execute(
     senderAddress: string,
     contractAddress: string,
-    msg: Record<string, unknown>,
+    msgs: [Record<string, unknown>],
     funds: readonly Coin[] | undefined,
   ): Promise<ExecuteResult> {
-    const executeMsg = new MsgExecuteContract(
+    const executeMsgs = msgs.map(msg=>  new MsgExecuteContract(
       senderAddress,
       contractAddress,
       msg,
       funds?.map((coin) => new StationCoin(coin.denom, coin.amount)),
-    );
+    ));
     return this.client
       .post({
-        msgs: [executeMsg],
+        msgs: executeMsgs,
         chainID: this.chainID,
       })
       .then((result) => {

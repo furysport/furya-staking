@@ -17,7 +17,7 @@ export interface AssetDistribution {
     tokenSymbol: string
     distribution: number
 }
-export const fetchVTRewardShares = async (client: LCDClient): Promise<AssetDistribution[]> => {
+export const fetchVTRewardShares = async (client: LCDClient) => {
     if (!client) {
         return
     }
@@ -25,7 +25,7 @@ export const fetchVTRewardShares = async (client: LCDClient): Promise<AssetDistr
         reward_distribution: {}
     }
     const res: AssetDistributionResponse[] = await client.wasm.contractQuery(file.alliance_contract, msg)
-    return res.map((info) => {
+    const vtRewardShares = res.map((info) => {
         const token = tokens.find((token) => token.denom === (info?.asset?.native ?? info?.asset?.cw20))
         return {
             denom: token.denom,
@@ -33,6 +33,9 @@ export const fetchVTRewardShares = async (client: LCDClient): Promise<AssetDistr
             distribution: info.distribution,
         } as AssetDistribution
     })
+    return {
+        vtRewardShares
+    }
 
 }
 
@@ -45,5 +48,5 @@ export const useGetVTRewardShares = () => {
             enabled: !!client,
         }
     )
-    return {data, isLoading}
+    return {...data, isLoading}
 }
