@@ -232,7 +232,6 @@ const Dashboard = () => {
             !priceList,
         )
     }, [updatedAllianceData, priceList]);
-
     return (
         <VStack
             w="full"

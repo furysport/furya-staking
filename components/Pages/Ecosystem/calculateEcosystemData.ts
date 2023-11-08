@@ -1,6 +1,7 @@
 import {EnhancedStakeInfo} from "hooks/useQueryStakedBalances";
 import {RewardInfo} from "hooks/useQueryRewards";
 import {TabType} from "state/tabState";
+import {Token} from "components/Pages/AssetOverview";
 
 export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosystemBalances, stakedBalances: EnhancedStakeInfo[], rewards: RewardInfo[],  setEcosystemData) => {
     // Calculate data when dependencies change
@@ -10,14 +11,13 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
         const balance = ecosystemBalances?.[index] !== undefined ? ecosystemBalances?.[index] : 0
         return {
             ...token,
-            dollarValue: token.symbol === 'mUSDC' ? balance :
+            dollarValue: token.tokenSymbol === Token.mUSDC ? balance :
                 priceList && priceList[token.name]
                     ? priceList[token.name] * balance
                     : 0,
             value: balance,
         }
     })
-
     const calculateDelegationData = (tokenData: any) => {
         const allDelegations = stakedBalances.filter(
             (balance) =>  balance?.tokenSymbol === tokenData?.tokenSymbol,
@@ -29,7 +29,7 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
 
         return {
             ...tokenData,
-            dollarValue: Number(aggregatedAmount) * (tokenData.tokenSymbol === 'mUSDC' ? 1 : Number(priceList[tokenData.name] ?? 0)),
+            dollarValue: Number(aggregatedAmount) * (tokenData.tokenSymbol === Token.mUSDC ? 1 : Number(priceList[tokenData.name] ?? 0)),
             value: Number(aggregatedAmount),
         }
     }
@@ -40,7 +40,7 @@ export const calculateEcosystemData = (rawEcosystemTokenData, priceList, ecosyst
             return {
                 symbol: reward.tokenSymbol,
                 amount: reward.amount || 0,
-                dollarValue: reward.tokenSymbol === 'mUSDC' ? 1 : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
+                dollarValue: reward.tokenSymbol === Token.mUSDC ? 1 : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
                 denom: reward.denom,
                 stakedDenom: reward.stakedDenom,
             }
