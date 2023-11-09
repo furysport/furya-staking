@@ -12,7 +12,7 @@ interface AssetInputProps {
   showList?: boolean;
   onInputFocus?: () => void;
   balance?: number;
-  whalePrice?: number;
+  tokenPrice?: number;
   disabled?: boolean;
   minMax?: boolean;
   isSingleInput?: boolean;
@@ -28,7 +28,7 @@ interface AssetInputProps {
 const AssetInput = forwardRef((props: AssetInputProps, ref) => {
   const {
     balance,
-    whalePrice,
+    tokenPrice,
     token,
     onChange,
     hideMax,
@@ -52,8 +52,6 @@ const AssetInput = forwardRef((props: AssetInputProps, ref) => {
     () => `${token?.amount} ${token?.tokenSymbol}`,
     [token],
   );
-
-  const [tokenPrice] = [whalePrice]
 
   const dollarValue = useMemo(() => {
     return num(tokenPrice).times(token?.amount).dp(6).toString();

@@ -11,6 +11,8 @@ import useValidators from 'hooks/useValidators';
 import usePrices from 'hooks/usePrices';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { useRouter } from 'next/router';
+import {useGetLPTokenPrice} from "hooks/useGetLPTokenPrice";
+import {Token} from "components/Pages/AssetOverview";
 
 const Redelegate = ({
   validatorDestAddress,
@@ -90,20 +92,16 @@ const Redelegate = ({
 
 
     const router = useRouter();
-  const price = useMemo(() => {
-    if (!tokens || !Array.isArray(tokens) || !priceList) {
-      return undefined;
-    }
-    const token = tokens.find(
-      (e) => e.symbol === currentDelegationState.tokenSymbol,
-    );
+    const {lpTokenPrice} = useGetLPTokenPrice()
 
-    if (!token) {
-      return undefined;
-    }
-    return priceList[token.name];
-  }, [priceList, currentDelegationState.tokenSymbol, tokens]);
 
+    const price = useMemo(
+        () => currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
+            priceList?.[
+                tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)
+                    ?.name
+                ],
+        [priceList, currentDelegationState.tokenSymbol, lpTokenPrice])
   return (
     <VStack px={7} width="full" alignItems="flex-start" marginBottom={5}>
       <Text>From</Text>
@@ -176,7 +174,7 @@ const Redelegate = ({
             hideToken={currentDelegationState.tokenSymbol}
             {...field}
             token={currentDelegationState}
-            whalePrice={price}
+            tokenPrice={price}
             balance={aggregatedAmount}
             minMax={false}
             disabled={false}

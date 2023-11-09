@@ -128,7 +128,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                                         <Text
                                             marginBottom={1}
                                             fontSize={11}
-                                            color={isWalletConnected ? 'grey' : 'black'}
+                                            color={isWalletConnected ? 'white' : 'transparent'}
                                         >{`≈$${reward.dollarValue?.toFixed(2).toString()}`}</Text>
                                     </HStack>
                                     {index < data.length - 1 && <Divider/>}

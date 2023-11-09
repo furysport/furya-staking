@@ -24,6 +24,7 @@ import WalletModal from "components/Wallet/Modal/WalletModal";
 import {walletState, WalletStatusType} from "state/walletState";
 import {TxStep} from "types/blockchain";
 import {useGetLPTokenPrice} from "hooks/useGetLPTokenPrice";
+import {Token} from "components/Pages/AssetOverview";
 
 export const Undelegate = ({tokenSymbol}) => {
     const [currentDelegationState, setCurrentDelegationState] =
@@ -73,16 +74,16 @@ export const Undelegate = ({tokenSymbol}) => {
         (e) => e.tokenSymbol === currentDelegationState.tokenSymbol,
     ), [stakedInfos, currentDelegationState.tokenSymbol])
 
-    const [priceList] = usePrices() || [];
+    const [priceList] = usePrices() || []
     const { lpTokenPrice } = useGetLPTokenPrice()
 
     const price = useMemo(
-        () => currentDelegationState?.tokenSymbol === "USDC-WHALE_LP" ? lpTokenPrice :
+        () => currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
             priceList?.[
                 tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)
                     ?.name
                 ],
-        [priceList, lpTokenPrice, currentDelegationState.tokenSymbol],
+        [priceList, currentDelegationState.tokenSymbol, lpTokenPrice],
     )
 
     useEffect(() => {
@@ -161,7 +162,7 @@ export const Undelegate = ({tokenSymbol}) => {
                             hideLogo={currentDelegationState.tokenSymbol === "USDC-WHALE-LP"}
                             {...field}
                             token={currentDelegationState}
-                            whalePrice={price}
+                            tokenPrice={price}
                             balance={currentTokenBalance?.balance}
                             minMax={false}
                             disabled={false}

@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
 import { walletState } from 'state/walletState';
 import WalletModal from 'components/Wallet/Modal/WalletModal';
+import {tabState, TabType} from "state/tabState";
 
 const Wallet: any = ({
   connected,
@@ -20,7 +21,8 @@ const Wallet: any = ({
 }) => {
   const [isInitialized, setInitialized] = useState(false);
   const [currentWalletState, setCurrentWalletState] =
-    useRecoilState(walletState);
+    useRecoilState(walletState)
+  const [tabType, setTabType] = useRecoilState(tabState)
 
   const router = useRouter();
 
@@ -32,7 +34,18 @@ const Wallet: any = ({
   const { availableConnections } = useWallet();
 
   useEffect(() => {
-    if (router.pathname === '/') return;
+    if (router.pathname === '/') return
+
+    if(tabType === TabType.dashboard) {
+      const pathname = router.pathname
+      if (pathname.includes('alliance')) {
+        setTabType(TabType.alliance)
+      } else if (pathname.includes('ecosystem')) {
+        setTabType(TabType.ecosystem)
+      } else if (pathname.includes('liquidity')) {
+        setTabType(TabType.liquidity)
+      }
+    }
 
     const defaultChainId =
       currentWalletState.network === 'mainnet' ? 'migaloo-1' : 'narwhal-1';
