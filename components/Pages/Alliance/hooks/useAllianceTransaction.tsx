@@ -7,14 +7,14 @@ import { useRecoilValue } from 'recoil';
 import { walletState } from 'state/walletState';
 import { convertDenomToMicroDenom } from 'util/conversion';
 import { ActionType } from 'components/Pages/Dashboard';
-import { allianceDelegate } from 'components/Pages/Alliance/hooks/alliance/allianceDelegate';
-import { allianceUndelegate } from 'components/Pages/Alliance/hooks/alliance/allianceUndelegate';
-import { allianceRedelegate } from 'components/Pages/Alliance/hooks/alliance/allianceRedelegate';
+import { allianceDelegate } from 'components/Pages/Alliance/hooks/allianceDelegate';
+import { allianceUndelegate } from 'components/Pages/Alliance/hooks/allianceUndelegate';
+import { allianceRedelegate } from 'components/Pages/Alliance/hooks/allianceRedelegate';
 // Native staking
 import { nativeDelegate } from 'components/Pages/Alliance/native-staking/nativeDelegate';
 import { nativeUndelegate } from 'components/Pages/Alliance/native-staking/nativeUndelegate';
 import { nativeRedelegate } from 'components/Pages/Alliance/native-staking/nativeRedelegate';
-import { claimAllRewards } from 'components/Pages/Alliance/hooks/claimRewards';
+import { claimAllRewards } from 'components/Pages/Alliance/hooks/claimAllRewards';
 import useClient from 'hooks/useTerraStationClient';
 import useDelegations from 'hooks/useDelegations';
 import {TxStep} from "types/blockchain";

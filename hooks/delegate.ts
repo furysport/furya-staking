@@ -29,16 +29,6 @@ export const delegate = async (
                 address,
                 denom,
                 {
-                    "increase_allowance": {
-                        "amount": amount,
-                        "spender": file.alliance_contract
-                    }
-                }, []
-            ),
-            new MsgExecuteContract(
-                address,
-                denom,
-                {
                     "send": {
                         "amount": amount,
                         "contract": file.alliance_contract,

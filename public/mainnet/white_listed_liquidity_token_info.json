@@ -5,7 +5,7 @@
     "symbol": "USDC-WHALE-LP",
     "name": "USDC-WHALE LP",
     "decimals": 6,
-    "logoURI": "/logos/whale-usdc-lp.png",
+    "logoURI": null,
     "tags": ["native"],
     "denom": "factory/migaloo1xv4ql6t6r8zawlqn2tyxqsrvjpmjfm6kvdfvytaueqe3qvcwyr7shtx0hj/uLP",
     "native": true,

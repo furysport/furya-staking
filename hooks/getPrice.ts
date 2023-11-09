@@ -55,8 +55,6 @@ const getPriceFromPool = (
         const [asset1, asset2] = response?.assets || [];
         const aToken =
           asset1.info.native_token?.denom || asset1.info.token?.contract_addr;
-        const bToken =
-          asset2.info.native_token?.denom || asset2.info.token?.contract_addr;
         const isAB = aToken === basedOn;
 
         if (!basePrice || !basedOn) return 0;
@@ -74,8 +72,8 @@ const getPriceFromPool = (
             .dp(decimals)
             .toNumber();
       }
-    });
-};
+    })
+}
 
 const getPrice = (tokens: PoolInfo[], basePrice?: TokenPrice) => {
   const promises = tokens.map((token) => getPriceFromPool(token, basePrice));

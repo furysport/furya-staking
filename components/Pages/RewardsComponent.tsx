@@ -39,14 +39,14 @@ const RewardsComponent: FC<UndelegationsProps> = ({
     return (
         <VStack
             width="full"
-            background={'#1C1C1C'}
+            backgroundColor="rgba(0, 0, 0, 0.5)"
             alignItems="flex-start"
             justifyContent="center"
             px={7}
             pt={7}
             spacing={1}
             borderRadius={'20px'}
-            h={320}
+            minH={320}
             minW={500}
             as="form"
             overflow="hidden"
@@ -97,17 +97,20 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                             chainId={chainId}
                         />
                     </HStack>
-                    {data?.length > 0 && <Box
+                     <Box
                      overflowY="scroll"
                      minW={540}
-                     minH={170}
-                     backgroundColor="black"
+                     h={170}
+                     backgroundColor='#1C1C1C'
                      alignSelf={'center'}
                      px="4"
                      borderRadius="10px"
-                     marginBottom="20px"
+                     alignItems={"center"}
+                     display={data.length > 0 ? null : "flex"} // Make the Box a flex container
+                     justifyContent={data.length > 0 ? null : "center" } // Center children along the main axis
+                     flexDirection={data.length > 0 ? null : "column"}// Stack children vertically
                     >
-                        {data?.map((reward, index) => {
+                        { data.length > 0 ? data?.map((reward, index) => {
                             const logoURI = tokens.find((token) => token.symbol === reward.symbol)?.logoURI
                             return (<Box key={index} marginY={3}>
                                     <HStack justifyContent="space-between" width="100%" pr={3}>
@@ -129,14 +132,14 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                                         <Text
                                             marginBottom={1}
                                             fontSize={11}
-                                            color={isWalletConnected ? 'grey' : 'black'}
+                                            color={isWalletConnected ? 'white' : 'transparent'}
                                         >{`≈$${reward.dollarValue?.toFixed(2).toString()}`}</Text>
                                     </HStack>
                                     {index < data.length - 1 && <Divider/>}
                                 </Box>
                             )
-                        })}
-                    </Box>}
+                        }) : <Text textAlign="center" marginTop="auto" marginBottom="auto" color={'rgba(255, 255, 255, 0.5)'}>No rewards yet...</Text>}
+                    </Box>
                 </>
             )}
         </VStack>

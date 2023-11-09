@@ -3,12 +3,12 @@ import { Cell, Pie, PieChart } from 'recharts';
 import Loader from 'components/Loader';
 
 export enum Token {
-  WHALE,
-  ampLUNA,
-  bLUNA,
-  mUSDC,
-  ASH,
-  "USDC-WHALE-LP"
+  WHALE = "WHALE",
+  ampLUNA = "ampLUNA",
+  bLUNA = "bLUNA",
+  mUSDC = "mUSDC",
+  ASH = "ASH",
+  "USDC-WHALE-LP"= "USDC-WHALE-LP",
 }
 
 export enum TokenType {
@@ -17,33 +17,34 @@ export enum TokenType {
   undelegated,
   rewards,
 }
-
-const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
-  const borderRadius = '30px';
-  const TokenBox = ({ token }) => {
+const TokenBox = ({ token, data }) => {
     const { color } = data.find((e) => e.token === token);
 
     return (
-      <HStack mr="10">
-        <Box bg={color} w="4" h="4" borderRadius="50%" mr="2"></Box>
-        <Text
-            style={{
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              maxWidth: '80%', // Ensures it doesn't overflow the parent container
-            }}
-        >
-            {Token[token]}
-        </Text>
-      </HStack>
+        <HStack mr="10">
+            <Box bg={color} w="4" h="4" borderRadius="50%" mr="2"></Box>
+            <Text
+                style={{
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '80%', // Ensures it doesn't overflow the parent container
+                }}
+            >
+                {Token[token]}
+            </Text>
+        </HStack>
     );
-  };
+};
+
+const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
+  const borderRadius = '30px';
+
   const aggregatedAssets = data?.reduce((acc, e) => acc + (e?.value ?? 0), 0);
   return (
     <VStack
       width="full"
-      background={'#1C1C1C'}
+      backgroundColor="rgba(0, 0, 0, 0.5)"
       borderRadius={borderRadius}
       alignItems="flex-start"
       verticalAlign="center"
@@ -82,7 +83,7 @@ const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
               const apr = aprs?.find((apr) => apr.name === e.tokenSymbol);
               return (
                 <VStack key={`tokenBox-${e.token}`} alignItems={'flex-start'}>
-                  <TokenBox token={e.token} />
+                  <TokenBox token={e.token} data={data} />
                   <Text paddingBottom={4} color={'gray'}>
                     {`APR ≈${apr?.apr.toFixed(1)}%`}
                   </Text>
@@ -125,7 +126,7 @@ const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
                   <Cell key={`cell-${index}`} fill={data[index].color} />
                 ))
               ) : (
-                <Cell key={'cell-${index}'} fill="grey" />
+                <Cell fill="grey" />
               )}
             </Pie>
           </PieChart>

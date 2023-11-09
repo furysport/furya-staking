@@ -157,7 +157,7 @@ const useUndelegations = ({ address }) => {
   return useQuery({
     queryKey: ['undelegations', address],
     queryFn: () => getUndelegations(client, priceList, address),
-    enabled: !!address && !!priceList,
+    enabled: false, //!!address && !!priceList,
     refetchOnWindowFocus: false,
     refetchOnMount: false
   })

@@ -111,12 +111,12 @@ const ActionsComponent = ({
       <Button
         sx={{
           '&:hover': {
-            backgroundColor: '#1C1C1C',
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
             color: '#6ACA70',
           },
         }}
         color={globalAction === action ? 'white' : 'grey'}
-        bg={'#1C1C1C'}
+        backgroundColor="rgba(0, 0, 0, 0.5)"
         fontSize={20}
         px={5}
         transform="translate(0%, -55%)"
@@ -168,7 +168,7 @@ const ActionsComponent = ({
       {isLoadingSummary && isWalletConnected ? (
         <VStack
           width="full"
-          background={'#1C1C1C'}
+          backgroundColor="rgba(0, 0, 0, 0.5)"
           borderRadius={'30px'}
           justifyContent="center"
           top={70}
@@ -195,7 +195,7 @@ const ActionsComponent = ({
       ) : (
         <VStack
           width="full"
-          background={'#1C1C1C'}
+          backgroundColor="rgba(0, 0, 0, 0.5)"
           borderRadius={'30px'}
           alignItems="flex-start"
           verticalAlign="flex-start"

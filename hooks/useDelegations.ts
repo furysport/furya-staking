@@ -5,7 +5,7 @@ import usePrices from 'hooks/usePrices';
 import { num } from 'libs/num';
 import { useQuery } from 'react-query';
 
-const getDelegation = async (
+export const getDelegation = async (
   client: LCDClient | null,
   priceList: any,
   delegatorAddress: string,
@@ -76,12 +76,12 @@ const getDelegation = async (
 
   const allianceDelegation = await client?.alliance.alliancesDelegation(
     delegatorAddress,
-  );
+  )
   const nativeStake = await client.staking.delegations(delegatorAddress);
   const [nativeStakeResponse, allianceStakeResponse] = await Promise.all([
     nativeStake[0],
     allianceDelegation.delegations,
-  ]);
+  ])
 
   const delegations = [
     ...nativeStakeResponse.map((item: any) => {
@@ -103,9 +103,9 @@ const getDelegation = async (
         type: 'alliance',
         delegation: item.delegation,
         balance: item.balance,
-      };
+      }
     }),
-  ];
+  ]
 
   // This needs to be reworked such that we are working on a list of delegations from both modules
   return getRewards(delegations)
@@ -122,8 +122,8 @@ const getDelegation = async (
             name: token.name,
             decimals: token.decimals,
             denom: token.denom,
-          };
-        });
+          }
+        })
 
         //delegation amount
         const amount = delegatedToken
@@ -134,8 +134,7 @@ const getDelegation = async (
         const dollarValue = delegatedToken
           ? num(amount).times(priceList[delegatedToken.name]).dp(2).toNumber()
           : 0;
-        // console.log(`amount: ${amount} dollarValue: ${dollarValue} for ${delegatedToken.name}`)
-        //rewards amount
+
         const rewards = rewardTokens.map((rt) => {
           const amount = num(rt.amount)
             .div(10 ** rt.decimals)
@@ -145,8 +144,8 @@ const getDelegation = async (
             amount: amount,
             dollarValue: num(amount).times(priceList[rt.name]).dp(3).toNumber(),
             denom: rt.denom,
-          };
-        });
+          }
+        })
         return {
           ...item,
           rewards: rewards,
@@ -155,8 +154,8 @@ const getDelegation = async (
             amount,
             dollarValue,
           },
-        };
-      });
+        }
+      })
     })
     .then((data) => {
       // sum to total delegation
@@ -165,25 +164,25 @@ const getDelegation = async (
           const { dollarValue } = item.token;
           return {
             dollarValue: acc.dollarValue + dollarValue,
-          };
+          }
         },
         { dollarValue: 0 },
-      );
+      )
       return {
         delegations: data,
         totalDelegation: totalDelegation?.dollarValue?.toFixed(2),
-      };
-    });
-};
+      }
+    })
+}
 
 const useDelegations = ({ address }) => {
-  const client = useClient();
-  const [priceList] = usePrices() || [];
+  const client = useClient()
+  const [priceList] = usePrices() || []
   return useQuery({
     queryKey: ['delegations', priceList, address],
     queryFn: () => getDelegation(client, priceList, address),
     enabled: !!client && !!address && !!priceList,
-  });
-};
+  })
+}
 
-export default useDelegations;
+export default useDelegations

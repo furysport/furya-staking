@@ -24,17 +24,13 @@ const CardComponent: FC<CardComponentProps> = ({
   isWalletConnected,
   assetType,
 }) => {
-
-
   const sumAndMultiplyValues = useMemo(() => {
-    return isLoading
-      ? 0
-      : tokenData?.reduce((total, item) => {
+    return tokenData?.reduce((total, item) => {
           return (
             total +
             (item?.dollarValue !== undefined ? item?.dollarValue ?? 0 : 0)
-          );
-        }, 0);
+          )
+        }, 0)
   }, [tokenData, isLoading]);
 
   const summedAndMultipliedValues = useMemo(() => {
@@ -45,7 +41,7 @@ const CardComponent: FC<CardComponentProps> = ({
   return (
     <VStack
       width="full"
-      background={'#1C1C1C'}
+      backgroundColor="rgba(0, 0, 0, 0.5)"
       pl={7}
       spacing={1}
       borderRadius={'20px'}
@@ -74,7 +70,6 @@ const CardComponent: FC<CardComponentProps> = ({
         <>
           <HStack>
             <Text color="gray">{title}</Text>
-            {/* if isUndelegations is 'undelegations' then show unbonding peroid of otherwise show hello world */}
             {assetType && (
               <Tooltip
                 label={

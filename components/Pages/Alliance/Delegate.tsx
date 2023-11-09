@@ -11,6 +11,8 @@ import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import useValidators from 'hooks/useValidators';
 import usePrices from 'hooks/usePrices';
 import { useRouter } from 'next/router';
+import {useGetLPTokenPrice} from "hooks/useGetLPTokenPrice";
+import {Token} from "components/Pages/AssetOverview";
 
 export interface TokenBalance {
   tokenSymbol: string;
@@ -32,7 +34,7 @@ const Delegate: FC<ActionProps> = ({
   const [currentDelegationState, setCurrentDelegationState] =
     useRecoilState<DelegationState>(delegationState);
 
-  const { data: { validators = [] } = {} } = useValidators({ address });
+  const { data: { validators = [] } = {} } = useValidators({ address })
 
   const chosenValidator = useMemo(
     () => validators.find((v) => v.operator_address === validatorDestAddress),
@@ -42,7 +44,7 @@ const Delegate: FC<ActionProps> = ({
   const router = useRouter();
 
   useEffect(() => {
-    const token = tokens.find((e) => e.symbol === tokenSymbol);
+    const token = tokens.find((e) => e.symbol === tokenSymbol)
     setCurrentDelegationState({
       ...currentDelegationState,
       tokenSymbol: token.symbol,
@@ -65,16 +67,16 @@ const Delegate: FC<ActionProps> = ({
     (e) => e.tokenSymbol === currentDelegationState.tokenSymbol,
   )
     const [priceList] = usePrices() || [];
-
+    const {lpTokenPrice} = useGetLPTokenPrice()
 
 
     const price = useMemo(
-    () =>
+    () => currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
       priceList?.[
         tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)
           ?.name
       ],
-    [priceList, currentDelegationState.tokenSymbol],
+    [priceList, currentDelegationState.tokenSymbol, lpTokenPrice],
   );
   return (
     <VStack px={7} width="full" alignItems="flex-start" marginBottom={5}>
@@ -116,7 +118,7 @@ const Delegate: FC<ActionProps> = ({
             hideToken={currentDelegationState.tokenSymbol}
             {...field}
             token={currentDelegationState}
-            whalePrice={price}
+            tokenPrice={price}
             balance={currentTokenBalance?.balance}
             minMax={false}
             disabled={false}

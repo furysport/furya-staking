@@ -20,6 +20,8 @@ import {ActionType} from "components/Pages/Dashboard";
 import {tabState, TabType} from "state/tabState";
 import WalletModal from "components/Wallet/Modal/WalletModal";
 import {useGetLPTokenPrice} from "hooks/useGetLPTokenPrice";
+import tokens from "public/mainnet/white_listed_alliance_token_info.json";
+import {Token} from "components/Pages/AssetOverview";
 
 
 export const Delegate = ({tokenSymbol}) => {
@@ -99,12 +101,12 @@ export const Delegate = ({tokenSymbol}) => {
     }, [tabFromUrl, currentDelegationState])
 
     const price = useMemo(
-        () => currentDelegationState?.tokenSymbol === "USDC-WHALE_LP" ? lpTokenPrice :
+        () => currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
             priceList?.[
-                whiteListedTokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)
+                tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)
                     ?.name
                 ],
-        [priceList, lpTokenPrice, currentDelegationState.tokenSymbol],
+        [priceList, currentDelegationState.tokenSymbol, lpTokenPrice],
     )
     const buttonLabel = useMemo(() => {
         if (!isWalletConnected) {
@@ -142,7 +144,7 @@ export const Delegate = ({tokenSymbol}) => {
             </HStack>
             <VStack
                 width="full"
-                background={'#1C1C1C'}
+                backgroundColor="rgba(0, 0, 0, 0.5)"
                 borderRadius={'30px'}
                 alignItems="flex-start"
                 verticalAlign="flex-start"
@@ -165,7 +167,7 @@ export const Delegate = ({tokenSymbol}) => {
                             hideLogo={currentDelegationState.tokenSymbol === "USDC-WHALE-LP"}
                             {...field}
                             token={currentDelegationState}
-                            whalePrice={price}
+                            tokenPrice={price}
                             balance={currentTokenBalance?.balance}
                             minMax={false}
                             disabled={false}
@@ -193,9 +195,9 @@ export const Delegate = ({tokenSymbol}) => {
                 />
                 <CustomButton
                     buttonLabel={buttonLabel}
-                    onClick={async () => {
+                    onClick={ () => {
                         if (isWalletConnected) {
-                            await submit(ActionType.delegate,
+                            submit(ActionType.delegate,
                                 currentDelegationState.amount,
                                 currentDelegationState.denom,
                                 null
