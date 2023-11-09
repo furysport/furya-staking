@@ -34,8 +34,8 @@ const RewardsComponent: FC<UndelegationsProps> = ({
         [data],
     ) || 0
 
-    const stakedDenoms = useMemo(() => data?.map((r: { stakedDenom: string })=>r.stakedDenom), [data])
-
+    const stakedDenoms = useMemo(() => data?.map((r: { stakedDenom: string }) => r.stakedDenom), [data])
+    const showRewards = useMemo(() => (data.length > 0 && isWalletConnected), [data, isWalletConnected])
     return (
         <VStack
             width="full"
@@ -97,20 +97,19 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                             chainId={chainId}
                         />
                     </HStack>
-                     <Box
-                     overflowY="scroll"
-                     minW={540}
-                     h={170}
-                     backgroundColor='#1C1C1C'
-                     alignSelf={'center'}
-                     px="4"
-                     borderRadius="10px"
-                     alignItems={"center"}
-                     display={data.length > 0 ? null : "flex"} // Make the Box a flex container
-                     justifyContent={data.length > 0 ? null : "center" } // Center children along the main axis
-                     flexDirection={data.length > 0 ? null : "column"}// Stack children vertically
-                    >
-                        { data.length > 0 ? data?.map((reward, index) => {
+                    <Box
+                        overflowY="scroll"
+                        minW={540}
+                        h={170}
+                        backgroundColor='#1C1C1C'
+                        alignSelf={'center'}
+                        px="4"
+                        borderRadius="10px"
+                        alignItems={"center"}
+                        display={showRewards ? null : "flex"}
+                        justifyContent={showRewards ? null : "center"}
+                        flexDirection={showRewards ? null : "column"}>
+                        {showRewards ? data?.map((reward, index) => {
                             const logoURI = tokens.find((token) => token.symbol === reward.symbol)?.logoURI
                             return (<Box key={index} marginY={3}>
                                     <HStack justifyContent="space-between" width="100%" pr={3}>
@@ -138,7 +137,8 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                                     {index < data.length - 1 && <Divider/>}
                                 </Box>
                             )
-                        }) : <Text textAlign="center" marginTop="auto" marginBottom="auto" color={'rgba(255, 255, 255, 0.5)'}>No rewards yet...</Text>}
+                        }) : <Text textAlign="center" marginTop="auto" marginBottom="auto"
+                                   color={'rgba(255, 255, 255, 0.5)'}>No rewards yet...</Text>}
                     </Box>
                 </>
             )}
