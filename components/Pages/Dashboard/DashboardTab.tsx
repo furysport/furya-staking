@@ -14,7 +14,7 @@ import {useCalculateAllianceAprs} from "components/Pages/Alliance/hooks/useCalcu
 import {Apr, useCalculateAprs} from "components/Pages/Ecosystem/hooks/useCalculateAprs";
 
 
-const dashboardTokenSymbols = [Token.WHALE, Token.ampLUNA, Token.bLUNA, Token.ASH, Token.mUSDC, Token["USDC-WHALE-LP"]]
+const dashboardTokenSymbols = [Token.WHALE, Token.mUSDC, Token.ampLUNA, Token.bLUNA, Token.ASH, Token["USDC-WHALE-LP"]]
 export const DashboardTab = ({priceList}) => {
     const {address} = useRecoilValue(walletState)
     const [dashboardData, setDashboardData] = useState<DashboardData[]>([])
