@@ -7,12 +7,11 @@ const UndelegatePage = () => {
   const { validatorSrcAddress } = router.query;
   const { tokenSymbol } = router.query;
 
-  // @ts-ignore
   return (
     <ActionsComponent
       globalAction={ActionType.undelegate}
       validatorSrcAddress={validatorSrcAddress}
-      tokenSymbol={tokenSymbol}
+      tokenSymbol={tokenSymbol.toString()}
     />
   );
 };

@@ -164,7 +164,7 @@ export const Undelegate = ({ tokenSymbol }) => {
               balance={currentTokenBalance?.balance}
               minMax={false}
               disabled={false}
-              onChange={async (value, isTokenChange) => {
+              onChange={(value, isTokenChange) => {
                 field.onChange(value);
                 if (isTokenChange) {
                   const { denom } = whiteListedTokens.find((t) => t.symbol === value.tokenSymbol);

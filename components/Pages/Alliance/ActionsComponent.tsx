@@ -28,7 +28,7 @@ import { TxStep } from 'types/blockchain';
 
 const ActionsComponent = ({
   globalAction,
-  validatorDestAddress,
+  validatorDestAddress = null,
   validatorSrcAddress,
   tokenSymbol = 'ampLUNA',
 }) => {

@@ -1,8 +1,8 @@
 import { FC, useMemo } from 'react';
 
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
-import useValidators from 'hooks/useValidators';
 import { Validator } from '@terra-money/feather.js';
+import useValidators from 'hooks/useValidators';
 
 type ValidatorListProps = {
   onChange: (validator) => void;
