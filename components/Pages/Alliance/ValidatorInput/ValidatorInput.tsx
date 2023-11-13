@@ -1,7 +1,8 @@
-import { HStack, IconButton, Text } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import ValidatorSelectModal from 'components/ValidatorInput/ValidatorSelectModal';
 import { FC } from 'react';
+
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import { HStack, IconButton, Text } from '@chakra-ui/react';
+import ValidatorSelectModal from 'components/Pages/Alliance/ValidatorInput/ValidatorSelectModal';
 import { useRecoilState } from 'recoil';
 import { walletState } from 'state/walletState';
 
@@ -32,7 +33,7 @@ const ValidatorInput: FC<ValidatorInputProps> = (props) => {
           onChange={props.onChange}
           address={address}
           delegatedOnly={props.delegatedOnly}
-          currentValidator={'Validator'} //[tokenInfo?.symbol || hideToken]
+          currentValidator={'Validator'} // [tokenInfo?.symbol || hideToken]
           validatorList={[]}
           disabled={false}
         >

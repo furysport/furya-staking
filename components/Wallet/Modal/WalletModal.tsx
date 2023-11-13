@@ -9,6 +9,7 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
+
 import TerraStationConnectButton from './TerraStationConnectButton';
 
 function WalletModal({ isOpenModal, onCloseModal, chainId }) {
@@ -23,9 +24,9 @@ function WalletModal({ isOpenModal, onCloseModal, chainId }) {
             {chainId !== 'comdex-1' && chainId !== 'injective-1' && (
               <TerraStationConnectButton onCloseModal={onCloseModal} />
             )}
-            {/*<KeplrConnectButton onCloseModal={onCloseModal} />*/}
-            {/*<LeapConnectButton onCloseModal={onCloseModal} />*/}
-            {/*<CosmostationConnectButton onCloseModal={onCloseModal} />*/}
+            {/* <KeplrConnectButton onCloseModal={onCloseModal} />*/}
+            {/* <LeapConnectButton onCloseModal={onCloseModal} />*/}
+            {/* <CosmostationConnectButton onCloseModal={onCloseModal} />*/}
           </VStack>
         </ModalBody>
       </ModalContent>

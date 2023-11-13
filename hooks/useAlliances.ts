@@ -1,9 +1,10 @@
+import { useQuery } from 'react-query';
+
+import { LCDClient } from '@terra-money/feather.js';
+import { AllianceAsset } from '@terra-money/feather.js/dist/client/lcd/api/AllianceAPI';
 import useClient from 'hooks/useClient';
 import usePrices from 'hooks/usePrices';
-import { useQuery } from 'react-query';
-import { LCDClient } from '@terra-money/feather.js';
 import whiteListedTokens from 'public/mainnet/white_listed_alliance_token_info.json';
-import { AllianceAsset } from '@terra-money/feather.js/dist/client/lcd/api/AllianceAPI';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
 export interface Alliance {
@@ -18,11 +19,10 @@ export const useAlliances = () => {
   const client = useClient();
   const [priceList] = usePrices() || [];
 
-
   const { data: alliances } = useQuery({
     queryKey: ['alliances', priceList],
     queryFn: () => fetchAlliances(client, priceList),
-    enabled: !!client && !!priceList,
+    enabled: Boolean(client) && Boolean(priceList),
     refetchOnMount: true,
   });
   return { alliances };
@@ -35,9 +35,7 @@ const fetchAlliances = async (client: LCDClient, priceList) => {
   ).alliances;
 
   const alliances: Alliance[] = whiteListedTokens.map((token) => {
-    const alliance = allianceAssets?.find(
-      (asset) => asset.denom === token.denom,
-    );
+    const alliance = allianceAssets?.find((asset) => asset.denom === token.denom);
 
     return {
       name: token.symbol,
@@ -45,10 +43,8 @@ const fetchAlliances = async (client: LCDClient, priceList) => {
       totalDollarAmount:
         convertMicroDenomToDenom(alliance?.total_tokens, token.decimals) *
         priceList[token.name],
-      totalTokens: convertMicroDenomToDenom(
-        alliance?.total_tokens,
-        token.decimals,
-      ),
+      totalTokens: convertMicroDenomToDenom(alliance?.total_tokens,
+        token.decimals),
       takeRate: Number(alliance?.take_rate),
     };
   });

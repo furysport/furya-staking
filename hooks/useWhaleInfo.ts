@@ -1,4 +1,5 @@
 import { useQueries } from 'react-query';
+
 import { fetchTotalSupply } from 'libs/fetchTotalWhaleSupply';
 import { fetchInflation } from 'libs/fetchWhaleInflation';
 

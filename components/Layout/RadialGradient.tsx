@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+
 import { Box } from '@chakra-ui/react';
 
 const backgrounds = {
@@ -7,17 +8,17 @@ const backgrounds = {
 };
 
 const RadialGradient: FC = () => (
-    <Box
-      position="absolute"
-      height="718px"
-      left="-131px"
-      top="-314px"
-      background={backgrounds['migaloo-1']}
-      width="full"
-      filter="blur(250px)"
-      borderTopRightRadius="20%"
-      zIndex="-1"
-    />
-  )
+  <Box
+    position="absolute"
+    height="718px"
+    left="-131px"
+    top="-314px"
+    background={backgrounds['migaloo-1']}
+    width="full"
+    filter="blur(250px)"
+    borderTopRightRadius="20%"
+    zIndex="-1"
+  />
+)
 
 export default RadialGradient;

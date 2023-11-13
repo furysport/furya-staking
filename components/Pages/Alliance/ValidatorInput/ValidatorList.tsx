@@ -4,7 +4,7 @@ import { Box, Button, HStack, Text } from '@chakra-ui/react';
 import useValidators from 'hooks/useValidators';
 
 type ValidatorListProps = {
-  // assetList?: Asset[];
+  // AssetList?: Asset[];
   onChange: (validator) => void;
   search: string;
   address: string;
@@ -23,24 +23,26 @@ const ValidatorList: FC<ValidatorListProps> = ({
   const { data: { validators = [] } = {} } = useValidators({ address });
 
   const validatorsWithDelegation = useMemo(() => {
-    if (!validators?.length) return [];
+    if (!validators?.length) {
+      return [];
+    }
 
-    return validators
-      ?.map((validator) => ({
+    return validators?.
+      map((validator) => ({
         ...validator,
-      }))
-      .filter((v) => (delegatedOnly ? v.delegated : true));
+      })).
+      filter((v) => (delegatedOnly ? v.delegated : true));
   }, [validators]);
 
   const filteredValidators = useMemo(() => {
-    if (!!!search) return validatorsWithDelegation;
+    if (!search) {
+      return validatorsWithDelegation;
+    }
 
-    return validatorsWithDelegation.filter(({ description }) =>
-      description?.moniker.toLowerCase().includes(search.toLowerCase()),
-    );
+    return validatorsWithDelegation.filter(({ description }) => description?.moniker.toLowerCase().includes(search.toLowerCase()));
   }, [search, validatorsWithDelegation]);
 
-  //// useFilter<any>(tokensWithBalance, 'symbol', search)
+  // // useFilter<any>(tokensWithBalance, 'symbol', search)
 
   return (
     <Box

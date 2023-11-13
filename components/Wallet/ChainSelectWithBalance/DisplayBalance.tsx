@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Spinner, Text } from '@chakra-ui/react'
-import {useGetWhaleBalance} from "hooks/useGetWhaleBalance"
+import { useGetWhaleBalance } from 'hooks/useGetWhaleBalance'
 
 function DisplayBalance() {
   const { balance, isLoading } = useGetWhaleBalance()

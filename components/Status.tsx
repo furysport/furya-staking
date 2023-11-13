@@ -11,9 +11,7 @@ const Status = () => {
   const chains: Array<any> = useChains()
   const { chainId } = useRecoilValue(walletState)
 
-  const url = useMemo(() => {
-    return chains?.find((c) => c?.chainId === chainId)?.rpc;
-  }, [chainId, chains])
+  const url = useMemo(() => chains?.find((c) => c?.chainId === chainId)?.rpc, [chainId, chains])
 
   const { data: status } = useQuery(
     ['status', chainId],
@@ -22,12 +20,12 @@ const Status = () => {
       const resJons = await res?.json();
       return {
         block: resJons?.result?.sync_info?.latest_block_height || status?.block,
-        active: !!resJons?.result?.sync_info?.latest_block_height,
+        active: Boolean(resJons?.result?.sync_info?.latest_block_height),
       }
     },
     {
       refetchInterval: 6000,
-      enabled: !!url,
+      enabled: Boolean(url),
     },
   )
 
@@ -44,7 +42,7 @@ const Status = () => {
       <Text color="white">{status?.block}</Text>
       <Icon
         as={BsCircleFill}
-        color={!!status?.active ? '#3CCD64' : 'gray'}
+        color={status?.active ? '#3CCD64' : 'gray'}
         boxShadow="0px 0px 14.0801px #298F46"
         bg="#1C1C1C"
         borderRadius="full"

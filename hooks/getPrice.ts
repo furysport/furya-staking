@@ -1,6 +1,6 @@
 import { LCDClient } from '@terra-money/feather.js'
-import tokens from 'public/mainnet/tokens.json'
 import { num } from 'libs/num'
+import tokens from 'public/mainnet/tokens.json'
 
 type PoolInfo = {
   denom: string;
@@ -16,61 +16,65 @@ type TokenPrice = {
   [key: string]: number;
 };
 
-const getLCDClient = () => {
-  return new LCDClient({
-    'migaloo-1': {
-      lcd: 'https://ww-migaloo-rest.polkachu.com/',
-      chainID: 'migaloo-1',
-      gasAdjustment: 0.1,
-      gasPrices: { uwhale: 0.05 },
-      prefix: 'migaloo',
-    },
-    'phoenix-1': {
-      lcd: 'https://ww-terra-rest.polkachu.com/',
-      chainID: 'phoenix-1',
-      gasAdjustment: 1.75,
-      gasPrices: { uluna: 0.015 },
-      prefix: 'terra',
-    },
-  });
-};
+const getLCDClient = () => new LCDClient({
+  'migaloo-1': {
+    lcd: 'https://ww-migaloo-rest.polkachu.com/',
+    chainID: 'migaloo-1',
+    gasAdjustment: 0.1,
+    gasPrices: { uwhale: 0.05 },
+    prefix: 'migaloo',
+  },
+  'phoenix-1': {
+    lcd: 'https://ww-terra-rest.polkachu.com/',
+    chainID: 'phoenix-1',
+    gasAdjustment: 1.75,
+    gasPrices: { uluna: 0.015 },
+    prefix: 'terra',
+  },
+});
 
-const getPriceFromPool = (
-  { denom, decimals, contract, base, basedOn }: PoolInfo,
-  basePrice?: TokenPrice,
-): Promise<number> => {
+const getPriceFromPool = ({ denom, decimals, contract, base, basedOn }: PoolInfo,
+  basePrice?: TokenPrice): Promise<number> => {
   const client = getLCDClient();
 
-  return client.wasm
-    .contractQuery(contract, { pool: {} })
-    .then((response: any) => {
+  return client.wasm.
+    contractQuery(contract, { pool: {} }).
+    then((response: any) => {
       if (base) {
         const [asset1, asset2] = response?.assets || [];
         const isAB = asset1.info.native_token?.denom === denom;
-        if (isAB)
-          return num(asset2.amount).div(asset1.amount).dp(decimals).toNumber();
-        else
-          return num(asset1.amount).div(asset2.amount).dp(decimals).toNumber();
+        if (isAB) {
+          return num(asset2.amount).div(asset1.amount).
+            dp(decimals).
+            toNumber();
+        } else {
+          return num(asset1.amount).div(asset2.amount).
+            dp(decimals).
+            toNumber();
+        }
       } else {
         const [asset1, asset2] = response?.assets || [];
         const aToken =
           asset1.info.native_token?.denom || asset1.info.token?.contract_addr;
         const isAB = aToken === basedOn;
 
-        if (!basePrice || !basedOn) return 0;
+        if (!basePrice || !basedOn) {
+          return 0;
+        }
 
-        if (isAB)
-          return num(asset1.amount)
-            .div(asset2.amount)
-            .times(basePrice[basedOn])
-            .dp(decimals)
-            .toNumber();
-        else
-          return num(asset2.amount)
-            .div(asset1.amount)
-            .times(basePrice[basedOn])
-            .dp(decimals)
-            .toNumber();
+        if (isAB) {
+          return num(asset1.amount).
+            div(asset2.amount).
+            times(basePrice[basedOn]).
+            dp(decimals).
+            toNumber();
+        } else {
+          return num(asset2.amount).
+            div(asset1.amount).
+            times(basePrice[basedOn]).
+            dp(decimals).
+            toNumber();
+        }
       }
     })
 }
@@ -87,12 +91,13 @@ const getPrice = (tokens: PoolInfo[], basePrice?: TokenPrice) => {
 };
 
 export const getTokenPrice = async (): Promise<[TokenPrice, number]> => {
-  //group by base tokens to make sure we get base price before other tokens
+  // Group by base tokens to make sure we get base price before other tokens
   const baseTokens = tokens.filter((token) => token.base);
   const otherTokens = tokens.filter((token) => !token.base);
 
   const basePrice = await getPrice(baseTokens);
   const otherPrice = await getPrice(otherTokens, basePrice);
 
-  return [{ ...basePrice, ...otherPrice }, new Date().getTime()];
+  return [{ ...basePrice,
+    ...otherPrice }, new Date().getTime()];
 };

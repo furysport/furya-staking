@@ -1,6 +1,6 @@
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient'
 import { Coin } from '@cosmjs/launchpad'
-import {Wallet} from "util/wallet-adapters/index";
+import { Wallet } from 'util/wallet-adapters/index';
 
 export type Expiration =
   | { readonly at_height: number }

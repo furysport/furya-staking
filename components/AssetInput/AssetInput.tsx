@@ -1,8 +1,10 @@
-import { VStack, forwardRef } from '@chakra-ui/react';
 import React, { useMemo } from 'react';
-import WhaleInput from './WhaleInput';
+
+import { VStack, forwardRef } from '@chakra-ui/react';
 import { num } from 'libs/num';
+
 import BalanceWithMaxNHalf from './BalanceWithMax';
+import WhaleInput from './WhaleInput';
 
 interface AssetInputProps {
   image?: boolean;
@@ -48,22 +50,17 @@ const AssetInput = forwardRef((props: AssetInputProps, ref) => {
     })
   }
 
-  const numberOfTokens = useMemo(
-    () => `${token?.amount} ${token?.tokenSymbol}`,
-    [token],
-  );
+  const numberOfTokens = useMemo(() => `${token?.amount} ${token?.tokenSymbol}`,
+    [token]);
 
-  const dollarValue = useMemo(() => {
-    return num(tokenPrice).times(token?.amount).dp(6).toString();
-  }, [tokenPrice, token?.amount]);
+  const dollarValue = useMemo(() => num(tokenPrice).times(token?.amount).
+    dp(6).
+    toString(), [tokenPrice, token?.amount]);
 
-  const balanceWithDecimals = useMemo(
-    () =>
-      num(balance)
-        .dp(token?.decimals || 6)
-        .toString(),
-    [balance, token?.decimals],
-  );
+  const balanceWithDecimals = useMemo(() => num(balance).
+    dp(token?.decimals || 6).
+    toString(),
+  [balance, token?.decimals]);
 
   return (
     <VStack width="full">

@@ -1,3 +1,5 @@
+import React, { useMemo, useState } from 'react';
+
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -8,25 +10,22 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import { walletState, WalletStatusType } from 'state/walletState';
-import Redelegate from 'components/Pages/Alliance/Redelegate';
-import Delegate, { TokenBalance } from 'components/Pages/Alliance/Delegate';
-import { useRouter } from 'next/router';
-
-import { delegationState, DelegationState } from 'state/delegationState';
-import React, { useMemo, useState } from 'react';
-import WalletModal from 'components/Wallet/Modal/WalletModal';
-
-import Loader from 'components/Loader';
-import { ActionType } from 'components/Pages/Dashboard';
-import Undelegate from 'components/Pages/Alliance/Undelegate';
-import { useMultipleTokenBalance } from 'hooks/useTokenBalance';
-import useAllianceTransaction from 'components/Pages/Alliance/hooks/useAllianceTransaction';
-import whiteListedTokens from 'public/mainnet/white_listed_alliance_token_info.json';
-import useDelegations from 'hooks/useDelegations';
 import CustomButton from 'components/CustomButton';
-import {TxStep} from "types/blockchain";
+import Loader from 'components/Loader';
+import Delegate, { TokenBalance } from 'components/Pages/Alliance/Delegate';
+import useAllianceTransaction from 'components/Pages/Alliance/hooks/useAllianceTransaction';
+import Redelegate from 'components/Pages/Alliance/Redelegate';
+import Undelegate from 'components/Pages/Alliance/Undelegate';
+import { ActionType } from 'components/Pages/Dashboard';
+import WalletModal from 'components/Wallet/Modal/WalletModal';
+import useDelegations from 'hooks/useDelegations';
+import { useMultipleTokenBalance } from 'hooks/useTokenBalance';
+import { useRouter } from 'next/router';
+import whiteListedTokens from 'public/mainnet/white_listed_alliance_token_info.json';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { delegationState, DelegationState } from 'state/delegationState';
+import { walletState, WalletStatusType } from 'state/walletState';
+import { TxStep } from 'types/blockchain';
 
 const ActionsComponent = ({
   globalAction,
@@ -51,9 +50,7 @@ const ActionsComponent = ({
 
   const { data: { delegations = [] } = {} } = useDelegations({ address })
 
-  const { data: balances } = useMultipleTokenBalance(
-    whiteListedTokens?.map((e) => e.symbol) ?? [],
-  )
+  const { data: balances } = useMultipleTokenBalance(whiteListedTokens?.map((e) => e.symbol) ?? [])
 
   const liquidTokenPriceBalances: TokenBalance[] =
     whiteListedTokens?.map((tokenInfo, index) => ({
@@ -71,23 +68,27 @@ const ActionsComponent = ({
         ? null
         : currentDelegationState?.validatorDestAddress;
 
-    if (!isWalletConnected) return 'Connect Wallet';
-    else if (
+    if (!isWalletConnected) {
+      return 'Connect Wallet';
+    } else if (
       valSrc === null &&
       valDest === null &&
       globalAction === ActionType.redelegate
-    )
+    ) {
       return 'Choose Validators'
-    else if (
+    } else if (
       valSrc === null &&
       (globalAction === ActionType.undelegate ||
         globalAction === ActionType.redelegate)
-    )
+    ) {
       return 'Choose Validator'
-    else if (valDest === null && globalAction !== ActionType.undelegate)
+    } else if (valDest === null && globalAction !== ActionType.undelegate) {
       return 'Choose Validator'
-    else if (currentDelegationState?.amount === 0) return 'Enter Amount'
-    else return ActionType[globalAction]
+    } else if (currentDelegationState?.amount === 0) {
+      return 'Enter Amount'
+    } else {
+      return ActionType[globalAction]
+    }
   }, [isWalletConnected, currentDelegationState, globalAction])
 
   const [isLoadingSummary, __] = useState<boolean>(false)
@@ -95,7 +96,7 @@ const ActionsComponent = ({
   const DelegationActionButton = ({ action }) => {
     const actionString = ActionType[action].toString()
     const onClick = async () => {
-       setCurrentDelegationState({
+      setCurrentDelegationState({
         ...currentDelegationState,
         amount: 0,
         validatorSrcAddress: null,
@@ -111,7 +112,7 @@ const ActionsComponent = ({
       <Button
         sx={{
           '&:hover': {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
             color: '#6ACA70',
           },
         }}
@@ -130,7 +131,8 @@ const ActionsComponent = ({
 
   return (
     <VStack
-      width={{ base: '100%', md: '650px' }}
+      width={{ base: '100%',
+        md: '650px' }}
       alignItems="flex-start"
       top={200}
       gap={4}
@@ -144,7 +146,7 @@ const ActionsComponent = ({
           aria-label="go back"
           icon={<ArrowBackIcon />}
           onClick={async () => {
-            await router.push(`/`);
+            await router.push('/');
             setCurrentDelegationState({
               ...currentDelegationState,
               amount: 0,

@@ -1,9 +1,10 @@
-import { HStack, VStack, Text, Box, Tooltip } from '@chakra-ui/react';
-import Loader from 'components/Loader';
 import React, { FC, useMemo } from 'react';
+
+import { HStack, VStack, Text, Box, Tooltip } from '@chakra-ui/react';
+import InfoIcon from 'components/icons/InfoIcon';
+import Loader from 'components/Loader';
 import { CustomTooltip } from 'components/Pages/CustomTooltip';
 import { TokenData } from 'components/Pages/Dashboard';
-import InfoIcon from 'components/icons/InfoIcon';
 
 interface CardComponentProps {
   title: string;
@@ -24,20 +25,14 @@ const CardComponent: FC<CardComponentProps> = ({
   isWalletConnected,
   assetType,
 }) => {
-  const sumAndMultiplyValues = useMemo(() => {
-    return tokenData?.reduce((total, item) => {
-          return (
-            total +
+  const sumAndMultiplyValues = useMemo(() => tokenData?.reduce((total, item) => (
+    total +
             (item?.dollarValue !== undefined ? item?.dollarValue ?? 0 : 0)
-          )
-        }, 0)
-  }, [tokenData, isLoading]);
+  ), 0), [tokenData, isLoading]);
 
-  const summedAndMultipliedValues = useMemo(() => {
-    return isWalletConnected
-      ? `$${sumAndMultiplyValues.toFixed(2).toString()}`
-      : '$0'
-  }, [isWalletConnected, sumAndMultiplyValues]);
+  const summedAndMultipliedValues = useMemo(() => (isWalletConnected
+    ? `$${sumAndMultiplyValues.toFixed(2).toString()}`
+    : '$0'), [isWalletConnected, sumAndMultiplyValues]);
   return (
     <VStack
       width="full"

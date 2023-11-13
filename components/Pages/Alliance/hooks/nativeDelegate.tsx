@@ -1,19 +1,17 @@
+import { Coin, MsgDelegate } from '@terra-money/feather.js';
 import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
-import { Coin, MsgBeginRedelegate } from '@terra-money/feather.js';
-export const nativeRedelegate = async (
+
+export const nativeDelegate = async (
   wallet: TerraStationWallet,
   destBlockchain: string,
-  validatorSrcAddress: string,
-  validatorDstAddress: string,
+  valAddress: string,
   address: string,
   amount: number,
   allianceDenom: string,
 ) => {
-  // wrong sig valDest => valSrc valSrc => valDest
-  const handleMsg = new MsgBeginRedelegate(
+  const handleMsg = new MsgDelegate(
     address,
-    validatorSrcAddress,
-    validatorDstAddress,
+    valAddress,
     new Coin(allianceDenom, amount),
   );
 

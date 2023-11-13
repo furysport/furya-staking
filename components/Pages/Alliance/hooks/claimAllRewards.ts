@@ -1,20 +1,16 @@
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 import {
   MsgWithdrawDelegatorReward,
   MsgClaimDelegationRewards,
 } from '@terra-money/feather.js';
-import {ActionType} from "components/Pages/Dashboard";
+import { ActionType } from 'components/Pages/Dashboard';
+import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 
-export const claimAllRewards = async (
-  wallet: TerraStationWallet,
-  delegations: any,
-) => {
+export const claimAllRewards = async (wallet: TerraStationWallet,
+  delegations: any) => {
   const msgs = delegations.map(({ delegation }) => {
     if (delegation.denom == 'uwhale') {
-      return new MsgWithdrawDelegatorReward(
-        delegation.delegator_address,
-        delegation.validator_address,
-      );
+      return new MsgWithdrawDelegatorReward(delegation.delegator_address,
+        delegation.validator_address);
     } else {
       return new MsgClaimDelegationRewards(
         delegation.delegator_address,
@@ -23,7 +19,9 @@ export const claimAllRewards = async (
       );
     }
   })
-  const result = await wallet.client.post({ chainID: 'migaloo-1', msgs: msgs })
+  const result = await wallet.client.post({ chainID: 'migaloo-1',
+    msgs })
   const actionType = ActionType.claim
-  return { result, actionType }
+  return { result,
+    actionType }
 }

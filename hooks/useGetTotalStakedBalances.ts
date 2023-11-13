@@ -1,9 +1,10 @@
-import useClient from "hooks/useClient";
-import {useQuery} from "react-query";
-import file from "public/mainnet/contract_addresses.json"
+import { useQuery } from 'react-query';
+
+import { LCDClient } from '@terra-money/feather.js/dist/client/lcd/LCDClient';
+import useClient from 'hooks/useClient';
+import file from 'public/mainnet/contract_addresses.json'
 import tokens from 'public/mainnet/tokens.json'
-import {convertMicroDenomToDenom} from "util/conversion"
-import {LCDClient} from "@terra-money/feather.js/dist/client/lcd/LCDClient";
+import { convertMicroDenomToDenom } from 'util/conversion'
 
 interface Response {
     asset : {
@@ -21,28 +22,31 @@ export interface TotalStakedBalance {
 }
 
 export const fetchTotalStakedBalances = async (client: LCDClient) => {
-    if (!client) return null
-    const msg = {
-        total_staked_balances: {}
-    }
-    const res: Response[] = await client.wasm.contractQuery(file.alliance_contract, msg)
-    const totalStakedBalances = res.map((info) => {
-        const token = tokens.find((token) => token.denom === (info?.asset?.native ?? info?.asset?.cw20))
-        return {
-            denom: token.denom,
-            name: token.name,
-            tokenSymbol: token.symbol,
-            totalAmount: convertMicroDenomToDenom(info.balance, 6)
-        } as TotalStakedBalance
-    })
-    return { totalStakedBalances }
+  if (!client) {
+    return null
+  }
+  const msg = {
+    total_staked_balances: {},
+  }
+  const res: Response[] = await client.wasm.contractQuery(file.alliance_contract, msg)
+  const totalStakedBalances = res.map((info) => {
+    const token = tokens.find((token) => token.denom === (info?.asset?.native ?? info?.asset?.cw20))
+    return {
+      denom: token.denom,
+      name: token.name,
+      tokenSymbol: token.symbol,
+      totalAmount: convertMicroDenomToDenom(info.balance, 6),
+    } as TotalStakedBalance
+  })
+  return { totalStakedBalances }
 }
 export const useGetTotalStakedBalances = () => {
-    const client = useClient()
-    const {data, isLoading} = useQuery({
-        queryKey: 'totalStakeBalances',
-        queryFn: () => fetchTotalStakedBalances(client),
-        enabled: !!client,
-    })
-    return {...data, isLoading}
+  const client = useClient()
+  const { data, isLoading } = useQuery({
+    queryKey: 'totalStakeBalances',
+    queryFn: () => fetchTotalStakedBalances(client),
+    enabled: Boolean(client),
+  })
+  return { ...data,
+    isLoading }
 }

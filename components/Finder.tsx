@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 
 import { Link } from '@chakra-ui/react';
-
 import { truncate } from 'libs/text';
 
 type Props = {
@@ -20,12 +19,10 @@ const getUrl = (chainId, txHash) => {
   }
 };
 
-const Finder = ({ children, txHash, chainId }: Props) => {
-  return (
-    <Link isExternal href={getUrl(chainId, txHash)}>
-      {children} TxHash: {truncate(txHash, [4, 4])}
-    </Link>
-  );
-};
+const Finder = ({ children, txHash, chainId }: Props) => (
+  <Link isExternal href={getUrl(chainId, txHash)}>
+    {children} TxHash: {truncate(txHash, [4, 4])}
+  </Link>
+);
 
 export default Finder;

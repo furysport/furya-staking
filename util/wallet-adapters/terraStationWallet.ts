@@ -10,7 +10,7 @@ import {
   MsgTransfer,
   TxInfo,
 } from '@terra-money/feather.js';
-// import { LCDClient } from '@terra-money/terra.js/dist/client/lcd/LCDClient'
+// Import { LCDClient } from '@terra-money/terra.js/dist/client/lcd/LCDClient'
 import { LCDClient } from '@terra-money/feather.js/dist/client/lcd/LCDClient';
 import { ConnectedWallet } from '@terra-money/wallet-provider';
 import axios from 'axios';
@@ -26,8 +26,11 @@ const TX_MAAP = new Map([
 ]);
 export class TerraStationWallet implements Wallet {
   client: ConnectedWallet;
+
   lcdClient: LCDClient;
+
   network: string;
+
   chainID: string;
 
   constructor(
@@ -58,9 +61,7 @@ export class TerraStationWallet implements Wallet {
           msg.value.sender,
           msg.value.contract,
           JSON.parse(String.fromCharCode.apply(null, msg.value.msg)),
-          msg.value.funds?.map(
-            (coin) => new StationCoin(coin.denom, coin.amount),
-          ),
+          msg.value.funds?.map((coin) => new StationCoin(coin.denom, coin.amount)),
         );
       case '/ibc.applications.transfer.v1.MsgTransfer':
         // This needs testing when there are IBC functions in the application
@@ -91,20 +92,18 @@ export class TerraStationWallet implements Wallet {
     memo: string | undefined,
     chainID: string = 'juno-1',
   ): Promise<TxResponse> {
-    return this.client
-      .post({
+    return this.client.
+      post({
         msgs: msgs.map((msg) => this.convertMsg(msg)),
-        memo: memo,
+        memo,
         chainID: this.chainID,
-      })
-      .then((result) => {
-        return {
-          height: result.result.height.valueOf(),
-          code: result.success ? 0 : -1,
-          transactionHash: result.result.txhash,
-          rawLog: result.result.raw_log,
-        };
-      });
+      }).
+      then((result) => ({
+        height: result.result.height.valueOf(),
+        code: result.success ? 0 : -1,
+        transactionHash: result.result.txhash,
+        rawLog: result.result.raw_log,
+      }));
   }
 
   execute(
@@ -113,46 +112,38 @@ export class TerraStationWallet implements Wallet {
     msgs: [Record<string, unknown>],
     funds: readonly Coin[] | undefined,
   ): Promise<ExecuteResult> {
-    const executeMsgs = msgs.map(msg=>  new MsgExecuteContract(
+    const executeMsgs = msgs.map((msg) => new MsgExecuteContract(
       senderAddress,
       contractAddress,
       msg,
       funds?.map((coin) => new StationCoin(coin.denom, coin.amount)),
     ));
-    return this.client
-      .post({
+    return this.client.
+      post({
         msgs: executeMsgs,
         chainID: this.chainID,
-      })
-      .then((result) => {
-        return {
-          height: result.result.height.valueOf(),
-          code: result.success ? 0 : -1,
-          transactionHash: result.result.txhash,
-          rawLog: result.result.raw_log,
-        };
-      })
-      .then((result) => {
-        if (!!result.code) {
-          throw new Error(
-            `Error when broadcasting tx ${result.transactionHash} at height ${result.height}. Code: ${result.code}; Raw log: ${result.rawLog}`,
-          );
+      }).
+      then((result) => ({
+        height: result.result.height.valueOf(),
+        code: result.success ? 0 : -1,
+        transactionHash: result.result.txhash,
+        rawLog: result.result.raw_log,
+      })).
+      then((result) => {
+        if (result.code) {
+          throw new Error(`Error when broadcasting tx ${result.transactionHash} at height ${result.height}. Code: ${result.code}; Raw log: ${result.rawLog}`);
         } else {
           return result;
         }
-      })
-      .then((result) => {
-        return {
-          logs: parseRawLog(result.rawLog),
-          transactionHash: result.transactionHash,
-        };
-      });
+      }).
+      then((result) => ({
+        logs: parseRawLog(result.rawLog),
+        transactionHash: result.transactionHash,
+      }));
   }
 
-  queryContractSmart(
-    address: string,
-    queryMsg: Record<string, unknown>,
-  ): Promise<JsonObject> {
+  queryContractSmart(address: string,
+    queryMsg: Record<string, unknown>): Promise<JsonObject> {
     return this.lcdClient.wasm.contractQuery(address, queryMsg);
   }
 
@@ -161,48 +152,42 @@ export class TerraStationWallet implements Wallet {
     messages: readonly EncodeObject[],
     memo: string | undefined,
   ): Promise<number> {
-    let tx = {
-      msgs: messages
-        .map((msg) =>
-          Msg.fromAmino({
-            // @ts-ignore
-            type: this.convertType(msg.typeUrl),
-            value: msg.value,
-          }),
-        )
-        .map((msg) => {
+    const tx = {
+      msgs: messages.
+        map((msg) => Msg.fromAmino({
+          // @ts-ignore
+          type: this.convertType(msg.typeUrl),
+          value: msg.value,
+        })).
+        map((msg) => {
           if (msg instanceof MsgExecuteContract) {
-            msg.execute_msg = JSON.parse(
-              String.fromCharCode.apply(null, msg.execute_msg),
-            );
+            msg.execute_msg = JSON.parse(String.fromCharCode.apply(null, msg.execute_msg));
           }
           return msg;
         }),
-      memo: memo,
+      memo,
       chainID: this.chainID,
     };
 
     // @ts-ignore
-    return this.lcdClient.auth
-      .accountInfo(signerAddress)
-      .then((result) => {
+    return this.lcdClient.auth.
+      accountInfo(signerAddress).
+      then((result) => {
         console.log(this.lcdClient.config);
-        return this.lcdClient.tx.estimateFee(
-          [
-            {
-              publicKey: result.getPublicKey(),
-              sequenceNumber: result.getSequenceNumber(),
-            },
-          ],
-          tx,
-        );
-      })
-      .then((result) => {
+        return this.lcdClient.tx.estimateFee([
+          {
+            publicKey: result.getPublicKey(),
+            sequenceNumber: result.getSequenceNumber(),
+          },
+        ],
+        tx);
+      }).
+      then((result) => {
         console.log(result);
         console.log(TX_MAAP.get(this.chainID));
         return result.amount.get(TX_MAAP.get(this.chainID)).amount.toNumber();
-      })
-      .catch((err) => {
+      }).
+      catch((err) => {
         if (axios.isAxiosError(err)) {
           console.log(err);
           throw new Error(err.response.statusText);
@@ -211,17 +196,17 @@ export class TerraStationWallet implements Wallet {
       });
   }
 
-  getChainId(): Promise<String> {
+  getChainId(): Promise<string> {
     return Promise.resolve(this.chainID);
   }
 
-  getNetwork(): Promise<String> {
+  getNetwork(): Promise<string> {
     return Promise.resolve(this.network);
   }
 
   getBalance(address: string, searchDenom: string): Promise<Coin> {
     return this.lcdClient.bank.balance(address).then(([coins]) => {
-      // console.log(coins)
+      // Console.log(coins)
       const coin = coins.get(searchDenom);
       if (coin === undefined) {
         return {

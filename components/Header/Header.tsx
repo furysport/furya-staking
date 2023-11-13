@@ -31,12 +31,15 @@ const Header = () => {
   };
 
   return (
-    <Box py={{ base: '4', md: '10' }} px={{ base: '4', md: '10' }}>
+    <Box py={{ base: '4',
+      md: '10' }} px={{ base: '4',
+      md: '10' }}>
       <Flex
         justifyContent="space-between"
         mx="auto"
         maxWidth="container.xl"
-        display={{ base: 'none', md: 'flex' }}
+        display={{ base: 'none',
+          md: 'flex' }}
         alignItems="center"
       >
         <HStack flex="1" spacing="6" justify="flex-end">

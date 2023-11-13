@@ -1,3 +1,6 @@
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { Box, Button, HStack, Text, VStack } from '@chakra-ui/react';
 import {
   ColumnDef,
@@ -9,13 +12,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import React, { useEffect, useMemo, useState } from 'react';
-import useValidators from 'hooks/useValidators';
-import useDelegations from 'hooks/useDelegations';
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { ActionType } from 'components/Pages/Dashboard';
-import { useRouter } from 'next/router';
 import { Validator } from '@terra-money/feather.js';
+import { ActionType } from 'components/Pages/Dashboard';
+import useDelegations from 'hooks/useDelegations';
+import useValidators from 'hooks/useValidators';
+import { useRouter } from 'next/router';
 import Commission = Validator.Commission;
 
 type Props = {
@@ -60,7 +61,7 @@ const columns: ColumnDef<TableProps, any>[] = [
         Voting Power
       </Text>
     ),
-    cell: (info) => info.getValue() + '%',
+    cell: (info) => `${info.getValue()}%`,
   }),
   columnHelper.accessor('commission', {
     enableSorting: true,
@@ -75,7 +76,7 @@ const columns: ColumnDef<TableProps, any>[] = [
         Commission
       </Text>
     ),
-    cell: (info) => info.getValue() + '%',
+    cell: (info) => `${info.getValue()}%`,
   }),
   columnHelper.accessor('actionButtons', {
     header: () => (
@@ -108,40 +109,42 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
   const { data: { delegations = [] } = {} } = useDelegations({ address });
 
   const tableData = useMemo(() => {
-    if (!validators?.length) return [];
+    if (!validators?.length) {
+      return [];
+    }
     const onClick = async (action: ActionType, validatorAddress: string) => {
       const tokenSymbol = 'ampLUNA'
       if (action === ActionType.delegate) {
         const validatorDestAddress = validatorAddress;
         await router.push({
           pathname: `/alliance/${ActionType[action]}`,
-          query: { validatorDestAddress, tokenSymbol },
+          query: { validatorDestAddress,
+            tokenSymbol },
         });
       } else if (action === ActionType.undelegate) {
         const validatorSrcAddress = validatorAddress;
         await router.push({
           pathname: `/alliance/${ActionType[action]}`,
-          query: { validatorSrcAddress, tokenSymbol },
+          query: { validatorSrcAddress,
+            tokenSymbol },
         });
       } else if (action === ActionType.redelegate) {
         const validatorSrcAddress = validatorAddress;
         await router.push({
           pathname: `/alliance/${ActionType[action]}`,
-          query: { validatorSrcAddress, tokenSymbol },
+          query: { validatorSrcAddress,
+            tokenSymbol },
         });
       }
     };
     const getIsActive = (validator) => {
-      const delegation = delegations.find(
-        ({ delegation }) =>
-          delegation.validator_address === validator.validator_addr,
-      );
-      return !!delegation ? 'active' : 'inactive';
+      const delegation = delegations.find(({ delegation }) => delegation.validator_address === validator.validator_addr);
+      return delegation ? 'active' : 'inactive';
     };
     // Shuffle the validators before returning
-    return validators
-      ?.sort(() => Math.random() - 0.5)
-      ?.map((validator) => ({
+    return validators?.
+      sort(() => Math.random() - 0.5)?.
+      map((validator) => ({
         name: validator?.description?.moniker,
         // @ts-ignore
         votingPower: validator.votingPower,
@@ -152,8 +155,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                onClick(ActionType.delegate, validator.operator_address)
+              onClick={() => onClick(ActionType.delegate, validator.operator_address)
               }
             >
               Delegate
@@ -161,8 +163,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                onClick(ActionType.redelegate, validator.operator_address)
+              onClick={() => onClick(ActionType.redelegate, validator.operator_address)
               }
             >
               Redelegate
@@ -170,8 +171,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                onClick(ActionType.undelegate, validator.operator_address)
+              onClick={() => onClick(ActionType.undelegate, validator.operator_address)
               }
             >
               Undelegate
@@ -208,9 +208,8 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
   useEffect(() => {
-    table.setColumnFilters(
-      selectedStatus !== 'all' ? [{ id: 'status', value: selectedStatus }] : [],
-    );
+    table.setColumnFilters(selectedStatus !== 'all' ? [{ id: 'status',
+      value: selectedStatus }] : []);
   }, [selectedStatus, table]);
 
   return (
@@ -233,10 +232,8 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
             >
               <HStack>
                 <Box>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
+                  {flexRender(header.column.columnDef.header,
+                    header.getContext())}
                 </Box>
                 {header?.column?.columnDef?.enableSorting && (
                   <VStack width="fit-content" p="0" m="0" spacing="0">
@@ -270,18 +267,16 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
           py="5"
           px="8"
         >
-          {row.getVisibleCells().map((cell, index) => {
-            return (
-              <Text
-                key={cell.id}
-                as={index == 3 ? HStack : 'span'}
-                flex={index == 0 || index == 3 ? 1 : 'unset'}
-                minW={index == 1 || index == 2 ? '200px' : 'unset'}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </Text>
-            );
-          })}
+          {row.getVisibleCells().map((cell, index) => (
+            <Text
+              key={cell.id}
+              as={index == 3 ? HStack : 'span'}
+              flex={index == 0 || index == 3 ? 1 : 'unset'}
+              minW={index == 1 || index == 2 ? '200px' : 'unset'}
+            >
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </Text>
+          ))}
         </HStack>
       ))}
       {!tableData?.length && (
@@ -289,7 +284,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
           No validators found
         </Text>
       )}
-      {!!tableData?.length && (
+      {Boolean(tableData?.length) && (
         <HStack w="full" justifyContent="space-between" pt="3">
           <Text>
             Showing {table.getState().pagination.pageIndex + 1} of{' '}

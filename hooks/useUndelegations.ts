@@ -1,8 +1,9 @@
+import { useQuery } from 'react-query';
+
 import { LCDClient } from '@terra-money/feather.js';
 import useClient from 'hooks/useClient';
-import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import usePrices from 'hooks/usePrices';
-import { useQuery } from 'react-query';
+import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
 interface RawTxData {
@@ -81,20 +82,14 @@ const getUndelegations = async (
   // This is the search params for gathering undelegations from native module
   const nativeParams = new URLSearchParams();
   // For alliance we add their undelegate message action
-  allianceParams.append(
-    'events',
-    `message.action='/alliance.alliance.MsgUndelegate'`,
-  );
+  allianceParams.append('events',
+    'message.action=\'/alliance.alliance.MsgUndelegate\'');
   // And same for native
-  nativeParams.append(
-    'events',
-    `message.action='/cosmos.staking.v1beta1.MsgUndelegate'`,
-  );
+  nativeParams.append('events',
+    'message.action=\'/cosmos.staking.v1beta1.MsgUndelegate\'');
   // Next 3 params we can just add to both they are the same
-  allianceParams.append(
-    'events',
-    `coin_received.receiver='${delegatorAddress}'`,
-  );
+  allianceParams.append('events',
+    `coin_received.receiver='${delegatorAddress}'`);
   allianceParams.append('pagination.limit', '100');
   allianceParams.append('order_by', '2');
 
@@ -102,45 +97,41 @@ const getUndelegations = async (
   nativeParams.append('pagination.limit', '100');
   nativeParams.append('order_by', '2');
   // Make the request for alliance undelegations
-  const res = (await client?.alliance
-    .getReqFromAddress(delegatorAddress)
-    .get(`/cosmos/tx/v1beta1/txs`, allianceParams)) as RawTxData;
+  const res = (await client?.alliance.
+    getReqFromAddress(delegatorAddress).
+    get('/cosmos/tx/v1beta1/txs', allianceParams)) as RawTxData;
   // Map the response to our undelegation object
-  const undelegations: Undelegation[] = res.tx_responses
-    .map((res) => res.tx.body.messages[0])
-    .map((undelegation) => {
+  const undelegations: Undelegation[] = res.tx_responses.
+    map((res) => res.tx.body.messages[0]).
+    map((undelegation) => {
       const token = tokens.find((t) => t.denom === undelegation.amount.denom);
-      const amount = convertMicroDenomToDenom(
-        undelegation.amount.amount,
-        token.decimals,
-      );
+      const amount = convertMicroDenomToDenom(undelegation.amount.amount,
+        token.decimals);
       const dollarValue = priceList[token.name] * amount;
       return {
         validatorAddress: undelegation.validator_address,
         delegatorAddress: undelegation.delegator_address,
-        amount: amount,
-        dollarValue: dollarValue,
+        amount,
+        dollarValue,
         symbol: token.symbol,
       };
     });
   // Do the same for native undelegations
-  const nativeRes = (await client?.staking
-    .getReqFromAddress(delegatorAddress)
-    .get(`/cosmos/tx/v1beta1/txs`, nativeParams)) as RawTxData;
-  let native_undelegations: Undelegation[] = nativeRes.tx_responses
-    .map((res) => res.tx.body.messages[0])
-    .map((undelegation) => {
+  const nativeRes = (await client?.staking.
+    getReqFromAddress(delegatorAddress).
+    get('/cosmos/tx/v1beta1/txs', nativeParams)) as RawTxData;
+  const native_undelegations: Undelegation[] = nativeRes.tx_responses.
+    map((res) => res.tx.body.messages[0]).
+    map((undelegation) => {
       const token = tokens.find((t) => t.denom === undelegation.amount.denom);
-      const amount = convertMicroDenomToDenom(
-        undelegation.amount.amount,
-        token.decimals,
-      );
+      const amount = convertMicroDenomToDenom(undelegation.amount.amount,
+        token.decimals);
       const dollarValue = priceList[token.name] * amount;
       return {
         validatorAddress: undelegation.validator_address,
         delegatorAddress: undelegation.delegator_address,
-        amount: amount,
-        dollarValue: dollarValue,
+        amount,
+        dollarValue,
         symbol: token.symbol,
       };
     });
@@ -156,10 +147,12 @@ const useUndelegations = ({ address }) => {
 
   return useQuery({
     queryKey: ['undelegations', address],
-    queryFn: () => getUndelegations(client, priceList, address),
-    enabled: false, //!!address && !!priceList,
+    queryFn: () => getUndelegations(
+      client, priceList, address,
+    ),
+    enabled: false, // !!address && !!priceList,
     refetchOnWindowFocus: false,
-    refetchOnMount: false
+    refetchOnMount: false,
   })
 }
 

@@ -1,6 +1,6 @@
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 import { Coin, MsgAllianceRedelegate } from '@terra-money/feather.js';
-import {ActionType} from "components/Pages/Dashboard";
+import { ActionType } from 'components/Pages/Dashboard';
+import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 export const allianceRedelegate = async (
   wallet: TerraStationWallet,
   destBlockchain: string,
@@ -21,5 +21,6 @@ export const allianceRedelegate = async (
     msgs: [handleMsg],
   })
   const actionType = ActionType.redelegate
-  return { result, actionType }
+  return { result,
+    actionType }
 }

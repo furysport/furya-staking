@@ -12,6 +12,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Asset } from 'types/blockchain';
+
 import AssetList from './AssetList';
 import SearchInput from './SearchInput';
 
@@ -35,7 +36,8 @@ const AssetSelectModal: FC<AssetSelectModalProps> = ({
 
   const onAssetChange = (asset, isTokenChange) => {
     setSearch(asset?.asset)
-    const newAsset = { ...asset, amount }
+    const newAsset = { ...asset,
+      amount }
     onChange(newAsset, isTokenChange)
     onClose();
   }
@@ -55,7 +57,8 @@ const AssetSelectModal: FC<AssetSelectModalProps> = ({
         onClose={onClose}
         isOpen={isOpen}
         isCentered
-        size={{ base: 'full', md: '2xl' }}
+        size={{ base: 'full',
+          md: '2xl' }}
       >
         <ModalOverlay />
         <ModalContent backgroundColor="#212121">

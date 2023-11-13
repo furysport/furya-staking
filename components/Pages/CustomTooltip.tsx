@@ -1,6 +1,7 @@
-import { Box, Divider, HStack, Text, VStack, Tooltip } from '@chakra-ui/react';
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
+
+import { Box, Divider, HStack, Text, VStack, Tooltip } from '@chakra-ui/react';
 import { Token } from 'components/Pages/AssetOverview';
 import { TokenData } from 'components/Pages/Dashboard';
 
@@ -17,18 +18,16 @@ export const CustomTooltip = ({
   isWalletConnected,
   labelColor = 'whiteAlpha.600',
 }: TooltipProps) => {
-  const TokenDetail = ({ tokenType, value }) => {
-    return (
-      <HStack justify="space-between" direction="row" width="full" px={2}>
-        <Text color="whiteAlpha.600" fontSize={14}>
-          {Token[tokenType]}
-        </Text>
-        <Text fontSize={14}>
-          {isWalletConnected ? `${value.toLocaleString()}` : '$0'}
-        </Text>
-      </HStack>
-    );
-  };
+  const TokenDetail = ({ tokenType, value }) => (
+    <HStack justify="space-between" direction="row" width="full" px={2}>
+      <Text color="whiteAlpha.600" fontSize={14}>
+        {Token[tokenType]}
+      </Text>
+      <Text fontSize={14}>
+        {isWalletConnected ? `${value.toLocaleString()}` : '$0'}
+      </Text>
+    </HStack>
+  );
   const textRef = useRef(null);
   const [textWidth, setTextWidth] = useState(0);
 
@@ -52,20 +51,18 @@ export const CustomTooltip = ({
           justifyContent="center"
           alignItems="center"
         >
-          {data?.map((e, index) => {
-            return (
-              <React.Fragment key={e.token}>
-                <TokenDetail tokenType={e.token} value={e.value} />
-                {index !== data.length - 1 && (
-                  <Divider
-                    width="93%"
-                    borderWidth="0.1px"
-                    color="whiteAlpha.300"
-                  />
-                )}
-              </React.Fragment>
-            );
-          })}
+          {data?.map((e, index) => (
+            <React.Fragment key={e.token}>
+              <TokenDetail tokenType={e.token} value={e.value} />
+              {index !== data.length - 1 && (
+                <Divider
+                  width="93%"
+                  borderWidth="0.1px"
+                  color="whiteAlpha.300"
+                />
+              )}
+            </React.Fragment>
+          ))}
         </VStack>
       }
       bg="transparent"

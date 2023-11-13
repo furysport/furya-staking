@@ -4,9 +4,9 @@ import { useRouter } from 'next/router';
 
 const RedelegatePage = () => {
   const router = useRouter();
-  const validatorDestAddress = router.query.validatorDestAddress;
-  const validatorSrcAddress = router.query.validatorSrcAddress;
-  const tokenSymbol = router.query.tokenSymbol;
+  const { validatorDestAddress } = router.query;
+  const { validatorSrcAddress } = router.query;
+  const { tokenSymbol } = router.query;
 
   // @ts-ignore
   return (

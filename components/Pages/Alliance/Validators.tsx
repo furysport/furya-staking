@@ -1,5 +1,6 @@
-import { HStack, VStack, Button, Heading } from '@chakra-ui/react';
 import { useState } from 'react';
+
+import { HStack, VStack, Button, Heading } from '@chakra-ui/react';
 import ValidatorTable from 'components/Pages/Alliance/ValidatorTable';
 
 const TopBar = ({ setSelectedStatus }) => {
@@ -37,8 +38,8 @@ const TopBar = ({ setSelectedStatus }) => {
             {item === 'all'
               ? 'All Validators'
               : item === 'active'
-              ? 'Delegated To'
-              : 'Other Validators'}
+                ? 'Delegated To'
+                : 'Other Validators'}
           </Button>
         ))}
       </HStack>
