@@ -87,7 +87,7 @@ type UseValidatorsResult = {
   isFetching: boolean
 };
 const getStakedLSTLunaAmounts = async ({ client }) => {
-  const { validators } = await client.alliance.alliancesValidators('migaloo-1')
+  const { validators } = await client.alliance.alliancesByValidators('migaloo-1')
   const bLunaDenom = allianceTokens.find((token) => token.symbol === 'bLUNA').denom
   const ampLunaDenom = allianceTokens.find((token) => token.symbol === 'ampLUNA').denom
   let totalAmpLunaAmount = 0

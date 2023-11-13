@@ -45,7 +45,13 @@ export const DashboardPieChart = ({ dashboardData }) => {
       spacing={35}
       width={'full'}
     >
-      <VStack alignItems="start" alignSelf="center" w={160}>
+      <VStack alignItems="start" alignSelf="center" w={240}>
+        <Text mt={-100}
+          mb={19}
+          as="h2"
+          fontSize="24"
+          fontWeight="900"
+          style={{ textTransform: 'capitalize' }}>Total Values Staked</Text>
         {data.map((e) => (
           <VStack key={`tokenBox-${e.tokenSymbol}`} alignItems={'flex-start'}>
             <TokenBox symbol={e.tokenSymbol} color={e.color} />
