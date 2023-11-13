@@ -46,7 +46,7 @@ export const getDelegation = async (
             ...item,
             rewards,
           })).
-        catch((e) => ({
+        catch(() => ({
           ...item,
           rewards: null,
         }))
@@ -58,7 +58,7 @@ export const getDelegation = async (
           ...item,
           rewards,
         })).
-        catch((e) => ({
+        catch(() => ({
           ...item,
           rewards: null,
         }));

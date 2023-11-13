@@ -41,7 +41,7 @@ export const useGetLPTokenPrice = () => {
   const whalePrice = priceList?.Whale
   const { data: lpTokenPrice, isLoading } = useQuery(
     ['getLPInfo', whalePrice],
-    async () => fetchTotalPoolSupply(client, whalePrice), { enabled: Boolean(client) && Boolean(whalePrice) },
+    async () => await fetchTotalPoolSupply(client, whalePrice), { enabled: Boolean(client) && Boolean(whalePrice) },
   )
 
   return { lpTokenPrice,

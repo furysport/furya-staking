@@ -11,7 +11,7 @@ export const calculateLiquidityData = (
   }
 
   const liquidData = rawLiquidityTokenData.map((token, index) => {
-    const balance = liquidityBalances?.[index] !== undefined ? liquidityBalances?.[index] : 0
+    const balance = liquidityBalances?.[index] ? liquidityBalances?.[index] : 0
     return {
       ...token,
       dollarValue: lpTokenPrice * balance,
@@ -33,7 +33,7 @@ export const calculateLiquidityData = (
   }
   const calculateRewardData = () => {
     if (rewards.length === 0) {
-      return
+      return null
     }
     return rewards.filter((reward: RewardInfo) => reward.tabType === TabType.liquidity && reward.amount > 0).map((reward) => ({
       symbol: reward.tokenSymbol,
@@ -52,8 +52,8 @@ export const calculateLiquidityData = (
     const liquidTokenData = liquidData?.[index]
     const rewardsTokenData = rewardsData?.[index]
     const totalDollarValue =
-            tokenData?.dollarValue +
-            liquidTokenData?.dollarValue +
+      (tokenData?.dollarValue ?? 0) +
+      (liquidTokenData?.dollarValue ?? 0) +
             (rewardsTokenData?.dollarValue || 0)
     const totalValue =
             tokenData.value + liquidTokenData.value;

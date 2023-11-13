@@ -10,13 +10,13 @@ export const calculateAllianceData = (
   }
 
   const liquidData = rawAllianceTokenData?.map((token, index) => {
-    const balance = allianceBalances?.[index] !== undefined ? allianceBalances?.[index] : 0
+    const balance = allianceBalances?.[index] ? allianceBalances?.[index] : 0
     return {
       ...token,
       dollarValue:
-                priceList && priceList[token.name]
-                  ? priceList[token.name] * balance
-                  : 0,
+        priceList && priceList[token.name]
+          ? priceList[token.name] * balance
+          : 0,
       value: balance,
     }
   })
@@ -78,12 +78,12 @@ export const calculateAllianceData = (
     const liquidTokenData = liquidData[index];
     const rewardsTokenData = rewardsData[index];
     const totalDollarValue =
-            tokenData?.dollarValue +
-            undelegatedTokenData?.dollarValue +
-            liquidTokenData?.dollarValue +
-            rewardsTokenData?.dollarValue;
+      (tokenData?.dollarValue ?? 0) +
+      (undelegatedTokenData?.dollarValue ?? 0) +
+      (liquidTokenData?.dollarValue ?? 0) +
+      (rewardsTokenData?.dollarValue ?? 0)
     const totalValue =
-            tokenData.value + undelegatedTokenData.value + liquidTokenData?.value;
+      tokenData.value + undelegatedTokenData.value + (liquidTokenData?.value ?? 0)
     return {
       ...tokenData,
       dollarValue: totalDollarValue,

@@ -20,7 +20,7 @@ export interface AssetDistribution {
 }
 export const fetchVTRewardShares = async (client: LCDClient) => {
   if (!client) {
-    return
+    return null
   }
   const msg = {
     reward_distribution: {},
@@ -43,7 +43,7 @@ export const useGetVTRewardShares = () => {
   const client = useClient()
   const { data, isLoading } = useQuery(
     ['vtRewardShares'],
-    async () => fetchVTRewardShares(client),
+    async () => await fetchVTRewardShares(client),
     {
       enabled: Boolean(client),
     },

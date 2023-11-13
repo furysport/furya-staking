@@ -1,12 +1,14 @@
 import React from 'react';
 
 import { Button, HStack, useToast } from '@chakra-ui/react';
-import ConnectedWalletIcon from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/ConnectedWalletIcon';
 import TruncatedAddress from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/TruncatedAddress';
 import { useRecoilValue } from 'recoil';
 import { walletState } from 'state/walletState';
+import {
+  ConnectedWalletIcon
+} from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/ConnectedWalletIcon';
 
-function ConnectedWallet({ connected }) {
+export const ConnectedWallet = ({ connected }) => {
   const toast = useToast();
   const { address } = useRecoilValue(walletState);
   const copyToClipboard = () => {
@@ -31,7 +33,7 @@ function ConnectedWallet({ connected }) {
       onClick={copyToClipboard}
       width="full"
     >
-      <ConnectedWalletIcon connected={connected} />
+      <ConnectedWalletIcon />
       <TruncatedAddress connected={connected} />
     </HStack>
   );

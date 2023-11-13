@@ -39,15 +39,15 @@ export const useTransaction = () => {
         return response
       } catch (error) {
         if (
-          (/insufficient funds/i).test(error.toString()) ||
-                    (/Overflow: Cannot Sub with/i).test(error.toString())
+          (/insufficient funds/u).test(error.toString()) ||
+                    (/Overflow: Cannot Sub with/u).test(error.toString())
         ) {
           console.error(error)
           setTxStep(TxStep.Idle)
           setError('Insufficient Funds')
           setButtonLabel('Insufficient Funds')
           throw new Error('Insufficient Funds')
-        } else if ((/account sequence mismatch/i).test(error?.toString())) {
+        } else if ((/account sequence mismatch/u).test(error?.toString())) {
           setError('You have pending transaction')
           setButtonLabel('You have pending transaction')
           throw new Error('You have pending transaction')
@@ -97,22 +97,22 @@ export const useTransaction = () => {
       console.error(e?.toString());
       setTxStep(TxStep.Failed);
       if (
-        (/insufficient funds/i).test(e?.toString()) ||
-                    (/Overflow: Cannot Sub with/i).test(e?.toString())
+        (/insufficient funds/u).test(e?.toString()) ||
+                    (/Overflow: Cannot Sub with/u).test(e?.toString())
       ) {
         setError('Insufficient Funds');
         message = 'Insufficient Funds';
-      } else if ((/Request rejected/i).test(e?.toString())) {
+      } else if ((/Request rejected/u).test(e?.toString())) {
         setError('User Denied');
         message = 'User Denied';
-      } else if ((/account sequence mismatch/i).test(e?.toString())) {
+      } else if ((/account sequence mismatch/u).test(e?.toString())) {
         setError('You have pending transaction');
         message = 'You have pending transaction';
-      } else if ((/out of gas/i).test(e?.toString())) {
+      } else if ((/out of gas/u).test(e?.toString())) {
         setError('Out of gas, try increasing gas limit on wallet.');
         message = 'Out of gas, try increasing gas limit on wallet.';
       } else if (
-        (/was submitted but was not yet found on the chain/i).test(e?.toString())
+        (/was submitted but was not yet found on the chain/u).test(e?.toString())
       ) {
         setError(e?.toString());
         message = (
@@ -181,7 +181,7 @@ export const useTransaction = () => {
     ['txInfo', txHash],
     async () => {
       if (txHash === null) {
-        return
+        return null
       }
       return await client.getTx(txHash);
     },

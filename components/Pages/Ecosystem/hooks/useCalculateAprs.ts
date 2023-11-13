@@ -35,7 +35,7 @@ export const useCalculateAprs = () => {
         apr: (info.distribution * vtEmission * priceList.Whale / ((stakedBalance?.totalAmount || 0) * stakedTokenPrice)) * 100,
       } as Apr
     }))
-  }, [totalStakedBalances, vtRewardShares, priceList, lpTokenPrice])
+  }, [vtEmission, totalStakedBalances, vtRewardShares, priceList, lpTokenPrice])
 
   return aprs
 }

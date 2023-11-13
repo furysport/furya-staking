@@ -7,7 +7,7 @@ import TerraExtensionIcon from 'components/icons/TerraExtensionIcon';
 import { useRecoilValue } from 'recoil';
 import { walletState } from 'state/walletState';
 
-function ConnectedWalletIcon() {
+export const ConnectedWalletIcon = () => {
   const { activeWallet } =
     useRecoilValue(walletState)
   switch (activeWallet) {
@@ -24,4 +24,3 @@ function ConnectedWalletIcon() {
   }
 }
 
-export default ConnectedWalletIcon;

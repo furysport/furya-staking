@@ -10,6 +10,7 @@ export enum AssetType {
   total,
   undelegations,
 }
+
 interface CardComponentProps {
   title: string;
   tokenData: TokenData[];
@@ -27,11 +28,12 @@ const CardComponent: FC<CardComponentProps> = ({
 }) => {
   const sumAndMultiplyValues = useMemo(() => tokenData?.reduce((total, item) => (
     total +
-            (item?.dollarValue !== undefined ? item?.dollarValue ?? 0 : 0)
+    (item?.dollarValue ? item?.dollarValue ?? 0 : 0)
   ), 0), [tokenData, isLoading]);
 
   const summedAndMultipliedValues = useMemo(() => (isWalletConnected
-    ? `$${sumAndMultiplyValues.toFixed(2).toString()}`
+    ? `$${sumAndMultiplyValues.toFixed(2).
+      toString()}`
     : '$0'), [isWalletConnected, sumAndMultiplyValues]);
   return (
     <VStack
@@ -59,7 +61,7 @@ const CardComponent: FC<CardComponentProps> = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Loader height={'7rem'} width={'7rem'} />
+          <Loader height={'7rem'} width={'7rem'}/>
         </HStack>
       ) : (
         <>
@@ -88,7 +90,7 @@ const CardComponent: FC<CardComponentProps> = ({
                 arrowSize={0}
               >
                 <Box>
-                  <InfoIcon color={'white'} cursor="pointer" />
+                  <InfoIcon color={'white'} cursor="pointer"/>
                 </Box>
               </Tooltip>
             )}

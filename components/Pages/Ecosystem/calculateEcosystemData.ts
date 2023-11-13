@@ -12,7 +12,7 @@ export const calculateEcosystemData = (
   }
 
   const liquidData = rawEcosystemTokenData.map((token, index) => {
-    const balance = ecosystemBalances?.[index] !== undefined ? ecosystemBalances?.[index] : 0
+    const balance = ecosystemBalances?.[index] ? ecosystemBalances?.[index] : 0
     return {
       ...token,
       dollarValue: token.tokenSymbol === Token.mUSDC ? balance :
@@ -34,13 +34,14 @@ export const calculateEcosystemData = (
     }
   }
 
-  const calculateRewardData = () => rewards?.filter((reward) => reward.tabType === TabType.ecosystem && reward.amount > 0).map((reward) => ({
-    symbol: reward.tokenSymbol,
-    amount: reward.amount || 0,
-    dollarValue: reward.tokenSymbol === Token.mUSDC ? 1 : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
-    denom: reward.denom,
-    stakedDenom: reward.stakedDenom,
-  }))
+  const calculateRewardData = () => rewards?.filter((reward) => reward.tabType === TabType.ecosystem && reward.amount > 0).
+    map((reward) => ({
+      symbol: reward.tokenSymbol,
+      amount: reward.amount || 0,
+      dollarValue: reward.tokenSymbol === Token.mUSDC ? 1 : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
+      denom: reward.denom,
+      stakedDenom: reward.stakedDenom,
+    }))
 
   const delegatedData = rawEcosystemTokenData.map((tokenData) => calculateDelegationData(tokenData))
 
@@ -50,11 +51,11 @@ export const calculateEcosystemData = (
     const liquidTokenData = liquidData[index];
     const rewardsTokenData = rewardsData[index]
     const totalDollarValue =
-            tokenData?.dollarValue +
-            liquidTokenData?.dollarValue +
-            (rewardsTokenData?.dollarValue || 0)
+      (tokenData?.dollarValue ?? 0) +
+      (liquidTokenData?.dollarValue ?? 0) +
+      (rewardsTokenData?.dollarValue ?? 0)
     const totalValue =
-            tokenData.value + liquidTokenData.value;
+      tokenData.value + liquidTokenData.value;
     return {
       ...tokenData,
       dollarValue: totalDollarValue,

@@ -6,13 +6,33 @@ import usePrices from 'hooks/usePrices';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
-interface RawTxData {
-  txs: any[];
-  tx_responses: TxResponse[];
-  pagination: null;
-  total: string;
+interface Amount {
+  amount: string;
+  denom: string;
 }
-
+interface Message {
+  amount: Amount
+  validator_address: string;
+  delegator_address: string;
+}
+interface Body {
+  extension_options: any[]; // You may replace 'any' with a more specific type if needed
+  memo: string;
+  messages: Message[];
+  non_critical_extension_options: any[]; // You may replace 'any' with a more specific type if needed
+  timeout_height: string;
+}
+interface AuthInfo {
+  signer_infos: any[]; // You may replace 'any' with a more specific type if needed
+  fee: any
+  tip: null
+}
+interface Tx {
+  '@type': string;
+  auth_info: AuthInfo;
+  body: Body;
+  signatures: string[];
+}
 interface TxResponse {
   height: string;
   txhash: string;
@@ -26,39 +46,15 @@ interface TxResponse {
   gas_used: string;
   events: Event[];
   timestamp: string;
-  tx: Tx;
+  tx: Tx
+}
+interface RawTxData {
+  txs: any[];
+  tx_responses: TxResponse[];
+  pagination: null;
+  total: string;
 }
 
-interface Event {
-  // Define the properties for the Event object
-}
-
-interface Tx {
-  '@type': string;
-  auth_info: AuthInfo;
-  body: Body;
-  signatures: string[];
-}
-
-interface AuthInfo {
-  signer_infos: any[]; // You may replace 'any' with a more specific type if needed
-  fee: any;
-  tip: null;
-}
-
-interface Body {
-  extension_options: any[]; // You may replace 'any' with a more specific type if needed
-  memo: string;
-  messages: Message[];
-  non_critical_extension_options: any[]; // You may replace 'any' with a more specific type if needed
-  timeout_height: string;
-}
-
-interface Message {
-  amount: Amount;
-  validator_address: string;
-  delegator_address: string;
-}
 export interface Undelegation {
   amount: number;
   dollarValue: number;
@@ -66,12 +62,6 @@ export interface Undelegation {
   validatorAddress: string;
   delegatorAddress: string;
 }
-
-interface Amount {
-  amount: string;
-  denom: string;
-}
-
 const getUndelegations = async (
   client: LCDClient | null,
   priceList: any,
@@ -120,7 +110,7 @@ const getUndelegations = async (
   const nativeRes = (await client?.staking.
     getReqFromAddress(delegatorAddress).
     get('/cosmos/tx/v1beta1/txs', nativeParams)) as RawTxData;
-  const native_undelegations: Undelegation[] = nativeRes.tx_responses.
+  const nativeUndelegations: Undelegation[] = nativeRes.tx_responses.
     map((res) => res.tx.body.messages[0]).
     map((undelegation) => {
       const token = tokens.find((t) => t.denom === undelegation.amount.denom);
@@ -136,7 +126,7 @@ const getUndelegations = async (
       };
     });
   // And finally merge them up and return
-  const allUndelegations = undelegations.concat(native_undelegations);
+  const allUndelegations = undelegations.concat(nativeUndelegations);
 
   return { allUndelegations };
 }
@@ -150,7 +140,7 @@ const useUndelegations = ({ address }) => {
     queryFn: () => getUndelegations(
       client, priceList, address,
     ),
-    enabled: false, // !!address && !!priceList,
+    enabled: Boolean(address) && Boolean(priceList),
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   })

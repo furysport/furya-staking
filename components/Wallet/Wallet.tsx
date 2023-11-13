@@ -39,11 +39,11 @@ const Wallet: any = ({
 
     if (tabType === TabType.dashboard) {
       const { pathname } = router
-      if (pathname.includes('alliance')) {
+      if (pathname.includes(TabType.alliance)) {
         setTabType(TabType.alliance)
-      } else if (pathname.includes('ecosystem')) {
+      } else if (pathname.includes(TabType.ecosystem)) {
         setTabType(TabType.ecosystem)
-      } else if (pathname.includes('liquidity')) {
+      } else if (pathname.includes(TabType.liquidity)) {
         setTabType(TabType.liquidity)
       }
     }

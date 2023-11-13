@@ -11,7 +11,7 @@ import { convertMicroDenomToDenom } from 'util/conversion';
 import { Wallet } from '../util/wallet-adapters';
 import { getTokenInfoFromTokenList } from './useTokenInfo';
 
-async function fetchTokenBalance({
+const fetchTokenBalance = async ({
   client,
   token = {},
   address,
@@ -19,7 +19,7 @@ async function fetchTokenBalance({
     client: Wallet;
     token: any;
     address: string;
-}) {
+}) => {
   const { denom, native, token_address, decimals } = token || {};
 
   if (!denom && !token_address) {
@@ -43,7 +43,7 @@ async function fetchTokenBalance({
   return 0;
 }
 
-async function fetchTokenBalances({
+const fetchTokenBalances = async ({
   client,
   tokenSymbols,
   address,
@@ -53,17 +53,15 @@ async function fetchTokenBalances({
     tokenSymbols: Array<string>
     address: string;
     tokens: any
-}) {
-  return await Promise.all(tokenSymbols.map(async (symbol) => {
-    const token = getTokenInfoFromTokenList(symbol, tokens)
-    const balance = await fetchTokenBalance({
-      client,
-      token,
-      address,
-    })
-    return balance || 0
-  }))
-}
+}) => await Promise.all(tokenSymbols.map(async (symbol) => {
+  const token = getTokenInfoFromTokenList(symbol, tokens)
+  const balance = await fetchTokenBalance({
+    client,
+    token,
+    address,
+  })
+  return balance || 0
+}))
 
 export const useMultipleTokenBalance = (tokenSymbols?: Array<string>) => {
   const { address, status, client } =

@@ -97,6 +97,7 @@ const getStakedLSTLunaAmounts = async ({ client }) => {
     const ampLuna = v.total_staked.find((token) => token.denom === ampLunaDenom)?.amount || 0
     totalAmpLunaAmount += convertMicroDenomToDenom(ampLuna, 6)
     totalBLunaAmount = totalAmpLunaAmount + convertMicroDenomToDenom(bLuna, 6)
+    return null
   })
   return { totalAmpLunaAmount,
     totalBLunaAmount }
