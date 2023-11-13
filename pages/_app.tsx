@@ -39,7 +39,6 @@ const MyApp: FC<AppProps> = ({
         </Head>
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
-            {/* <ErrorBoundary> */}
             <ChakraProvider theme={theme}>
               <CSSReset />
               {!mounted ? (
@@ -51,7 +50,6 @@ const MyApp: FC<AppProps> = ({
               )}
             </ChakraProvider>
             <Toaster position="top-right" toastOptions={{ duration: 10000 }} />
-            {/* </ErrorBoundary> */}
           </QueryClientProvider>
         </RecoilRoot>
       </>
@@ -64,7 +62,6 @@ const MyApp: FC<AppProps> = ({
         </Head>
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
-            {/* <ErrorBoundary> */}
             <ChakraProvider theme={theme}>
               <CSSReset />
               {!mounted ? (
@@ -76,7 +73,6 @@ const MyApp: FC<AppProps> = ({
               )}
             </ChakraProvider>
             <Toaster position="top-right" toastOptions={{ duration: 10000 }} />
-            {/* </ErrorBoundary> */}
           </QueryClientProvider>
         </RecoilRoot>
       </>

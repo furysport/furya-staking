@@ -2,6 +2,8 @@ import { Key } from '@keplr-wallet/types';
 import { atom } from 'recoil';
 import { Wallet } from 'util/wallet-adapters/index';
 
+export type Network = 'testnet' | 'mainnet';
+
 export enum WalletStatusType {
   /* Nothing happens to the wallet */
   idle = '@wallet-state/idle',
@@ -18,8 +20,8 @@ export enum WalletStatusType {
 }
 
 type GeneratedWalletState<
-  TClient extends any,
-  TStateExtension extends {},
+  TClient,
+  TStateExtension extends NonNullable<unknown>,
 > = TStateExtension & {
   client: TClient | null;
   status: WalletStatusType;
@@ -29,7 +31,7 @@ type GeneratedWalletState<
   activeWallet: string;
 };
 
-type CreateWalletStateArgs<TState = {}> = {
+type CreateWalletStateArgs<TState = NonNullable<unknown>> = {
   key: string;
   default: TState;
 };
@@ -53,25 +55,25 @@ function createWalletState<TClient = any, TState = {}>({
     effects_UNSTABLE: [
       ({ onSet, setSelf }) => {
         const CACHE_KEY = `@wasmswap/wallet-state/wallet-type-${key}`;
-        const savedValue = localStorage.getItem(CACHE_KEY);
+        const savedValue = localStorage.getItem(CACHE_KEY)
         if (savedValue) {
           try {
-            const parsedSavedState = JSON.parse(savedValue);
+            const parsedSavedState = JSON.parse(savedValue)
             if (parsedSavedState?.address) {
               setSelf({
                 ...parsedSavedState,
-                client: null,
                 status: WalletStatusType.restored,
               });
             }
-          } catch (e) {}
+          } catch (e) { /* Empty */ }
         }
 
         onSet((newValue, oldValue) => {
           localStorage.setItem(CACHE_KEY,
             /* Let's not store the client in the cache */
             JSON.stringify({ ...newValue,
-              client: null }));
+              client: null,
+              address: newValue?.address ?? oldValue?.address }))
         });
       },
     ],
@@ -84,18 +86,3 @@ export const walletState = createWalletState<Wallet, { key?: Key }>({
     key: null,
   },
 });
-
-export const ibcWalletState = createWalletState<
-  Wallet,
-  {
-    /* Ibc wallet is connected */
-    tokenSymbol?: string;
-  }
->({
-  key: 'ibc-wallet',
-  default: {
-    tokenSymbol: null,
-  },
-});
-
-type Network = 'testnet' | 'mainnet';

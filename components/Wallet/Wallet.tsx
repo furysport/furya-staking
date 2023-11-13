@@ -5,11 +5,13 @@ import { useConnectedWallet, useWallet } from '@terra-money/wallet-provider';
 import Card from 'components/Card';
 import WalletIcon from 'components/icons/WalletIcon';
 import { ChainSelectWithBalance } from 'components/Wallet/ChainSelectWithBalance/ChainSelectWithBalance';
-import ConnectedWalletWithDisconnect from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWalletWithDisconnect';
+import {
+  ConnectedWalletWithDisconnect,
+} from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWalletWithDisconnect';
 import WalletModal from 'components/Wallet/Modal/WalletModal';
 import { useTerraStation } from 'hooks/useTerraStation';
 import { useRouter } from 'next/router';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { tabState, TabType } from 'state/tabState';
 import { walletState } from 'state/walletState';
 
@@ -21,8 +23,7 @@ const Wallet: any = ({
   onCloseModal,
 }) => {
   const [isInitialized, setInitialized] = useState(false);
-  const [currentWalletState, setCurrentWalletState] =
-    useRecoilState(walletState)
+  const currentWalletState = useRecoilValue(walletState)
   const [tabType, setTabType] = useRecoilState(tabState)
 
   const router = useRouter();
@@ -47,17 +48,8 @@ const Wallet: any = ({
         setTabType(TabType.liquidity)
       }
     }
-
-    const defaultChainId =
-      currentWalletState.network === 'mainnet' ? 'migaloo-1' : 'narwhal-1';
-
-    setCurrentWalletState({
-      ...currentWalletState,
-      chainId: defaultChainId,
-    });
     setInitialized(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (!isInitialized) {
@@ -68,7 +60,7 @@ const Wallet: any = ({
     }
     if (currentWalletState.activeWallet === 'station') {
       const [{ type = null, identifier = null } = {}] =
-        availableConnections.filter(filterForStation);
+        availableConnections.filter(filterForStation)
       if (type && identifier) {
         connectTerraAndCloseModal(type, identifier);
       }

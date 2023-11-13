@@ -1,21 +1,16 @@
 import { useEffect, useMemo } from 'react';
 
 import { LCDClient } from '@terra-money/feather.js';
-import {
-  Connection,
-  ConnectType,
-  useConnectedWallet,
-  useWallet,
-} from '@terra-money/wallet-provider';
+import { Connection, ConnectType, useConnectedWallet, useWallet } from '@terra-money/wallet-provider';
 import { useRecoilState } from 'recoil';
 import { walletState, WalletStatusType } from 'state/walletState';
 import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 
 export const useTerraStation = (onCloseModal) => {
-  const { connect } = useWallet();
-  const connectedWallet = useConnectedWallet();
+  const { connect } = useWallet()
+  const connectedWallet = useConnectedWallet()
   const [currentWalletState, setCurrentWalletState] =
-    useRecoilState(walletState);
+    useRecoilState(walletState)
 
   const filterForStation = (connection: Connection) => connection.identifier === 'station';
   const filterForWalletConnect = (connection: Connection) => connection.type === 'WALLETCONNECT';
@@ -23,9 +18,9 @@ export const useTerraStation = (onCloseModal) => {
   const connectTerraAndCloseModal = (type: ConnectType, identifier: string) => {
     const activeWallet = type === 'WALLETCONNECT' ? 'walletconnect' : 'station';
     setCurrentWalletState({ ...currentWalletState,
-      activeWallet });
-    connect(type, identifier);
-    onCloseModal();
+      activeWallet })
+    connect(type, identifier)
+    onCloseModal()
   };
 
   const { mainnet, testnet } = useMemo(() => {
@@ -94,22 +89,23 @@ export const useTerraStation = (onCloseModal) => {
     if (currentWalletState?.activeWallet !== 'station') {
       return;
     }
+    if (currentWalletState.status === WalletStatusType.connected && !connectedWallet) {
+      connect(ConnectType.EXTENSION, 'station')
+    }
     setCurrentWalletState({
-      key: null,
+      key: currentWalletState.key,
       status: connectedWallet
         ? WalletStatusType.connected
         : WalletStatusType.disconnected,
-      address: connectedWallet?.addresses[currentWalletState.chainId],
+      address: connectedWallet?.addresses[currentWalletState.chainId] ?? currentWalletState.address,
       chainId: currentWalletState.chainId,
       network: currentWalletState.network,
-      client: wasmChainClient,
+      client: wasmChainClient || currentWalletState.client,
       activeWallet:
         connectedWallet?.connectType === 'WALLETCONNECT'
           ? 'walletconnect'
           : 'station',
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    })
   }, [
     connectedWallet,
     currentWalletState.network,
