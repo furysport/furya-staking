@@ -212,7 +212,7 @@ const Dashboard = () => {
     calculateLiquidityData(
       rawLiquidityTokenData, lpTokenPrice, liquidityBalances, stakedBalances, rewards, setLiquidityData,
     )
-  }, [liquidityBalances, delegations, rawLiquidityTokenData, liquidityRewardsTokenData, priceList, lpTokenPrice])
+  }, [stakedBalances, rewards, liquidityBalances, rawLiquidityTokenData, liquidityRewardsTokenData, priceList, lpTokenPrice])
 
   useEffect(() => {
     setLoading(updatedAllianceData === null ||
