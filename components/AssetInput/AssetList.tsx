@@ -20,14 +20,13 @@ const AssetList: FC<AssetListProps> = ({
   search,
   currentTokenSymbol,
   amount,
-  actionType,
 }) => {
   const { tokens } = useTokenList();
 
   const { data: tokenBalance = [] } = useMultipleTokenBalance(tokens?.map(({ symbol }) => symbol))
 
   const tokensWithBalance = useMemo(() => {
-    if (tokenBalance.length == 0) {
+    if (tokenBalance?.length === 0) {
       return tokens?.filter(({ symbol }) => currentTokenSymbol !== symbol)
     }
     return tokens?.
@@ -38,9 +37,9 @@ const AssetList: FC<AssetListProps> = ({
   }, [tokens, tokenBalance, currentTokenSymbol])
 
   const filterAssets = useFilter<any>(
-    tokensWithBalance,
+    !search ? '' : search,
     'symbol',
-    search === undefined ? '' : search,
+    tokensWithBalance,
   )
 
   return (
@@ -73,7 +72,7 @@ const AssetList: FC<AssetListProps> = ({
           paddingY={4}
           paddingX={4}
           borderBottom={
-            index == filterAssets?.length - 1
+            index === ((filterAssets?.length || 0) - 1)
               ? 'unset'
               : '1px solid rgba(0, 0, 0, 0.5)'
           }

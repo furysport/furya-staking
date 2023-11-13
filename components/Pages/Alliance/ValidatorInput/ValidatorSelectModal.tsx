@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 
 import {
   HStack,

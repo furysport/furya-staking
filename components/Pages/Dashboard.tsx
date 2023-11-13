@@ -1,30 +1,30 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react'
 
-import { Box, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from '@chakra-ui/react';
-import Header from 'components/Header/Header';
-import Logo from 'components/Header/Logo';
-import { AllianceTab } from 'components/Pages/Alliance/AllianceTab';
-import { calculateAllianceData } from 'components/Pages/Alliance/hooks/calculateAllianceData';
-import { LiquidityTab } from 'components/Pages/Alliance/hooks/LiquidityTab';
-import { useCalculateAllianceAprs } from 'components/Pages/Alliance/hooks/useCalculateAllianceAprs';
-import { Token } from 'components/Pages/AssetOverview';
-import { DashboardTab } from 'components/Pages/Dashboard/DashboardTab';
-import { calculateEcosystemData } from 'components/Pages/Ecosystem/calculateEcosystemData';
-import { EcosystemTab } from 'components/Pages/Ecosystem/EcosystemTab';
-import { calculateLiquidityData } from 'components/Pages/Liquidity/calculateLiquidityData';
-import useDelegations from 'hooks/useDelegations';
-import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
-import usePrices from 'hooks/usePrices';
-import { useQueryRewards } from 'hooks/useQueryRewards';
-import { useQueryStakedBalances } from 'hooks/useQueryStakedBalances';
-import { useMultipleTokenBalance } from 'hooks/useTokenBalance';
-import useUndelegations from 'hooks/useUndelegations';
+import { Box, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from '@chakra-ui/react'
+import Header from 'components/Header/Header'
+import Logo from 'components/Header/Logo'
+import { AllianceTab } from 'components/Pages/Alliance/AllianceTab'
+import { calculateAllianceData } from 'components/Pages/Alliance/hooks/calculateAllianceData'
+import { useCalculateAllianceAprs } from 'components/Pages/Alliance/hooks/useCalculateAllianceAprs'
+import { Token } from 'components/Pages/AssetOverview'
+import { DashboardTab } from 'components/Pages/Dashboard/DashboardTab'
+import { calculateEcosystemData } from 'components/Pages/Ecosystem/calculateEcosystemData'
+import { EcosystemTab } from 'components/Pages/Ecosystem/EcosystemTab'
+import { calculateLiquidityData } from 'components/Pages/Liquidity/calculateLiquidityData'
+import { LiquidityTab } from 'components/Pages/Liquidity/LiquidityTab'
+import useDelegations from 'hooks/useDelegations'
+import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice'
+import usePrices from 'hooks/usePrices'
+import { useQueryRewards } from 'hooks/useQueryRewards'
+import { useQueryStakedBalances } from 'hooks/useQueryStakedBalances'
+import { useMultipleTokenBalance } from 'hooks/useTokenBalance'
+import useUndelegations from 'hooks/useUndelegations'
 import whiteListedAllianceTokens from 'public/mainnet/white_listed_alliance_token_info.json'
 import whiteListedEcosystemTokens from 'public/mainnet/white_listed_ecosystem_token_info.json'
 import whiteListedLiquidityTokens from 'public/mainnet/white_listed_liquidity_token_info.json'
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { tabState, TabType } from 'state/tabState';
-import { walletState, WalletStatusType } from 'state/walletState';
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { tabState, TabType } from 'state/tabState'
+import { walletState, WalletStatusType } from 'state/walletState'
 
 export interface Reward {
     amount: number;
@@ -67,7 +67,7 @@ const Dashboard = () => {
     dollarValue: 0,
     value: 0,
     color: t.color,
-  })), [whiteListedAllianceTokens])
+  })), [])
 
   const rawLiquidityTokenData = useMemo(() => whiteListedLiquidityTokens?.map((t) => ({
     token: Token[t.symbol],
@@ -76,7 +76,7 @@ const Dashboard = () => {
     dollarValue: 0,
     value: 0,
     color: t.color,
-  })), [whiteListedAllianceTokens])
+  })), [])
 
   const rawEcosystemTokenData = useMemo(() => whiteListedEcosystemTokens.map((t) => ({
     token: Token[t.symbol],
@@ -85,7 +85,7 @@ const Dashboard = () => {
     dollarValue: 0,
     value: 0,
     color: t.color,
-  })), [whiteListedAllianceTokens])
+  })), [])
 
   const allianceRewardsTokenData = useMemo(() => whiteListedAllianceTokens.map((t) => ({
     token: Token[t.symbol],
@@ -95,7 +95,7 @@ const Dashboard = () => {
     value: 0,
     totalRewardDollarValue: 0,
     rewards: [],
-  })), [whiteListedAllianceTokens])
+  })), [])
 
   const ecosystemRewardsTokenData = useMemo(() => whiteListedEcosystemTokens.map((t) => ({
     token: Token[t.symbol],
@@ -105,7 +105,7 @@ const Dashboard = () => {
     value: 0,
     totalRewardDollarValue: 0,
     rewards: [],
-  })), [whiteListedAllianceTokens])
+  })), [])
 
   const liquidityRewardsTokenData = useMemo(() => whiteListedLiquidityTokens.map((t) => ({
     token: Token[t.symbol],
@@ -115,7 +115,7 @@ const Dashboard = () => {
     value: 0,
     totalRewardDollarValue: 0,
     rewards: [],
-  })), [whiteListedAllianceTokens])
+  })), [])
 
   const [priceList] = usePrices() || []
 
@@ -150,7 +150,9 @@ const Dashboard = () => {
         break;
       case 3:
         setCurrentTab(TabType.liquidity)
-        break;
+        break
+      default:
+        throw new Error('Invalid tab index')
     }
   }
   const tabTypeToIndex = (tabType: TabType) => {
@@ -163,6 +165,8 @@ const Dashboard = () => {
         return 2
       case TabType.liquidity:
         return 3
+      default:
+        throw new Error('Invalid tab type')
     }
   }
 
@@ -213,7 +217,8 @@ const Dashboard = () => {
   useEffect(() => {
     setLoading(updatedAllianceData === null ||
             !priceList)
-  }, [updatedAllianceData, priceList]);
+  }, [updatedAllianceData, priceList])
+
   return (
     <VStack
       w="full"

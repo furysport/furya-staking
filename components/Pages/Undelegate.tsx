@@ -53,6 +53,7 @@ export const Undelegate = ({ tokenSymbol }) => {
     } else if (tabFromUrl === TabType.liquidity) {
       return whiteListedLiquidityTokens
     }
+    return null
   }, [tabFromUrl])
 
   useEffect(() => {
@@ -93,7 +94,7 @@ export const Undelegate = ({ tokenSymbol }) => {
         denom: token?.denom,
       })
     } else {
-      const token = whiteListedTokens.find((e) => e.symbol === currentDelegationState.tokenSymbol) || whiteListedTokens[0]
+      const token = whiteListedTokens.find((e) => e.symbol === currentDelegationState.tokenSymbol) || whiteListedTokens?.[0]
       setCurrentDelegationState({
         ...currentDelegationState,
         tokenSymbol: token?.symbol,

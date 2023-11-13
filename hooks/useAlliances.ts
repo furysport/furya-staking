@@ -15,26 +15,13 @@ export interface Alliance {
 
   takeRate: number;
 }
-export const useAlliances = () => {
-  const client = useClient();
-  const [priceList] = usePrices() || [];
-
-  const { data: alliances } = useQuery({
-    queryKey: ['alliances', priceList],
-    queryFn: () => fetchAlliances(client, priceList),
-    enabled: Boolean(client) && Boolean(priceList),
-    refetchOnMount: true,
-  });
-  return { alliances };
-};
 
 const fetchAlliances = async (client: LCDClient, priceList) => {
-  // @ts-ignore
   const allianceAssets: AllianceAsset[] = (
     await client.alliance.alliances('migaloo-1')
   ).alliances;
 
-  const alliances: Alliance[] = whiteListedTokens.map((token) => {
+  const alliances: Alliance[] = whiteListedTokens?.map((token) => {
     const alliance = allianceAssets?.find((asset) => asset.denom === token.denom);
 
     return {
@@ -46,8 +33,20 @@ const fetchAlliances = async (client: LCDClient, priceList) => {
       totalTokens: convertMicroDenomToDenom(alliance?.total_tokens,
         token.decimals),
       takeRate: Number(alliance?.take_rate),
-    };
-  });
-
+    }
+  })
   return { alliances };
-};
+}
+
+export const useAlliances = () => {
+  const client = useClient();
+  const [priceList] = usePrices() || [];
+
+  const { data: alliances } = useQuery({
+    queryKey: ['alliances', priceList],
+    queryFn: () => fetchAlliances(client, priceList),
+    enabled: Boolean(client) && Boolean(priceList),
+    refetchOnMount: true,
+  });
+  return { alliances };
+}

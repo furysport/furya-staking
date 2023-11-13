@@ -73,7 +73,6 @@ const AssetSelectTrigger = ({ currentTokenSymbol, hideLogo = false }) => {
 };
 
 const WhaleInput: FC<AssetInputProps> = forwardRef(({
-  image = true,
   token,
   onChange,
   value,

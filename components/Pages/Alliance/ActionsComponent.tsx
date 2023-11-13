@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
@@ -11,7 +11,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import CustomButton from 'components/CustomButton';
-import Loader from 'components/Loader';
 import Delegate, { TokenBalance } from 'components/Pages/Alliance/Delegate';
 import useAllianceTransaction from 'components/Pages/Alliance/hooks/useAllianceTransaction';
 import Redelegate from 'components/Pages/Alliance/Redelegate';
@@ -60,11 +59,11 @@ const ActionsComponent = ({
 
   const buttonLabel = useMemo(() => {
     const valSrc =
-      currentDelegationState?.validatorSrcAddress === undefined
+      !currentDelegationState?.validatorSrcAddress
         ? null
         : currentDelegationState?.validatorSrcAddress;
     const valDest =
-      currentDelegationState?.validatorDestAddress === undefined
+      !currentDelegationState?.validatorDestAddress
         ? null
         : currentDelegationState?.validatorDestAddress;
 
@@ -90,8 +89,6 @@ const ActionsComponent = ({
       return ActionType[globalAction]
     }
   }, [isWalletConnected, currentDelegationState, globalAction])
-
-  const [isLoadingSummary, __] = useState<boolean>(false)
 
   const DelegationActionButton = ({ action }) => {
     const actionString = ActionType[action].toString()
@@ -166,135 +163,107 @@ const ActionsComponent = ({
           {ActionType[globalAction]}
         </Text>
       </HStack>
-      (
-      {isLoadingSummary && isWalletConnected ? (
-        <VStack
-          width="full"
-          backgroundColor="rgba(0, 0, 0, 0.5)"
-          borderRadius={'30px'}
-          justifyContent="center"
-          top={70}
-          minH={280}
-          gap={4}
-          as="form"
-          position="absolute"
-          pb={7}
-          left="50%"
-          transform="translateX(-50%)"
-          display="flex"
+      <VStack
+        width="full"
+        backgroundColor="rgba(0, 0, 0, 0.5)"
+        borderRadius={'30px'}
+        alignItems="flex-start"
+        verticalAlign="flex-start"
+        top={70}
+        maxH={660}
+        gap={4}
+        as="form"
+        position="absolute"
+        pb={7}
+        left="50%"
+        transform="translateX(-50%)"
+        display="flex"
+      >
+        <Box
+          border="0.5px solid grey"
+          borderRadius="30px"
+          minH={160}
+          minW={570}
+          alignSelf="center"
+          mt={'50px'}
         >
-          <HStack
-            minW={100}
-            minH={100}
-            width="full"
-            alignContent="center"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Loader />
+          <HStack spacing={0} justify="center">
+            <DelegationActionButton action={ActionType.delegate} />
+            <DelegationActionButton action={ActionType.redelegate}/>
+            <DelegationActionButton action={ActionType.undelegate} />
           </HStack>
-        </VStack>
-      ) : (
-        <VStack
-          width="full"
-          backgroundColor="rgba(0, 0, 0, 0.5)"
-          borderRadius={'30px'}
-          alignItems="flex-start"
-          verticalAlign="flex-start"
-          top={70}
-          maxH={660}
-          gap={4}
-          as="form"
-          position="absolute"
-          pb={7}
-          left="50%"
-          transform="translateX(-50%)"
-          display="flex"
-        >
-          <Box
-            border="0.5px solid grey"
-            borderRadius="30px"
-            minH={160}
-            minW={570}
-            alignSelf="center"
-            mt={'50px'}
-          >
-            <HStack spacing={0} justify="center">
-              <DelegationActionButton action={ActionType.delegate} />
-              <DelegationActionButton action={ActionType.redelegate}/>
-              <DelegationActionButton action={ActionType.undelegate} />
-            </HStack>
-            {(() => {
-              switch (globalAction) {
-                case ActionType.delegate:
-                  return (
-                    <Delegate
-                      balance={liquidTokenPriceBalances}
-                      validatorDestAddress={validatorDestAddress}
-                      tokenSymbol={tokenSymbol}
-                    />
-                  );
-                case ActionType.redelegate:
-                  return (
-                    <Redelegate
-                      validatorDestAddress={validatorDestAddress}
-                      validatorSrcAddress={validatorSrcAddress}
-                      delegations={delegations}
-                      tokenSymbol={tokenSymbol}
-                    />
-                  );
-                case ActionType.undelegate:
-                  return (
-                    <Undelegate
-                      delegations={delegations}
-                      validatorSrcAddress={validatorSrcAddress}
-                      tokenSymbol={tokenSymbol}
-                    />
-                  );
-              }
-            })()}
-          </Box>
-          <CustomButton
-            buttonLabel={buttonLabel}
-            onClick={async () => {
-              if (isWalletConnected) {
-                await submit(
-                  globalAction,
-                  currentDelegationState.validatorDestAddress,
-                  currentDelegationState.validatorSrcAddress,
-                  currentDelegationState.amount,
-                  currentDelegationState.denom,
+          {(() => {
+            switch (globalAction) {
+              case ActionType.delegate:
+                return (
+                  <Delegate
+                    balance={liquidTokenPriceBalances}
+                    validatorDestAddress={validatorDestAddress}
+                    tokenSymbol={tokenSymbol}
+                  />
                 );
-              } else {
-                onOpenModal();
-              }
-            }}
-            disabled={
-              txStep == TxStep.Estimating ||
-              txStep == TxStep.Posting ||
-              txStep == TxStep.Broadcasting ||
+              case ActionType.redelegate:
+                return (
+                  <Redelegate
+                    validatorDestAddress={validatorDestAddress}
+                    validatorSrcAddress={validatorSrcAddress}
+                    delegations={delegations}
+                    tokenSymbol={tokenSymbol}
+                  />
+                );
+              case ActionType.undelegate:
+                return (
+                  <Undelegate
+                    delegations={delegations}
+                    validatorSrcAddress={validatorSrcAddress}
+                    tokenSymbol={tokenSymbol}
+                  />
+                )
+              default:
+                return null
+            }
+          })()}
+        </Box>
+        <CustomButton
+          buttonLabel={buttonLabel}
+          onClick={ () => {
+            if (isWalletConnected) {
+              submit(
+                globalAction,
+                currentDelegationState.validatorDestAddress,
+                currentDelegationState.validatorSrcAddress,
+                currentDelegationState.amount,
+                currentDelegationState.denom,
+              );
+            } else {
+              onOpenModal();
+            }
+          }}
+          disabled={
+            txStep === TxStep.Estimating ||
+              txStep === TxStep.Posting ||
+              txStep === TxStep.Broadcasting ||
               (currentDelegationState.amount <= 0 && isWalletConnected) ||
               (currentDelegationState?.validatorDestAddress === null &&
                 globalAction === ActionType.delegate) ||
               (currentDelegationState?.validatorSrcAddress === null &&
                 (globalAction === ActionType.undelegate ||
                   globalAction === ActionType.redelegate))
-            }
-            loading={
-              txStep === TxStep.Estimating ||
+          }
+          loading={
+            txStep === TxStep.Estimating ||
               txStep === TxStep.Posting ||
               txStep === TxStep.Broadcasting
-            }
-            height="57px"
-            width="563px"
-          />
-          <WalletModal
-            isOpenModal={isOpenModal}
-            onCloseModal={onCloseModal}
-            chainId={chainId}
-          />
-        </VStack>
-      )}
+          }
+          height="57px"
+          width="563px"
+        />
+        <WalletModal
+          isOpenModal={isOpenModal}
+          onCloseModal={onCloseModal}
+          chainId={chainId}
+        />
+      </VStack>
       )
     </VStack>
   );

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { FC, ReactNode } from 'react';
+import React, { FC, useState } from 'react'
 
 import {
   HStack,
@@ -17,7 +16,7 @@ import AssetList from './AssetList';
 import SearchInput from './SearchInput';
 
 interface AssetSelectModalProps {
-  children: ReactNode;
+  children: any
   currentTokenSymbol: string;
   onChange: (asset: Asset, isTokenChange?: boolean) => void;
   disabled: boolean;

@@ -1,5 +1,4 @@
-import React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Fragment } from 'react';
 
 import { Box, Divider, HStack, Text, VStack, Tooltip } from '@chakra-ui/react';
 import { Token } from 'components/Pages/AssetOverview';
@@ -52,7 +51,7 @@ export const CustomTooltip = ({
           alignItems="center"
         >
           {data?.map((e, index) => (
-            <React.Fragment key={e.token}>
+            <Fragment key={e.token}>
               <TokenDetail tokenType={e.token} value={e.value} />
               {index !== data.length - 1 && (
                 <Divider
@@ -61,7 +60,7 @@ export const CustomTooltip = ({
                   color="whiteAlpha.300"
                 />
               )}
-            </React.Fragment>
+            </Fragment>
           ))}
         </VStack>
       }
@@ -96,5 +95,5 @@ export const CustomTooltip = ({
         </Box>
       </VStack>
     </Tooltip>
-  );
-};
+  )
+}

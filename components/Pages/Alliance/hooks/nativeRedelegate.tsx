@@ -9,7 +9,6 @@ export const nativeRedelegate = async (
   amount: number,
   allianceDenom: string,
 ) => {
-  // Wrong sig valDest => valSrc valSrc => valDest
   const handleMsg = new MsgBeginRedelegate(
     address,
     validatorSrcAddress,

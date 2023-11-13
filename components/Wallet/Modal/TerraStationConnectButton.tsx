@@ -4,7 +4,7 @@ import { Button, HStack, Image, Text } from '@chakra-ui/react';
 import { useWallet } from '@terra-money/wallet-provider';
 import { useTerraStation } from 'hooks/useTerraStation';
 
-function TerraStationConnectButton({ onCloseModal }) {
+export const TerraStationConnectButton = ({ onCloseModal }) => {
   const { availableConnections, availableInstallations } = useWallet();
   const { connectTerraAndCloseModal, filterForStation } =
     useTerraStation(onCloseModal);
@@ -31,7 +31,9 @@ function TerraStationConnectButton({ onCloseModal }) {
           <Button
             colorScheme="black"
             key={identifier}
-            onClick={() => (window.location.href = url)}
+            onClick={() => {
+              window.location.href = url
+            }}
           >
             <img
               src={icon}
@@ -46,4 +48,3 @@ function TerraStationConnectButton({ onCloseModal }) {
   );
 }
 
-export default TerraStationConnectButton;

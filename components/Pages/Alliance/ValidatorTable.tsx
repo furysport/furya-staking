@@ -146,7 +146,6 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
       sort(() => Math.random() - 0.5)?.
       map((validator) => ({
         name: validator?.description?.moniker,
-        // @ts-ignore
         votingPower: validator.votingPower,
         commission: validator.commission,
         status: getIsActive(validator),
@@ -225,8 +224,8 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
           {headerGroup.headers.map((header, index) => (
             <Box
               key={header.id}
-              flex={index == 0 || index == 3 ? 1 : 'unset'}
-              minW={index == 1 || index == 2 ? '200px' : 'unset'}
+              flex={index === 0 || index === 3 ? 1 : 'unset'}
+              minW={index === 1 || index === 2 ? '200px' : 'unset'}
               cursor={header.column.getCanSort() ? 'pointer' : 'default'}
               onClick={header.column.getToggleSortingHandler()}
             >
@@ -240,7 +239,7 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
                     <TriangleUpIcon
                       fontSize="8px"
                       color={
-                        header.column.getIsSorted() == 'asc' ? 'white' : 'gray'
+                        header.column.getIsSorted() === 'asc' ? 'white' : 'gray'
                       }
                     />
                     <TriangleDownIcon
@@ -270,9 +269,9 @@ const ValidatorTable = ({ selectedStatus, address }: Props) => {
           {row.getVisibleCells().map((cell, index) => (
             <Text
               key={cell.id}
-              as={index == 3 ? HStack : 'span'}
-              flex={index == 0 || index == 3 ? 1 : 'unset'}
-              minW={index == 1 || index == 2 ? '200px' : 'unset'}
+              as={index === 3 ? HStack : 'span'}
+              flex={index === 0 || index === 3 ? 1 : 'unset'}
+              minW={index === 1 || index === 2 ? '200px' : 'unset'}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </Text>

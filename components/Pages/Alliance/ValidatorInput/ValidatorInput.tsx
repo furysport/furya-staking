@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { HStack, IconButton, Text } from '@chakra-ui/react';
 import ValidatorSelectModal from 'components/Pages/Alliance/ValidatorInput/ValidatorSelectModal';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { walletState } from 'state/walletState';
 
 interface ValidatorInputProps {
@@ -18,7 +18,7 @@ interface ValidatorInputProps {
 }
 
 const ValidatorInput: FC<ValidatorInputProps> = (props) => {
-  const [{ address }, _] = useRecoilState(walletState);
+  const { address } = useRecoilValue(walletState)
   return (
     <HStack
       width={['full', '510px']}

@@ -33,7 +33,7 @@ export const useAllianceTransaction = () => {
 
   const { data: fee } = useQuery(
     ['fee', error],
-    async () => {
+    () => {
       setError(null)
       setTxStep(TxStep.Estimating)
       try {
@@ -46,15 +46,15 @@ export const useAllianceTransaction = () => {
         return response;
       } catch (error) {
         if (
-          (/insufficient funds/i).test(error.toString()) ||
-          (/Overflow: Cannot Sub with/i).test(error.toString())
+          (/insufficient funds/u).test(error.toString()) ||
+          (/Overflow: Cannot Sub with/u).test(error.toString())
         ) {
           console.error(error);
           setTxStep(TxStep.Idle);
           setError('Insufficient Funds');
           setButtonLabel('Insufficient Funds');
           throw new Error('Insufficient Funds');
-        } else if ((/account sequence mismatch/i).test(error?.toString())) {
+        } else if ((/account sequence mismatch/u).test(error?.toString())) {
           setError('You have pending transaction');
           setButtonLabel('You have pending transaction');
           throw new Error('You have pending transaction');
@@ -83,7 +83,7 @@ export const useAllianceTransaction = () => {
   const { mutate } = useMutation((data: any) => {
     const adjustedAmount = convertDenomToMicroDenom(data.amount, 6);
     if (data.action === ActionType.delegate) {
-      return data.denom == 'uwhale'
+      return data.denom === 'uwhale'
         ? nativeDelegate(
           client,
           'migaloo-1',
@@ -101,7 +101,7 @@ export const useAllianceTransaction = () => {
           data.denom,
         )
     } else if (data.action === ActionType.undelegate) {
-      return data.denom == 'uwhale'
+      return data.denom === 'uwhale'
         ? nativeUndelegate(
           client,
           'migaloo-1',
@@ -119,7 +119,7 @@ export const useAllianceTransaction = () => {
           data.denom,
         )
     } else if (data.action === ActionType.redelegate) {
-      return data.denom == 'uwhale'
+      return data.denom === 'uwhale'
         ? nativeRedelegate(
           client,
           'migaloo-1',
@@ -152,22 +152,22 @@ export const useAllianceTransaction = () => {
       let message: any = '';
       setTxStep(TxStep.Failed);
       if (
-        (/insufficient funds/i).test(e?.toString()) ||
-          (/Overflow: Cannot Sub with/i).test(e?.toString())
+        (/insufficient funds/u).test(e?.toString()) ||
+          (/Overflow: Cannot Sub with/u).test(e?.toString())
       ) {
         setError('Insufficient Funds');
         message = 'Insufficient Funds';
-      } else if ((/Request rejected/i).test(e?.toString())) {
+      } else if ((/Request rejected/u).test(e?.toString())) {
         setError('User Denied');
         message = 'User Denied';
-      } else if ((/account sequence mismatch/i).test(e?.toString())) {
+      } else if ((/account sequence mismatch/u).test(e?.toString())) {
         setError('You have pending transaction');
         message = 'You have pending transaction';
-      } else if ((/out of gas/i).test(e?.toString())) {
+      } else if ((/out of gas/u).test(e?.toString())) {
         setError('Out of gas, try increasing gas limit on wallet.');
         message = 'Out of gas, try increasing gas limit on wallet.';
       } else if (
-        (/was submitted but was not yet found on the chain/i).test(e?.toString())
+        (/was submitted but was not yet found on the chain/u).test(e?.toString())
       ) {
         setError(e?.toString());
         message = (
@@ -243,21 +243,21 @@ export const useAllianceTransaction = () => {
   const { data: txInfo } = useQuery(
     ['txInfo', txHash],
     async () => {
-      if (txHash == null) {
-        return
+      if (!txHash) {
+        return null
       }
       return await client.getTx(txHash);
     },
     {
-      enabled: txHash != null,
+      enabled: Boolean(txHash),
       retry: true,
     },
   )
 
   const reset = () => {
-    setError(null);
-    setTxHash(undefined);
-    setTxStep(TxStep.Idle);
+    setError(null)
+    setTxHash(null)
+    setTxStep(TxStep.Idle)
   }
 
   const submit = useCallback((
@@ -267,12 +267,12 @@ export const useAllianceTransaction = () => {
     amount: number | null,
     denom: string | null,
   ) => {
-    if (fee == null) {
-      return
+    if (fee) {
+      return null
     }
     setDelegationAction(action)
 
-    mutate({
+    return mutate({
       fee,
       action,
       validatorDestAddress,
@@ -281,10 +281,10 @@ export const useAllianceTransaction = () => {
       amount,
     })
   },
-  [fee, mutate, client])
+  [fee, mutate])
 
   useEffect(() => {
-    if (txInfo != null && txHash != null) {
+    if (txInfo && txHash) {
       if (txInfo?.code) {
         setTxStep(TxStep.Failed)
       } else {
@@ -298,10 +298,10 @@ export const useAllianceTransaction = () => {
       setError(null);
     }
 
-    if (txStep != TxStep.Idle) {
+    if (txStep !== TxStep.Idle) {
       setTxStep(TxStep.Idle);
     }
-  }, [])
+  }, [txStep, error])
 
   return useMemo(() => ({
     fee,

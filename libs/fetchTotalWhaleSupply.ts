@@ -5,7 +5,7 @@ type Token = {
   amount: string;
 };
 
-export async function fetchTotalSupply(): Promise<number> {
+export const fetchTotalSupply = async (): Promise<number> => {
   try {
     const response = await fetch('https://ww-migaloo-rest.polkachu.com/cosmos/bank/v1beta1/supply');
     const data = await response.json();

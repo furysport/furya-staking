@@ -180,7 +180,7 @@ const AssetTable = ({ dashboardData, initialized }) => {
                     <TriangleUpIcon
                       fontSize="8px"
                       color={
-                        header.column.getIsSorted() == 'asc' ? 'white' : 'gray'
+                        header.column.getIsSorted() === 'asc' ? 'white' : 'gray'
                       }
                     />
                     <TriangleDownIcon
@@ -210,7 +210,7 @@ const AssetTable = ({ dashboardData, initialized }) => {
           {row.getVisibleCells().map((cell, index) => (
             <Text
               key={cell.id}
-              minW={index === 0 ? '20px' : index === 1 ? '185px' : index == 2 ? '145px' : index == 3 ? '145px' : index == 4 ? '180px' : index == 5 ? '180px' : 'unset'}
+              minW={index === 0 ? '20px' : index === 1 ? '185px' : index === 2 ? '145px' : index === 3 ? '145px' : index === 4 ? '180px' : index === 5 ? '180px' : 'unset'}
             >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </Text>

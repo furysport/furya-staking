@@ -2,6 +2,7 @@ import { useQuery } from 'react-query';
 
 import { LCDClient, Validator } from '@terra-money/feather.js';
 import { Pagination } from '@terra-money/feather.js/dist/client/lcd/APIRequester';
+import { ValidatorInfo } from 'components/Pages/Alliance/ValidatorInput/ValidatorList';
 import useClient from 'hooks/useClient';
 import { num } from 'libs/num';
 import allianceTokens from 'public/mainnet/white_listed_alliance_token_info.json'
@@ -26,7 +27,7 @@ const getValidators = ({
   };
 
   return client?.alliance.
-    alliancesValidators('migaloo-1').
+    alliancesByValidators('migaloo-1').
     then((data) => {
       const [validators = [], pagination] = validatorInfo || [];
 
@@ -77,7 +78,7 @@ const getStakedWhale = async ({ client }) => {
 };
 type UseValidatorsResult = {
   data: {
-    validators: Validator[]
+    validators: ValidatorInfo[]
     pagination: any;
     stakedWhale: number
     stakedAmpLuna: number

@@ -10,7 +10,6 @@ import usePrices from 'hooks/usePrices';
 import useValidators from 'hooks/useValidators';
 import { useRouter } from 'next/router';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
-import tokenList from 'public/mainnet/white_listed_alliance_token_info.json';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { delegationState, DelegationState } from 'state/delegationState';
 import { walletState } from 'state/walletState';
@@ -119,7 +118,7 @@ const Delegate: FC<ActionProps> = ({
             onChange={async (value, isTokenChange) => {
               field.onChange(value);
               if (isTokenChange) {
-                const { denom } = tokenList.find((t) => t.symbol === value.tokenSymbol);
+                const { denom } = tokens.find((t) => t.symbol === value.tokenSymbol);
                 setCurrentDelegationState({
                   ...currentDelegationState,
                   tokenSymbol: value.tokenSymbol,

@@ -4,14 +4,13 @@ import { HStack, VStack, Button, Heading } from '@chakra-ui/react';
 import ValidatorTable from 'components/Pages/Alliance/ValidatorTable';
 
 const TopBar = ({ setSelectedStatus }) => {
-  const [activeButton, setActiveButton] = useState('all');
+  const [activeButton, setActiveButton] = useState('all')
 
   return (
     <HStack width="full" justifyContent="space-between">
       <Heading color="white" size="lg">
         Validators
       </Heading>
-
       <HStack
         margin="20px"
         backgroundColor="rgba(0, 0, 0, 0.25)"

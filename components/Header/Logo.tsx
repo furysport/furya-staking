@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { HStack, Image, Text, Box } from '@chakra-ui/react';
+import { HStack, Image, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 
 const Logo = () => (

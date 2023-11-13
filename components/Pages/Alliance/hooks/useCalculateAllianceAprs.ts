@@ -22,20 +22,21 @@ export const useCalculateAllianceAprs = ({ address }) => {
     map((alliance) => Number(alliance?.weight))?.
     reduce((acc, e) => acc + (isNaN(e) ? 0 : e), 0) + 0.05, // 5% for VT,
   [alliances])
+
   const allianceAPRs : Apr[] = useMemo(() => alliances?.map((alliance) => {
     if (alliance.name === Token.WHALE) {
       const apr = Number(((totalYearlyWhaleEmission * (1 - summedAllianceWeights)) /
-                        (validatorData?.stakedWhale | 0)) *
+                        (validatorData?.stakedWhale || 0)) *
                     100)
       return {
         name: Token.WHALE,
         apr,
-        weight: 1 - summedAllianceWeights,
+        weight: 1 - summedAllianceWeights || 1,
       };
     } else {
       const apr = !isNaN(alliance.totalDollarAmount)
-        ? ((totalYearlyWhaleEmission * whalePrice * alliance?.weight) /
-                        alliance?.totalDollarAmount) *
+        ? ((totalYearlyWhaleEmission * whalePrice * (alliance?.weight || 0)) /
+                        (alliance?.totalDollarAmount || 1)) *
                     100
         : 0;
       return {

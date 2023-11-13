@@ -9,7 +9,6 @@ import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
 import usePrices from 'hooks/usePrices';
 import useValidators from 'hooks/useValidators';
 import { useRouter } from 'next/router';
-import tokenList from 'public/mainnet/white_listed_alliance_token_info.json';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { delegationState, DelegationState } from 'state/delegationState';
@@ -170,7 +169,7 @@ const Redelegate = ({
               onInputChange(value, 0);
               field.onChange(value);
               if (isTokenChange) {
-                const { denom } = tokenList.find((t) => t.symbol === value.tokenSymbol);
+                const { denom } = tokens.find((t) => t.symbol === value.tokenSymbol);
                 setCurrentDelegationState({
                   ...currentDelegationState,
                   tokenSymbol: value.tokenSymbol,

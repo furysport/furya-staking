@@ -8,7 +8,7 @@ import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 export const claimAllRewards = async (wallet: TerraStationWallet,
   delegations: any) => {
   const msgs = delegations.map(({ delegation }) => {
-    if (delegation.denom == 'uwhale') {
+    if (delegation.denom === 'uwhale') {
       return new MsgWithdrawDelegatorReward(delegation.delegator_address,
         delegation.validator_address);
     } else {

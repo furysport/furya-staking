@@ -36,11 +36,11 @@ export const DashboardTab = ({ priceList }) => {
       const vtRewardShare = vtRewardShares.find((info) => info.tokenSymbol === apr.name)
       return {
         ...apr,
-        weight: apr?.weight ?? (vtRewardShare?.distribution * 0.05),
+        weight: apr?.weight ?? ((vtRewardShare?.distribution || 0) * 0.05),
       }
     })
     setAprs(aprs)
-  }, [allianceAPRs, otherAprs])
+  }, [vtRewardShares, allianceAPRs, otherAprs])
 
   useEffect(() => {
     if (!totalStakedBalances || !stakedAmpLuna || !stakedBLuna || !stakedWhale || !priceList || !lpTokenPrice || aprs.length === 0) {

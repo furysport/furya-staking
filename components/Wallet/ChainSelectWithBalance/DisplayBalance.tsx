@@ -3,7 +3,7 @@ import React from 'react'
 import { Spinner, Text } from '@chakra-ui/react'
 import { useGetWhaleBalance } from 'hooks/useGetWhaleBalance'
 
-function DisplayBalance() {
+const DisplayBalance = () => {
   const { balance, isLoading } = useGetWhaleBalance()
 
   return (
@@ -19,4 +19,4 @@ function DisplayBalance() {
   )
 }
 
-export default DisplayBalance;
+export default DisplayBalance

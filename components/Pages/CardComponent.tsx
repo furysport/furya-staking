@@ -6,6 +6,10 @@ import Loader from 'components/Loader';
 import { CustomTooltip } from 'components/Pages/CustomTooltip';
 import { TokenData } from 'components/Pages/Dashboard';
 
+export enum AssetType {
+  total,
+  undelegations,
+}
 interface CardComponentProps {
   title: string;
   tokenData: TokenData[];
@@ -14,10 +18,6 @@ interface CardComponentProps {
   assetType?: AssetType;
 }
 
-export enum AssetType {
-  total,
-  undelegations,
-}
 const CardComponent: FC<CardComponentProps> = ({
   title,
   tokenData,

@@ -4,7 +4,7 @@ import { Box, Button, Divider } from '@chakra-ui/react';
 import { useConnectedWallet, useWallet } from '@terra-money/wallet-provider';
 import Card from 'components/Card';
 import WalletIcon from 'components/icons/WalletIcon';
-import ChainSelectWithBalance from 'components/Wallet/ChainSelectWithBalance/ChainSelectWithBalance';
+import { ChainSelectWithBalance } from 'components/Wallet/ChainSelectWithBalance/ChainSelectWithBalance';
 import ConnectedWalletWithDisconnect from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWalletWithDisconnect';
 import WalletModal from 'components/Wallet/Modal/WalletModal';
 import { useTerraStation } from 'hooks/useTerraStation';

@@ -50,6 +50,7 @@ export const Delegate = ({ tokenSymbol }) => {
     } else if (tabFromUrl === TabType.liquidity) {
       return whiteListedLiquidityTokens
     }
+    return null
   }, [tabFromUrl])
 
   useEffect(() => {
@@ -167,7 +168,7 @@ export const Delegate = ({ tokenSymbol }) => {
             balance={currentTokenBalance?.balance}
             minMax={false}
             disabled={false}
-            onChange={async (value, isTokenChange) => {
+            onChange={(value, isTokenChange) => {
               field.onChange(value);
               if (isTokenChange) {
                 const denom = whiteListedTokens?.find((t) => t.symbol === value.tokenSymbol).denom;
