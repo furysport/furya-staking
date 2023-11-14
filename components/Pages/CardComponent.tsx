@@ -1,9 +1,15 @@
-import { HStack, VStack, Text, Box, Tooltip } from '@chakra-ui/react';
-import Loader from 'components/Loader';
 import React, { FC, useMemo } from 'react';
+
+import { HStack, VStack, Text, Box, Tooltip } from '@chakra-ui/react';
+import InfoIcon from 'components/icons/InfoIcon';
+import Loader from 'components/Loader';
 import { CustomTooltip } from 'components/Pages/CustomTooltip';
 import { TokenData } from 'components/Pages/Dashboard';
-import InfoIcon from 'components/icons/InfoIcon';
+
+export enum AssetType {
+  total,
+  undelegations,
+}
 
 interface CardComponentProps {
   title: string;
@@ -13,10 +19,6 @@ interface CardComponentProps {
   assetType?: AssetType;
 }
 
-export enum AssetType {
-  total,
-  undelegations,
-}
 const CardComponent: FC<CardComponentProps> = ({
   title,
   tokenData,
@@ -24,20 +26,15 @@ const CardComponent: FC<CardComponentProps> = ({
   isWalletConnected,
   assetType,
 }) => {
-  const sumAndMultiplyValues = useMemo(() => {
-    return tokenData?.reduce((total, item) => {
-          return (
-            total +
-            (item?.dollarValue !== undefined ? item?.dollarValue ?? 0 : 0)
-          )
-        }, 0)
-  }, [tokenData, isLoading]);
+  const sumAndMultiplyValues = useMemo(() => tokenData?.reduce((total, item) => (
+    total +
+    (item?.dollarValue ? item?.dollarValue ?? 0 : 0)
+  ), 0), [tokenData, isLoading]);
 
-  const summedAndMultipliedValues = useMemo(() => {
-    return isWalletConnected
-      ? `$${sumAndMultiplyValues.toFixed(2).toString()}`
-      : '$0'
-  }, [isWalletConnected, sumAndMultiplyValues]);
+  const summedAndMultipliedValues = useMemo(() => (isWalletConnected
+    ? `$${sumAndMultiplyValues.toFixed(2).
+      toString()}`
+    : '$0'), [isWalletConnected, sumAndMultiplyValues]);
   return (
     <VStack
       width="full"
@@ -64,7 +61,7 @@ const CardComponent: FC<CardComponentProps> = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Loader height={'7rem'} width={'7rem'} />
+          <Loader height={'7rem'} width={'7rem'}/>
         </HStack>
       ) : (
         <>
@@ -93,7 +90,7 @@ const CardComponent: FC<CardComponentProps> = ({
                 arrowSize={0}
               >
                 <Box>
-                  <InfoIcon color={'white'} cursor="pointer" />
+                  <InfoIcon color={'white'} cursor="pointer"/>
                 </Box>
               </Tooltip>
             )}

@@ -7,7 +7,7 @@ interface Props {
   onChange?: (value: string) => void;
 }
 
-const SearchInput: FC<Props> = ({ onChange }) => (
+const ValidatorSearchInput: FC<Props> = ({ onChange }) => (
   <HStack paddingX={6} width="full">
     <HStack
       borderRadius="100px"
@@ -17,16 +17,14 @@ const SearchInput: FC<Props> = ({ onChange }) => (
       paddingX={6}
     >
       <Input
-        placeholder="Search Token"
+        placeholder="Search Validator"
         variant="unstyled"
         color="brand.500"
-        onChange={({ target: { value } }) => {
-          onChange(value);
-        }}
+        onChange={({ target: { value } }) => onChange(value)}
       />
       <SearchIcon color="green.500" />
     </HStack>
   </HStack>
-);
+)
 
-export default SearchInput;
+export default ValidatorSearchInput;

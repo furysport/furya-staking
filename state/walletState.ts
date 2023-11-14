@@ -1,26 +1,27 @@
 import { Key } from '@keplr-wallet/types';
 import { atom } from 'recoil';
-
 import { Wallet } from 'util/wallet-adapters/index';
 
+export type Network = 'testnet' | 'mainnet';
+
 export enum WalletStatusType {
-  /* nothing happens to the wallet */
+  /* Nothing happens to the wallet */
   idle = '@wallet-state/idle',
-  /* restored wallets state from the cache */
+  /* Restored wallets state from the cache */
   restored = '@wallet-state/restored',
-  /* the wallet is fully connected */
+  /* The wallet is fully connected */
   connected = '@wallet-state/connected',
-  /* the wallet is fully connected */
+  /* The wallet is fully connected */
   disconnected = '@wallet-state/disconnected',
-  /* connecting to the wallet */
+  /* Connecting to the wallet */
   connecting = '@wallet-state/connecting',
-  /* error when tried to connect */
+  /* Error when tried to connect */
   error = '@wallet-state/error',
 }
 
 type GeneratedWalletState<
-  TClient extends any,
-  TStateExtension extends {},
+  TClient,
+  TStateExtension extends NonNullable<unknown>,
 > = TStateExtension & {
   client: TClient | null;
   status: WalletStatusType;
@@ -30,7 +31,7 @@ type GeneratedWalletState<
   activeWallet: string;
 };
 
-type CreateWalletStateArgs<TState = {}> = {
+type CreateWalletStateArgs<TState = NonNullable<unknown>> = {
   key: string;
   default: TState;
 };
@@ -54,26 +55,25 @@ function createWalletState<TClient = any, TState = {}>({
     effects_UNSTABLE: [
       ({ onSet, setSelf }) => {
         const CACHE_KEY = `@wasmswap/wallet-state/wallet-type-${key}`;
-        const savedValue = localStorage.getItem(CACHE_KEY);
+        const savedValue = localStorage.getItem(CACHE_KEY)
         if (savedValue) {
           try {
-            const parsedSavedState = JSON.parse(savedValue);
+            const parsedSavedState = JSON.parse(savedValue)
             if (parsedSavedState?.address) {
               setSelf({
                 ...parsedSavedState,
-                client: null,
                 status: WalletStatusType.restored,
               });
             }
-          } catch (e) {}
+          } catch (e) { /* Empty */ }
         }
 
         onSet((newValue, oldValue) => {
-          localStorage.setItem(
-            CACHE_KEY,
-            /* let's not store the client in the cache */
-            JSON.stringify({ ...newValue, client: null }),
-          );
+          localStorage.setItem(CACHE_KEY,
+            /* Let's not store the client in the cache */
+            JSON.stringify({ ...newValue,
+              client: null,
+              address: newValue?.address ?? oldValue?.address }))
         });
       },
     ],
@@ -86,18 +86,3 @@ export const walletState = createWalletState<Wallet, { key?: Key }>({
     key: null,
   },
 });
-
-export const ibcWalletState = createWalletState<
-  Wallet,
-  {
-    /* ibc wallet is connected */
-    tokenSymbol?: string;
-  }
->({
-  key: 'ibc-wallet',
-  default: {
-    tokenSymbol: null,
-  },
-});
-
-type Network = 'testnet' | 'mainnet';

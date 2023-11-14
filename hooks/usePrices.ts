@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
+
 import { getTokenPrice } from 'hooks/getPrice';
 
 const usePrices = () => {

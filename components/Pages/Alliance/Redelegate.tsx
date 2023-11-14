@@ -1,18 +1,18 @@
 import React, { useEffect, useMemo } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
 import { Text, VStack } from '@chakra-ui/react';
 import AssetInput from 'components/AssetInput/index';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import { walletState } from 'state/walletState';
-import { Controller, useForm } from 'react-hook-form';
-import { delegationState, DelegationState } from 'state/delegationState';
-import ValidatorInput from 'components/ValidatorInput/ValidatorInput';
-import tokenList from 'public/mainnet/white_listed_alliance_token_info.json';
-import useValidators from 'hooks/useValidators';
+import ValidatorInput from 'components/Pages/Alliance/ValidatorInput/ValidatorInput';
+import { Token } from 'components/Pages/AssetOverview';
+import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
 import usePrices from 'hooks/usePrices';
-import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
+import useValidators from 'hooks/useValidators';
 import { useRouter } from 'next/router';
-import {useGetLPTokenPrice} from "hooks/useGetLPTokenPrice";
-import {Token} from "components/Pages/AssetOverview";
+import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { delegationState, DelegationState } from 'state/delegationState';
+import { walletState } from 'state/walletState';
 
 const Redelegate = ({
   validatorDestAddress,
@@ -26,21 +26,17 @@ const Redelegate = ({
 
   const { data: { validators = [] } = {} } = useValidators({ address });
 
-  const chosenDestValidator = useMemo(
-    () => validators.find((v) => v.operator_address === validatorDestAddress),
-    [validatorDestAddress, validators],
-  );
+  const chosenDestValidator = useMemo(() => validators.find((v) => v.operator_address === validatorDestAddress),
+    [validatorDestAddress, validators]);
 
-  const chosenSrcValidator = useMemo(
-    () => validators.find((v) => v.operator_address === validatorSrcAddress),
-    [validatorSrcAddress, validators],
-  );
+  const chosenSrcValidator = useMemo(() => validators.find((v) => v.operator_address === validatorSrcAddress),
+    [validatorSrcAddress, validators]);
 
   const onInputChange = (tokenSymbol: string | null, amount: number) => {
     if (tokenSymbol) {
       setCurrentDelegationState({
         ...currentDelegationState,
-        tokenSymbol: tokenSymbol,
+        tokenSymbol,
         amount: Number(amount),
       });
     } else {
@@ -73,35 +69,26 @@ const Redelegate = ({
     },
   });
 
-  const allSingleTokenDelegations = useMemo(() => {
-    return delegations
-      .filter((d) => d.token.symbol === currentDelegationState.tokenSymbol)
-      .filter(
-        (d) =>
-          currentDelegationState.validatorSrcAddress === null ||
+  const allSingleTokenDelegations = useMemo(() => delegations.
+    filter((d) => d.token.symbol === currentDelegationState.tokenSymbol).
+    filter((d) => currentDelegationState.validatorSrcAddress === null ||
           d.delegation.validator_address ===
-            currentDelegationState.validatorSrcAddress,
-      );
-  }, [delegations, currentDelegationState]);
+            currentDelegationState.validatorSrcAddress), [delegations, currentDelegationState]);
 
-  const aggregatedAmount = allSingleTokenDelegations
-    ?.reduce((acc, e) => acc + Number(e?.token?.amount ?? 0), 0)
-    .toFixed(6);
-    const [priceList] = usePrices() || [];
+  const aggregatedAmount = allSingleTokenDelegations?.
+    reduce((acc, e) => acc + Number(e?.token?.amount ?? 0), 0).
+    toFixed(6);
+  const [priceList] = usePrices() || [];
 
+  const router = useRouter();
+  const { lpTokenPrice } = useGetLPTokenPrice()
 
-
-    const router = useRouter();
-    const {lpTokenPrice} = useGetLPTokenPrice()
-
-
-    const price = useMemo(
-        () => currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
-            priceList?.[
-                tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)
-                    ?.name
-                ],
-        [priceList, currentDelegationState.tokenSymbol, lpTokenPrice])
+  const price = useMemo(() => (currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
+    priceList?.[
+      tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.
+        name
+    ]),
+  [priceList, currentDelegationState.tokenSymbol, lpTokenPrice])
   return (
     <VStack px={7} width="full" alignItems="flex-start" marginBottom={5}>
       <Text>From</Text>
@@ -182,14 +169,12 @@ const Redelegate = ({
               onInputChange(value, 0);
               field.onChange(value);
               if (isTokenChange) {
-                const denom = tokenList.find(
-                  (t) => t.symbol === value.tokenSymbol,
-                ).denom;
+                const { denom } = tokens.find((t) => t.symbol === value.tokenSymbol);
                 setCurrentDelegationState({
                   ...currentDelegationState,
                   tokenSymbol: value.tokenSymbol,
                   amount: value.amount === '' ? 0 : value.amount,
-                  denom: denom,
+                  denom,
                 });
                 await router.push({
                   pathname: '/redelegate',

@@ -14,7 +14,9 @@ type Props = {
 };
 
 const BalanceSlider = ({ balance, amount, onChange, show = true }: Props) => {
-  if (!show) return null;
+  if (!show) {
+    return null;
+  }
 
   return (
     <Box width="full" px={5}>

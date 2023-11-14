@@ -1,23 +1,22 @@
 import React from 'react';
+
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
 
 type BalanceProps = {
   balance: number | string;
 };
 
-const Balance = ({ balance }: BalanceProps) => {
-  return (
-    <HStack>
-      <Text color="brand.50" fontWeight={400} fontSize="14px">
+const Balance = ({ balance }: BalanceProps) => (
+  <HStack>
+    <Text color="brand.50" fontWeight={400} fontSize="14px">
         Available:
-      </Text>
-      <Text fontWeight={700} fontSize="14px">
-        {' '}
-        {balance}
-      </Text>
-    </HStack>
-  );
-};
+    </Text>
+    <Text fontWeight={700} fontSize="14px">
+      {' '}
+      {balance}
+    </Text>
+  </HStack>
+);
 
 type MaxButtonProps = {
   disabled: boolean;
@@ -31,7 +30,9 @@ type HalfButtonProps = {
 };
 
 const MaxButton = ({ disabled, onClick, hideMax = false }: MaxButtonProps) => {
-  if (hideMax) return null;
+  if (hideMax) {
+    return null;
+  }
   return (
     <Button
       disabled={disabled}
@@ -49,7 +50,9 @@ const HalfButton = ({
   onClick,
   hideHalf = false,
 }: HalfButtonProps) => {
-  if (hideHalf) return null;
+  if (hideHalf) {
+    return null;
+  }
   return (
     <Button
       disabled={disabled}
@@ -73,7 +76,9 @@ const TokenToPrice = ({
   dollarValue,
   hide = false,
 }: TokenToPriceProps) => {
-  if (hide) return <Box flex={1} />;
+  if (hide) {
+    return <Box flex={1} />;
+  }
 
   return (
     <HStack spacing={0} gap={0} flex={1}>
@@ -107,27 +112,25 @@ const BalanceWithMaxNHalf = ({
   onHalfClick,
   hideMax,
   hideDollarValue,
-}: BalanceWithMaxProps) => {
-  return (
-    <HStack width="full" px={5}>
-      <TokenToPrice
-        numberOfTokens={numberOfTokens}
-        dollarValue={dollarValue}
-        hide={hideDollarValue}
-      />
-      <Balance balance={balance} />
-      <HalfButton
-        disabled={maxDisabled}
-        onClick={onHalfClick}
-        hideHalf={hideMax}
-      />
-      <MaxButton
-        disabled={maxDisabled}
-        onClick={onMaxClick}
-        hideMax={hideMax}
-      />
-    </HStack>
-  );
-};
+}: BalanceWithMaxProps) => (
+  <HStack width="full" px={5}>
+    <TokenToPrice
+      numberOfTokens={numberOfTokens}
+      dollarValue={dollarValue}
+      hide={hideDollarValue}
+    />
+    <Balance balance={balance} />
+    <HalfButton
+      disabled={maxDisabled}
+      onClick={onHalfClick}
+      hideHalf={hideMax}
+    />
+    <MaxButton
+      disabled={maxDisabled}
+      onClick={onMaxClick}
+      hideMax={hideMax}
+    />
+  </HStack>
+);
 
 export default BalanceWithMaxNHalf;

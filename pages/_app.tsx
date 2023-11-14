@@ -1,5 +1,4 @@
-import { FC, useEffect } from 'react'
-import { useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { QueryClientProvider } from 'react-query'
 
@@ -10,12 +9,13 @@ import {
   WalletControllerChainOptions,
   WalletProvider,
 } from '@terra-money/wallet-provider'
-import AppLoading from '../components/AppLoading'
-import AppLayout from '../components/Layout/AppLayout'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { RecoilRoot } from 'recoil'
 import { queryClient } from 'services/queryClient'
+
+import AppLoading from '../components/AppLoading'
+import AppLayout from '../components/Layout/AppLayout'
 import theme from '../theme'
 
 const MyApp: FC<AppProps> = ({
@@ -39,7 +39,6 @@ const MyApp: FC<AppProps> = ({
         </Head>
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
-            {/* <ErrorBoundary> */}
             <ChakraProvider theme={theme}>
               <CSSReset />
               {!mounted ? (
@@ -51,7 +50,6 @@ const MyApp: FC<AppProps> = ({
               )}
             </ChakraProvider>
             <Toaster position="top-right" toastOptions={{ duration: 10000 }} />
-            {/* </ErrorBoundary> */}
           </QueryClientProvider>
         </RecoilRoot>
       </>
@@ -64,7 +62,6 @@ const MyApp: FC<AppProps> = ({
         </Head>
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
-            {/* <ErrorBoundary> */}
             <ChakraProvider theme={theme}>
               <CSSReset />
               {!mounted ? (
@@ -76,7 +73,6 @@ const MyApp: FC<AppProps> = ({
               )}
             </ChakraProvider>
             <Toaster position="top-right" toastOptions={{ duration: 10000 }} />
-            {/* </ErrorBoundary> */}
           </QueryClientProvider>
         </RecoilRoot>
       </>

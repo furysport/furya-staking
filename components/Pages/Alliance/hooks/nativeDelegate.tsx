@@ -1,5 +1,5 @@
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 import { Coin, MsgDelegate } from '@terra-money/feather.js';
+import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 
 export const nativeDelegate = async (
   wallet: TerraStationWallet,

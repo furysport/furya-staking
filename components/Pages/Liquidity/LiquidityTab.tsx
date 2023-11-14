@@ -6,17 +6,18 @@ import { useCalculateAprs } from 'components/Pages/Ecosystem/hooks/useCalculateA
 import RewardsComponent from 'components/Pages/RewardsComponent'
 import { useRouter } from 'next/router'
 
-export const EcosystemTab = ({
+export const LiquidityTab = ({
   isWalletConnected,
   isLoading,
   address,
   updatedData,
 }) => {
   const router = useRouter()
-  const openDelegate = async () => await router.push('/ecosystem/delegate?tokenSymbol=mUSDC')
-  const openUndelegate = async () => await router.push('/ecosystem/undelegate?tokenSymbol=mUSDC')
+  const openDelegate = async () => await router.push('/liquidity/delegate?tokenSymbol=USDC-WHALE-LP')
+  const openUndelegate = async () => await router.push('/liquidity/undelegate?tokenSymbol=USDC-WHALE-LP')
 
   const aprs = useCalculateAprs()
+
   return <VStack
     pt={12}
     maxW={1270}
@@ -26,13 +27,13 @@ export const EcosystemTab = ({
       <Text as="h1"
         fontSize="37"
         fontWeight="700">
-                Ecosystem
+                Liquidity
       </Text>
       <HStack pr={2}>
         <CustomButton isTransparent={true}
           onClick={() => openDelegate()}
-          buttonLabel={'Delegate'}
           disabled={!isWalletConnected}
+          buttonLabel={'Delegate'}
           height={'42px'}
           width={'198px'}/>
         <CustomButton isTransparent={true}

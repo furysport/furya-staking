@@ -9,28 +9,23 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
-import TerraStationConnectButton from './TerraStationConnectButton';
+import { TerraStationConnectButton } from 'components/Wallet/Modal/TerraStationConnectButton'
 
-function WalletModal({ isOpenModal, onCloseModal, chainId }) {
-  return (
-    <Modal isOpen={isOpenModal} onClose={onCloseModal}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Select Wallet</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <VStack justify="center" align="center" textAlign="center">
-            {chainId !== 'comdex-1' && chainId !== 'injective-1' && (
-              <TerraStationConnectButton onCloseModal={onCloseModal} />
-            )}
-            {/*<KeplrConnectButton onCloseModal={onCloseModal} />*/}
-            {/*<LeapConnectButton onCloseModal={onCloseModal} />*/}
-            {/*<CosmostationConnectButton onCloseModal={onCloseModal} />*/}
-          </VStack>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  );
-}
+export const WalletModal = ({ isOpenModal, onCloseModal, chainId }) => (
+  <Modal isOpen={isOpenModal} onClose={onCloseModal}>
+    <ModalOverlay />
+    <ModalContent>
+      <ModalHeader>Select Wallet</ModalHeader>
+      <ModalCloseButton />
+      <ModalBody>
+        <VStack justify="center" align="center" textAlign="center">
+          {chainId !== 'comdex-1' && chainId !== 'injective-1' && (
+            <TerraStationConnectButton onCloseModal={onCloseModal} />
+          )}
+        </VStack>
+      </ModalBody>
+    </ModalContent>
+  </Modal>
+)
 
 export default React.memo(WalletModal);

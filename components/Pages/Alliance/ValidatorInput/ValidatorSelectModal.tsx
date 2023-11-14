@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 
 import {
   HStack,
@@ -11,8 +10,8 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import ValidatorList from 'components/ValidatorInput/ValidatorList';
-import ValidatorSearchInput from 'components/ValidatorInput/ValidatorSearchInput';
+import ValidatorList from 'components/Pages/Alliance/ValidatorInput/ValidatorList';
+import ValidatorSearchInput from 'components/Pages/Alliance/ValidatorInput/ValidatorSearchInput';
 
 interface ValidatorSelectModalProps {
   children: ReactNode;
@@ -57,7 +56,8 @@ const ValidatorSelectModal: FC<ValidatorSelectModalProps> = ({
         onClose={onClose}
         isOpen={isOpen}
         isCentered
-        size={{ base: 'full', md: '2xl' }}
+        size={{ base: 'full',
+          md: '2xl' }}
       >
         <ModalOverlay />
         <ModalContent backgroundColor="#212121">

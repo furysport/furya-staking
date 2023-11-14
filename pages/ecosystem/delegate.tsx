@@ -1,11 +1,10 @@
-import {Delegate} from "components/Pages/Delegate"
-import {useRouter} from "next/router"
+import { Delegate } from 'components/Pages/Delegate'
+import { useRouter } from 'next/router'
 
 const DelegatePage = () => {
- const router = useRouter();
- const tokenSymbol = router.query.tokenSymbol;
- return <Delegate tokenSymbol={tokenSymbol}/>
-
+  const router = useRouter();
+  const { tokenSymbol } = router.query;
+  return <Delegate tokenSymbol={tokenSymbol}/>
 }
 
 export default DelegatePage;

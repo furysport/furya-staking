@@ -1,13 +1,15 @@
-import {FC, ReactNode, useEffect, useState} from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
+
 import { Flex, useMediaQuery } from '@chakra-ui/react';
-import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
-import MobileNotSupportedModal from '../Wallet/Modal/MobileNotSupportedModal';
-import RadialGradient from './RadialGradient';
 import Header from 'components/Header/Header';
 import Status from 'components/Status';
-import {useRouter} from "next/router";
+import { useRouter } from 'next/router';
+import { useRecoilValue } from 'recoil';
+import { walletState } from 'state/walletState';
+
+import MobileNotSupportedModal from '../Wallet/Modal/MobileNotSupportedModal';
+import RadialGradient from './RadialGradient';
 
 interface Props {
   children: ReactNode;

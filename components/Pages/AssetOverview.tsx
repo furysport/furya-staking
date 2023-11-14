@@ -1,14 +1,14 @@
 import { Box, HStack, Text, VStack } from '@chakra-ui/react';
-import { Cell, Pie, PieChart } from 'recharts';
 import Loader from 'components/Loader';
+import { Cell, Pie, PieChart } from 'recharts';
 
 export enum Token {
-  WHALE = "WHALE",
-  ampLUNA = "ampLUNA",
-  bLUNA = "bLUNA",
-  mUSDC = "mUSDC",
-  ASH = "ASH",
-  "USDC-WHALE-LP"= "USDC-WHALE-LP",
+  WHALE = 'WHALE',
+  ampLUNA = 'ampLUNA',
+  bLUNA = 'bLUNA',
+  mUSDC = 'mUSDC',
+  ASH = 'ASH',
+  'USDC-WHALE-LP'= 'USDC-WHALE-LP',
 }
 
 export enum TokenType {
@@ -18,23 +18,23 @@ export enum TokenType {
   rewards,
 }
 const TokenBox = ({ token, data }) => {
-    const { color } = data.find((e) => e.token === token);
+  const { color } = data.find((e) => e.token === token);
 
-    return (
-        <HStack mr="10">
-            <Box bg={color} w="4" h="4" borderRadius="50%" mr="2"></Box>
-            <Text
-                style={{
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    maxWidth: '80%', // Ensures it doesn't overflow the parent container
-                }}
-            >
-                {Token[token]}
-            </Text>
-        </HStack>
-    );
+  return (
+    <HStack mr="10">
+      <Box bg={color} w="4" h="4" borderRadius="50%" mr="2"></Box>
+      <Text
+        style={{
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          maxWidth: '80%', // Ensures it doesn't overflow the parent container
+        }}
+      >
+        {Token[token]}
+      </Text>
+    </HStack>
+  );
 };
 
 const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
@@ -122,8 +122,8 @@ const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
               stroke="none"
             >
               {isWalletConnected ? (
-                data?.map((_entry: any, index: number) => (
-                  <Cell key={`cell-${index}`} fill={data[index].color} />
+                data?.map((e, index: number) => (
+                  <Cell key={`cell-${index}-${e.symbol}`} fill={data[index].color} />
                 ))
               ) : (
                 <Cell fill="grey" />

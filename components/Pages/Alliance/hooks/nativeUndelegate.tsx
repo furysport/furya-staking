@@ -1,5 +1,5 @@
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 import { Coin, MsgUndelegate } from '@terra-money/feather.js';
+import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 
 export const nativeUndelegate = async (
   wallet: TerraStationWallet,
@@ -15,10 +15,12 @@ export const nativeUndelegate = async (
     new Coin(allianceDenom, amount),
   );
 
-  // const feeEstimation = await estimateFee(wallet,address,[handleMsg])
-  // const amounts = feeEstimation.amount
-  // const gasLimit = feeEstimation.gas_limit
-  // return await wallet.client.post({ chainID: destBlockchain, msgs: [handleMsg], fee:new Fee(gasLimit, amounts)});
+  /*
+   * Const feeEstimation = await estimateFee(wallet,address,[handleMsg])
+   * const amounts = feeEstimation.amount
+   * const gasLimit = feeEstimation.gas_limit
+   * return await wallet.client.post({ chainID: destBlockchain, msgs: [handleMsg], fee:new Fee(gasLimit, amounts)});
+   */
   return await wallet.client.post({
     chainID: destBlockchain,
     msgs: [handleMsg],

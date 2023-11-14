@@ -1,10 +1,10 @@
 import { FC, useMemo } from 'react';
 
 import { Box, Button, HStack, Text } from '@chakra-ui/react';
+import { Validator } from '@terra-money/feather.js';
 import useValidators from 'hooks/useValidators';
 
 type ValidatorListProps = {
-  // assetList?: Asset[];
   onChange: (validator) => void;
   search: string;
   address: string;
@@ -12,7 +12,12 @@ type ValidatorListProps = {
   validatorList: string[];
   amount?: number;
   delegatedOnly: boolean;
-};
+}
+
+export interface ValidatorInfo extends Validator {
+  votingPower: number
+  delegated: boolean
+}
 
 const ValidatorList: FC<ValidatorListProps> = ({
   onChange,
@@ -23,24 +28,26 @@ const ValidatorList: FC<ValidatorListProps> = ({
   const { data: { validators = [] } = {} } = useValidators({ address });
 
   const validatorsWithDelegation = useMemo(() => {
-    if (!validators?.length) return [];
-
-    return validators
-      ?.map((validator) => ({
+    if (!validators?.length) {
+      return [];
+    }
+    console.log({ validators })
+    return validators?.
+      map((validator) => ({
         ...validator,
-      }))
-      .filter((v) => (delegatedOnly ? v.delegated : true));
-  }, [validators]);
+      })).
+      filter((v) => (delegatedOnly ? v.delegated : true));
+  }, [validators, delegatedOnly])
 
   const filteredValidators = useMemo(() => {
-    if (!!!search) return validatorsWithDelegation;
+    if (!search) {
+      return validatorsWithDelegation;
+    }
 
-    return validatorsWithDelegation.filter(({ description }) =>
-      description?.moniker.toLowerCase().includes(search.toLowerCase()),
-    );
+    return validatorsWithDelegation.filter(({ description }) => description?.moniker.toLowerCase().includes(search.toLowerCase()));
   }, [search, validatorsWithDelegation]);
 
-  //// useFilter<any>(tokensWithBalance, 'symbol', search)
+  // // useFilter<any>(tokensWithBalance, 'symbol', search)
 
   return (
     <Box
@@ -72,7 +79,7 @@ const ValidatorList: FC<ValidatorListProps> = ({
           paddingY={4}
           paddingX={4}
           borderBottom={
-            index == filteredValidators?.length - 1
+            index === (filteredValidators?.length || 0 - 1)
               ? 'unset'
               : '1px solid rgba(0, 0, 0, 0.5)'
           }

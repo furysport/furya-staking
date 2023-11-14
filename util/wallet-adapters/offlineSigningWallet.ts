@@ -10,7 +10,6 @@ import {
   OfflineSigner,
 } from '@cosmjs/proto-signing';
 import { SigningStargateClientOptions } from '@cosmjs/stargate/build/signingstargateclient';
-
 import {
   AuthInfo,
   Fee,
@@ -59,7 +58,9 @@ export class OfflineSigningWallet implements Wallet {
     msgs: EncodeObject[],
     memo?: string,
   ): Promise<TxResponse> {
-    return this.client.signAndBroadcast(senderAddress, msgs, 'auto', memo);
+    return this.client.signAndBroadcast(
+      senderAddress, msgs, 'auto', memo,
+    );
   }
 
   execute(
@@ -78,10 +79,8 @@ export class OfflineSigningWallet implements Wallet {
     );
   }
 
-  queryContractSmart(
-    address: string,
-    queryMsg: Record<string, unknown>,
-  ): Promise<JsonObject> {
+  queryContractSmart(address: string,
+    queryMsg: Record<string, unknown>): Promise<JsonObject> {
     return this.client.queryContractSmart(address, queryMsg);
   }
 
@@ -90,7 +89,9 @@ export class OfflineSigningWallet implements Wallet {
     messages: readonly EncodeObject[] | Record<string, unknown>,
     memo: string | undefined,
   ): Promise<number> {
-    return this.client.simulate(signerAddress, messages, memo);
+    return this.client.simulate(
+      signerAddress, messages, memo,
+    );
   }
 
   getChainId(): Promise<string> {
@@ -106,50 +107,37 @@ export class OfflineSigningWallet implements Wallet {
   }
 
   getTx(txHash: string): Promise<TxInfo> {
-    if (this.client.getTx) return this.client.getTx(txHash);
+    if (this.client.getTx) {
+      return this.client.getTx(txHash);
+    }
 
     // @ts-ignore
     const promise: Promise<GetTxResponse> =
       this.client.queryClient.tx.getTx(txHash);
-    return promise.then((result) => {
-      return {
-        height: result.txResponse.height.toNumber(),
-        txhash: result.txResponse.txhash.toString(),
-        raw_log: result.txResponse.rawLog,
-        logs: undefined,
-        gas_wanted: result.txResponse.gasWanted.toNumber(),
-        gas_used: result.txResponse.gasUsed.toNumber(),
-        tx: new Tx(
-          new TxBody(
-            [],
-            result.tx.body.memo,
-            result.tx.body.timeoutHeight.toNumber(),
-          ),
-          new AuthInfo(
-            result.tx.authInfo.signerInfos.map(
-              (signerInfo) =>
-                new SignerInfo(
-                  new SimplePublicKey(
-                    String.fromCharCode.apply(null, signerInfo.publicKey.value),
-                  ),
-                  signerInfo.sequence.toNumber(),
-                  // @ts-ignore
-                  ModeInfo.fromData(signerInfo.modeInfo),
-                ),
-            ),
-            new Fee(
-              result.tx.authInfo.fee.gasLimit.toNumber(),
-              result.tx.authInfo.fee.amount.map(
-                (coin) => new StationCoin(coin.denom, coin.amount),
-              ),
-            ),
-          ),
-          result.tx.signatures.map((sig) =>
-            String.fromCharCode.apply(null, sig),
-          ),
+    return promise.then((result) => ({
+      height: result.txResponse.height.toNumber(),
+      txhash: result.txResponse.txhash.toString(),
+      raw_log: result.txResponse.rawLog,
+      logs: undefined,
+      gas_wanted: result.txResponse.gasWanted.toNumber(),
+      gas_used: result.txResponse.gasUsed.toNumber(),
+      tx: new Tx(
+        new TxBody(
+          [],
+          result.tx.body.memo,
+          result.tx.body.timeoutHeight.toNumber(),
         ),
-        timestamp: result.txResponse.timestamp,
-      };
-    });
+        new AuthInfo(result.tx.authInfo.signerInfos.map((signerInfo) => new SignerInfo(
+          new SimplePublicKey(String.fromCharCode.apply(null, signerInfo.publicKey.value)),
+          signerInfo.sequence.toNumber(),
+          // @ts-ignore
+          ModeInfo.fromData(signerInfo.modeInfo),
+        )),
+        new Fee(result.tx.authInfo.fee.gasLimit.toNumber(),
+          result.tx.authInfo.fee.amount.map((coin) => new StationCoin(coin.denom, coin.amount)))),
+        result.tx.signatures.map((sig) => String.fromCharCode.apply(null, sig)),
+      ),
+      timestamp: result.txResponse.timestamp,
+    }));
   }
 }

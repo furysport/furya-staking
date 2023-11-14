@@ -1,18 +1,18 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { Text, VStack } from '@chakra-ui/react';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import { walletState } from 'state/walletState';
 import { Controller, useForm } from 'react-hook-form';
-import { delegationState, DelegationState } from 'state/delegationState';
+
+import { Text, VStack } from '@chakra-ui/react';
 import AssetInput from 'components/AssetInput/index';
-import ValidatorInput from 'components/ValidatorInput/ValidatorInput';
-import tokenList from 'public/mainnet/white_listed_alliance_token_info.json';
-import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
-import useValidators from 'hooks/useValidators';
+import ValidatorInput from 'components/Pages/Alliance/ValidatorInput/ValidatorInput';
+import { Token } from 'components/Pages/AssetOverview';
+import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
 import usePrices from 'hooks/usePrices';
+import useValidators from 'hooks/useValidators';
 import { useRouter } from 'next/router';
-import {useGetLPTokenPrice} from "hooks/useGetLPTokenPrice";
-import {Token} from "components/Pages/AssetOverview";
+import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { delegationState, DelegationState } from 'state/delegationState';
+import { walletState } from 'state/walletState';
 
 export interface TokenBalance {
   tokenSymbol: string;
@@ -36,10 +36,8 @@ const Delegate: FC<ActionProps> = ({
 
   const { data: { validators = [] } = {} } = useValidators({ address })
 
-  const chosenValidator = useMemo(
-    () => validators.find((v) => v.operator_address === validatorDestAddress),
-    [validatorDestAddress, validators],
-  );
+  const chosenValidator = useMemo(() => validators.find((v) => v.operator_address === validatorDestAddress),
+    [validatorDestAddress, validators]);
 
   const router = useRouter();
 
@@ -51,7 +49,7 @@ const Delegate: FC<ActionProps> = ({
       amount: 0,
       decimals: 6,
       validatorSrcAddress: null,
-      validatorDestAddress: validatorDestAddress,
+      validatorDestAddress,
       validatorDestName: chosenValidator?.description.moniker,
       denom: token.denom,
     });
@@ -63,21 +61,16 @@ const Delegate: FC<ActionProps> = ({
       currentDelegationState,
     },
   });
-  const currentTokenBalance: TokenBalance = balance?.find(
-    (e) => e.tokenSymbol === currentDelegationState.tokenSymbol,
-  )
-    const [priceList] = usePrices() || [];
-    const {lpTokenPrice} = useGetLPTokenPrice()
+  const currentTokenBalance: TokenBalance = balance?.find((e) => e.tokenSymbol === currentDelegationState.tokenSymbol)
+  const [priceList] = usePrices() || [];
+  const { lpTokenPrice } = useGetLPTokenPrice()
 
-
-    const price = useMemo(
-    () => currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
-      priceList?.[
-        tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)
-          ?.name
-      ],
-    [priceList, currentDelegationState.tokenSymbol, lpTokenPrice],
-  );
+  const price = useMemo(() => (currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
+    priceList?.[
+      tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.
+        name
+    ]),
+  [priceList, currentDelegationState.tokenSymbol, lpTokenPrice]);
   return (
     <VStack px={7} width="full" alignItems="flex-start" marginBottom={5}>
       <Text>To</Text>
@@ -125,14 +118,12 @@ const Delegate: FC<ActionProps> = ({
             onChange={async (value, isTokenChange) => {
               field.onChange(value);
               if (isTokenChange) {
-                const denom = tokenList.find(
-                  (t) => t.symbol === value.tokenSymbol,
-                ).denom;
+                const { denom } = tokens.find((t) => t.symbol === value.tokenSymbol);
                 setCurrentDelegationState({
                   ...currentDelegationState,
                   tokenSymbol: value.tokenSymbol,
                   amount: value.amount === '' ? 0 : Number(value.amount),
-                  denom: denom,
+                  denom,
                 });
                 await router.push({
                   pathname: '/alliance/delegate',

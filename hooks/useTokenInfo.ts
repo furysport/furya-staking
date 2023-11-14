@@ -11,7 +11,5 @@ export type TokenInfo = {
   native: boolean;
 }
 
-export const getTokenInfoFromTokenList = (
-  tokenSymbol: string,
-  tokensList: any,
-): TokenInfo | undefined => tokensList?.find((x) => x.symbol === tokenSymbol)
+export const getTokenInfoFromTokenList = (tokenSymbol: string,
+  tokensList: any): TokenInfo | undefined => tokensList?.find((x) => x.symbol === tokenSymbol)
