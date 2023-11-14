@@ -30,7 +30,7 @@ const Wallet: any = ({
 
   const connectedWallet = useConnectedWallet();
 
-  const { connectTerraAndCloseModal, filterForStation } = useTerraStation(() => {});
+  const { connectTerraAndCloseModal, filterForStation } = useTerraStation(null);
   const { availableConnections } = useWallet();
 
   useEffect(() => {

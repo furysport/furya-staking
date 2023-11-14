@@ -79,7 +79,7 @@ const ValidatorList: FC<ValidatorListProps> = ({
           paddingY={4}
           paddingX={4}
           borderBottom={
-            index === (filteredValidators?.length - 1)
+            index === (filteredValidators?.length || 0 - 1)
               ? 'unset'
               : '1px solid rgba(0, 0, 0, 0.5)'
           }

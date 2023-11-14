@@ -14,7 +14,7 @@ import {
 import Loader from 'components/Loader';
 
 export type DashboardData = {
-    logo: JSX.Element
+    logo: any
     symbol: string
     category: string
     totalStaked: number

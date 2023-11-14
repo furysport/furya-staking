@@ -78,8 +78,21 @@ export const useAllianceTransaction = () => {
         setTxStep(TxStep.Idle)
       },
     },
-  );
+  )
 
+  const { data: txInfo } = useQuery(
+    ['txInfo', txHash],
+    async () => {
+      if (!txHash) {
+        return null
+      }
+      return await client.getTx(txHash);
+    },
+    {
+      enabled: Boolean(txHash),
+      retry: true,
+    },
+  )
   const { mutate } = useMutation((data: any) => {
     const adjustedAmount = convertDenomToMicroDenom(data.amount, 6);
     if (data.action === ActionType.delegate) {
@@ -239,20 +252,6 @@ export const useAllianceTransaction = () => {
       }, 2000)
     },
   })
-
-  const { data: txInfo } = useQuery(
-    ['txInfo', txHash],
-    async () => {
-      if (!txHash) {
-        return null
-      }
-      return await client.getTx(txHash);
-    },
-    {
-      enabled: Boolean(txHash),
-      retry: true,
-    },
-  )
 
   const reset = () => {
     setError(null)

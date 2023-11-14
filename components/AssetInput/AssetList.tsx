@@ -38,7 +38,7 @@ const AssetList: FC<AssetListProps> = ({
 
   const filterAssets = useFilter<any>(
     'symbol',
-    search === undefined ? '' : search,
+    !search ? '' : search,
     tokensWithBalance,
   )
 

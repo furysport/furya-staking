@@ -20,7 +20,7 @@ export const useTerraStation = (onCloseModal) => {
     setCurrentWalletState({ ...currentWalletState,
       activeWallet })
     connect(type, identifier)
-    onCloseModal()
+    onCloseModal?.()
   };
 
   const { mainnet, testnet } = useMemo(() => {

@@ -28,7 +28,7 @@ type TableProps = {
   votingPower: any;
   commission: Commission;
   status: string;
-  actionButtons: JSX.Element;
+  actionButtons: any
 };
 
 const columnHelper = createColumnHelper<TableProps>();

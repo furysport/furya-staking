@@ -45,6 +45,7 @@ export const Undelegate = ({ tokenSymbol }) => {
     onClose: onCloseModal,
   } = useDisclosure()
   const tabFromUrl = router.pathname.split('/')?.[1].split('/')?.[0]
+  // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   const [_, setTabType] = useRecoilState(tabState)
 
   const whiteListedTokens = useMemo(() => {

@@ -26,6 +26,7 @@ import { TxStep } from 'types/blockchain';
 export const Delegate = ({ tokenSymbol }) => {
   const [currentDelegationState, setCurrentDelegationState] =
         useRecoilState<DelegationState>(delegationState)
+  // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   const [_, setTabType] = useRecoilState(tabState)
   const { status, chainId } = useRecoilValue(walletState)
   const isWalletConnected: boolean = status === WalletStatusType.connected

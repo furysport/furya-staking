@@ -122,8 +122,8 @@ const AssetOverview = ({ isWalletConnected, isLoading, data, aprs }) => {
               stroke="none"
             >
               {isWalletConnected ? (
-                data?.map((_, index: number) => (
-                  <Cell key={`cell-${index}`} fill={data[index].color} />
+                data?.map((e, index: number) => (
+                  <Cell key={`cell-${index}-${e.symbol}`} fill={data[index].color} />
                 ))
               ) : (
                 <Cell fill="grey" />

@@ -27,6 +27,7 @@ interface AssetInputProps {
   hideLogo?: boolean;
 }
 
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 const AssetInput = forwardRef((props: AssetInputProps, ref) => {
   const {
     balance,
