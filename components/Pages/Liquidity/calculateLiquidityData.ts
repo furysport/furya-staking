@@ -32,7 +32,7 @@ export const calculateLiquidityData = (
     }
   }
   const calculateRewardData = () => {
-    if (rewards.length === 0) {
+    if (rewards?.length === 0) {
       return null
     }
     return rewards.filter((reward: RewardInfo) => reward.tabType === TabType.liquidity && reward.amount > 0).map((reward) => ({
