@@ -29,7 +29,7 @@ export const DashboardTab = ({ priceList }) => {
   const otherAprs = useCalculateAprs()
 
   useEffect(() => {
-    if (allianceAPRs.length === 0 || otherAprs.length === 0 || !vtRewardShares) {
+    if (allianceAPRs?.length === 0 || otherAprs.length === 0 || !vtRewardShares) {
       return
     }
     const aprs = [...allianceAPRs, ...otherAprs].map((apr) => {

@@ -218,7 +218,7 @@ const AssetTable = ({ dashboardData, initialized }) => {
         </HStack>
       ))}
       {!initialized && <Loader height={'7rem'} width={'7rem'} /> }
-      {(dashboardData.length === 0 && initialized) && (
+      {(dashboardData?.length === 0 && initialized) && (
         <Text color="brand.50" fontSize="sm" textTransform="capitalize">
                     No whitelisted assets found
         </Text>

@@ -34,7 +34,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
     [data]) || 0
 
   const stakedDenoms = useMemo(() => data?.map((r: { stakedDenom: string }) => r.stakedDenom), [data])
-  const showRewards = useMemo(() => (data.length > 0 && isWalletConnected), [data, isWalletConnected])
+  const showRewards = useMemo(() => (data?.length > 0 && isWalletConnected), [data, isWalletConnected])
   return (
     <VStack
       width="full"
@@ -133,7 +133,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                     color={isWalletConnected ? 'white' : 'transparent'}
                   >{`≈$${reward.dollarValue?.toFixed(2).toString()}`}</Text>
                 </HStack>
-                {index < data.length - 1 && <Divider/>}
+                {(index < (data?.length || 0) - 1) && <Divider/>}
               </Box>
               )
             }) : <Text textAlign="center" marginTop="auto" marginBottom="auto"

@@ -53,7 +53,7 @@ export const CustomTooltip = ({
           {data?.map((e, index) => (
             <Fragment key={e.token}>
               <TokenDetail tokenType={e.token} value={e.value} />
-              {index !== data.length - 1 && (
+              {(index !== (data?.length || 0) - 1) && (
                 <Divider
                   width="93%"
                   borderWidth="0.1px"
