@@ -199,20 +199,20 @@ const Dashboard = () => {
     calculateAllianceData(
       rawAllianceTokenData, priceList, allianceBalances, delegations, undelegations, setAllianceData,
     )
-  }, [allianceBalances, delegations, rawAllianceTokenData, allianceRewardsTokenData, undelegations, priceList])
+  }, [allianceBalances, delegations, rawAllianceTokenData, undelegations, priceList])
 
   useEffect(() => {
     calculateEcosystemData(
       rawEcosystemTokenData, priceList, ecosystemBalances, stakedBalances, rewards, setEcosystemData,
     )
-  }, [ecosystemBalances, stakedBalances, rewards, rawEcosystemTokenData, ecosystemRewardsTokenData, priceList])
+  }, [ecosystemBalances, stakedBalances, rewards, rawEcosystemTokenData, priceList])
 
   const { lpTokenPrice } = useGetLPTokenPrice()
   useEffect(() => {
     calculateLiquidityData(
-      rawLiquidityTokenData, lpTokenPrice, liquidityBalances, stakedBalances, rewards, setLiquidityData,
+      rawLiquidityTokenData, priceList, lpTokenPrice, liquidityBalances, stakedBalances, rewards, setLiquidityData,
     )
-  }, [stakedBalances, rewards, liquidityBalances, rawLiquidityTokenData, liquidityRewardsTokenData, priceList, lpTokenPrice])
+  }, [stakedBalances, rewards, liquidityBalances, rawLiquidityTokenData, priceList, lpTokenPrice])
 
   useEffect(() => {
     setLoading(updatedAllianceData === null ||

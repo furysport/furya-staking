@@ -1,9 +1,10 @@
+import { Token } from 'components/Pages/AssetOverview';
 import { RewardInfo } from 'hooks/useQueryRewards';
 import { EnhancedStakeInfo } from 'hooks/useQueryStakedBalances';
 import { TabType } from 'state/tabState';
 
 export const calculateLiquidityData = (
-  rawLiquidityTokenData, lpTokenPrice, liquidityBalances, stakedBalances: EnhancedStakeInfo[], rewards, setLiquidityData,
+  rawLiquidityTokenData, priceList, lpTokenPrice, liquidityBalances, stakedBalances: EnhancedStakeInfo[], rewards, setLiquidityData,
 ) => {
   // Calculate data when dependencies change
   if (!lpTokenPrice || !liquidityBalances || !rewards || !stakedBalances) {
@@ -38,7 +39,7 @@ export const calculateLiquidityData = (
     return rewards.filter((reward: RewardInfo) => reward.tabType === TabType.liquidity && reward.amount > 0).map((reward) => ({
       symbol: reward.tokenSymbol,
       amount: reward.amount,
-      dollarValue: (Number(reward.amount) * Number(lpTokenPrice ?? 0)),
+      dollarValue: reward.tokenSymbol === Token['USDC-WHALE-LP'] ? lpTokenPrice : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
       denom: reward.denom,
       stakedDenom: reward.stakedDenom,
     }))
