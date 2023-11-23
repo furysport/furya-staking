@@ -39,7 +39,7 @@ export const calculateLiquidityData = (
     return rewards.filter((reward: RewardInfo) => reward.tabType === TabType.liquidity && reward.amount > 0).map((reward) => ({
       symbol: reward.tokenSymbol,
       amount: reward.amount,
-      dollarValue: reward.tokenSymbol === Token['USDC-WHALE-LP'] ? lpTokenPrice : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
+      dollarValue: reward.tokenSymbol === Token['USDC-WHALE-LP'] ? lpTokenPrice : (Number(reward.amount) * Number(priceList?.[reward.name] || 0)),
       denom: reward.denom,
       stakedDenom: reward.stakedDenom,
     }))
