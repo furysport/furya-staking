@@ -38,7 +38,7 @@ export const calculateEcosystemData = (
     map((reward) => ({
       symbol: reward.tokenSymbol,
       amount: reward.amount || 0,
-      dollarValue: reward.tokenSymbol === Token.mUSDC ? 1 : (Number(reward.amount) * Number(priceList[reward.name] ?? 0)),
+      dollarValue: reward.tokenSymbol === Token.mUSDC ? 1 : (Number(reward.amount) * Number(priceList?.[reward.name] || 0)),
       denom: reward.denom,
       stakedDenom: reward.stakedDenom,
     }))
