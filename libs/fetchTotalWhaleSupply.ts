@@ -7,8 +7,8 @@ type Token = {
 
 export const fetchTotalSupply = async (): Promise<number> => {
   try {
-    const response = await fetch('https://ww-migaloo-rest.polkachu.com/cosmos/bank/v1beta1/supply');
-    const data = await response.json();
+    const response = await fetch('https://ww-migaloo-rest.polkachu.com/cosmos/bank/v1beta1/supply?pagination.key=dXdoYWxl')
+    const data = await response.json()
 
     const uwhale = data.supply.find((item: Token) => item.denom === 'uwhale');
     return uwhale ? convertMicroDenomToDenom(uwhale.amount, 6) : null;
