@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { Box, Button, Divider } from '@chakra-ui/react';
 import { useChain } from '@cosmos-kit/react-lite';
@@ -9,25 +9,15 @@ import {
   ConnectedWalletWithDisconnect,
 } from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWalletWithDisconnect';
 import { MIGALOO_CHAIN_NAME } from 'constants/common';
-import { useRouter } from 'next/router';
 import { queryClient } from 'services/queryClient';
 
 const Wallet: any = () => {
-  const [isInitialized, setInitialized] = useState(false);
   const { openView, disconnect, isWalletConnected } = useChain(MIGALOO_CHAIN_NAME);
 
-  const router = useRouter();
   const resetWallet = async () => {
     await disconnect()
     queryClient.clear()
   }
-
-  useEffect(() => {
-    if (router.pathname === '/') {
-      return;
-    }
-    setInitialized(true);
-  }, []);
 
   if (!isWalletConnected) {
     return (
