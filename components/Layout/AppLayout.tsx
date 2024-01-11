@@ -6,7 +6,7 @@ import Header from 'components/Header/Header';
 import Status from 'components/Status';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
+import { chainState } from 'state/chainState';
 
 import MobileNotSupportedModal from '../Wallet/Modal/MobileNotSupportedModal';
 import RadialGradient from './RadialGradient';
@@ -15,7 +15,7 @@ interface Props {
   children: ReactNode;
 }
 const AppLayout: FC<Props> = ({ children }) => {
-  const { chainId } = useRecoilValue(walletState);
+  const { chainId } = useRecoilValue(chainState)
   const [isMobileView] = useMediaQuery('(max-width: 480px)')
 
   const router = useRouter()

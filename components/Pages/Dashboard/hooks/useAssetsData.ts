@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { useQueries } from 'react-query';
 
-import useClient from 'hooks/useClient';
 import { fetchTotalStakedBalances } from 'hooks/useGetTotalStakedBalances';
 import { fetchVTRewardShares } from 'hooks/useGetVTRewardShares';
+import useLCDClient from 'hooks/useLCDClient';
 import { debounce } from 'lodash'
 
 export const useAssetsData = () => {
-  const client = useClient()
+  const client = useLCDClient()
   const queries = useQueries([{
     queryKey: 'totalStakeBalances',
     queryFn: () => fetchTotalStakedBalances(client),

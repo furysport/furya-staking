@@ -1,26 +1,37 @@
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient';
 import { Coin } from '@terra-money/feather.js';
-import { MsgDelegate } from '@terra-money/feather.js/dist/core/alliance/msgs';
-import { ActionType } from 'components/Pages/Dashboard';
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
+import { MsgDelegate as AllianceMsgDelegate } from '@terra-money/feather.js/dist/core/alliance/msgs';
+import { MsgDelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
 
 export const allianceDelegate = async (
-  wallet: TerraStationWallet,
-  destBlockchain: string,
+
+  client: SigningCosmWasmClient,
   valAddress: string,
   address: string,
-  amount: number,
+  amount: string,
   allianceDenom: string,
 ) => {
-  const handleMsg = new MsgDelegate(
+  const handleMsg = new AllianceMsgDelegate(
     address,
     valAddress,
     new Coin(allianceDenom, amount),
-  );
-  const result = await wallet.client.post({
-    chainID: destBlockchain,
-    msgs: [handleMsg],
+  )
+  const msgDelegate = MsgDelegate.fromJSON({
+    delegatorAddress: address,
+    validatorAddress: valAddress,
+    '@type': '/alliance.alliance.MsgDelegate',
+    amount: {
+      denom: allianceDenom,
+      amount,
+    },
   })
-  const actionType = ActionType.delegate
-  return { result,
-    actionType }
+
+  const anyMsgDelegate = {
+    typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
+    value: msgDelegate,
+  };
+
+  return await client.signAndBroadcast(
+    address, [anyMsgDelegate], 'auto', null,
+  )
 }

@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 
 import { Coins, LCDClient } from '@terra-money/feather.js';
-import useClient from 'hooks/useClient';
+import useLCDClient from 'hooks/useLCDClient';
 import usePrices from 'hooks/usePrices';
 import { num } from 'libs/num';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
@@ -158,7 +158,7 @@ export const getDelegation = async (
 }
 
 const useDelegations = ({ address }) => {
-  const client = useClient()
+  const client = useLCDClient()
   const [priceList] = usePrices() || []
   return useQuery({
     queryKey: ['delegations', priceList, address],

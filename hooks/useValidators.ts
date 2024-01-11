@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { LCDClient, Validator } from '@terra-money/feather.js';
 import { Pagination } from '@terra-money/feather.js/dist/client/lcd/APIRequester';
 import { ValidatorInfo } from 'components/Pages/Alliance/ValidatorInput/ValidatorList';
-import useClient from 'hooks/useClient';
+import useLCDClient from 'hooks/useLCDClient';
 import { num } from 'libs/num';
 import allianceTokens from 'public/mainnet/white_listed_alliance_token_info.json'
 import { convertMicroDenomToDenom } from 'util/conversion';
@@ -103,7 +103,7 @@ const getStakedLSTLunaAmounts = async ({ client }) => {
     totalBLunaAmount }
 }
 const useValidators = ({ address }): UseValidatorsResult => {
-  const client = useClient();
+  const client = useLCDClient();
 
   const { data: { delegations = [] } = {}, isFetched } = useDelegations({
     address,

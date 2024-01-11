@@ -1,61 +1,61 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useMutation, useQuery } from 'react-query'
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMutation, useQuery } from 'react-query';
 
-import { useToast } from '@chakra-ui/react'
-import Finder from 'components/Finder'
-import { ActionType } from 'components/Pages/Dashboard'
-import { claimRewards } from 'hooks/claimRewards'
-import { delegate } from 'hooks/delegate'
-import { undelegate } from 'hooks/undelegate'
-import useClient from 'hooks/useTerraStationClient'
-import { useRecoilValue } from 'recoil'
-import { walletState } from 'state/walletState'
-import { TxStep } from 'types/blockchain'
-import { convertDenomToMicroDenom } from 'util/conversion'
-import { isNativeToken } from 'util/isNative'
+import { useToast } from '@chakra-ui/react';
+import { useChain } from '@cosmos-kit/react-lite';
+import Finder from 'components/Finder';
+import { ActionType } from 'components/Pages/Dashboard';
+import { MIGALOO_CHAIN_ID, MIGALOO_CHAIN_NAME } from 'constants/common';
+import { claimRewards } from 'hooks/claimRewards';
+import { delegate } from 'hooks/delegate';
+import { undelegate } from 'hooks/undelegate';
+import { useClients } from 'hooks/useClients';
+import { TxStep } from 'types/blockchain';
+import { convertDenomToMicroDenom } from 'util/conversion';
+import { isNativeToken } from 'util/isNative';
 
 export const useTransaction = () => {
-  const toast = useToast()
-  const { chainId, address } = useRecoilValue(walletState)
-  const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle)
+  const toast = useToast();
+  const { address } = useChain(MIGALOO_CHAIN_NAME)
+  const { signingClient: client } = useClients()
+  const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle);
   const [delegationAction, setDelegationAction] = useState<ActionType>(ActionType.delegate)
   const [txHash, setTxHash] = useState<string>(null)
   const [error, setError] = useState(null)
   const [buttonLabel, setButtonLabel] = useState(null)
-  const client = useClient()
 
   const { data: fee } = useQuery(
     ['fee', error],
     async () => {
       setError(null);
-      setTxStep(TxStep.Estimating)
+      setTxStep(TxStep.Estimating);
       try {
         const response = 0; // Await client.simulate(address, [delegationMsg], '')
 
         if (buttonLabel) {
-          setButtonLabel(null)
+          setButtonLabel(null);
         }
-        setTxStep(TxStep.Ready)
-        return response
+        setTxStep(TxStep.Ready);
+        return response;
       } catch (error) {
         if (
           (/insufficient funds/u).test(error.toString()) ||
-                    (/Overflow: Cannot Sub with/u).test(error.toString())
+          (/Overflow: Cannot Sub with/u).test(error.toString())
         ) {
-          console.error(error)
-          setTxStep(TxStep.Idle)
-          setError('Insufficient Funds')
-          setButtonLabel('Insufficient Funds')
-          throw new Error('Insufficient Funds')
+          console.error(error);
+          setTxStep(TxStep.Idle);
+          setError('Insufficient Funds');
+          setButtonLabel('Insufficient Funds');
+          throw new Error('Insufficient Funds');
         } else if ((/account sequence mismatch/u).test(error?.toString())) {
-          setError('You have pending transaction')
-          setButtonLabel('You have pending transaction')
-          throw new Error('You have pending transaction')
+          setError('You have pending transaction');
+          setButtonLabel('You have pending transaction');
+          throw new Error('You have pending transaction');
         } else {
-          console.error({ error })
-          setTxStep(TxStep.Idle)
-          setError(error?.message)
-          throw Error(error?.message)
+          console.error({ error });
+          setTxStep(TxStep.Idle);
+          setError(error?.message);
+          throw Error(error?.message);
         }
       }
     },
@@ -64,16 +64,17 @@ export const useTransaction = () => {
       refetchOnWindowFocus: false,
       retry: false,
       onSuccess: () => {
-        setTxStep(TxStep.Ready)
+        setTxStep(TxStep.Ready);
       },
       onError: () => {
-        setTxStep(TxStep.Idle)
+        setTxStep(TxStep.Idle);
       },
     },
   )
 
   const { mutate } = useMutation((data: any) => {
-    const adjustedAmount = convertDenomToMicroDenom(data.amount, 6).toString();
+    console.log({ data })
+    const adjustedAmount = convertDenomToMicroDenom(data?.amount ?? 0, 6).toString();
     if (data.action === ActionType.delegate) {
       return delegate(
         client, address, adjustedAmount, data.denom,
@@ -84,7 +85,7 @@ export const useTransaction = () => {
       )
     } else {
       return claimRewards(
-        client, address, data.stakedDenoms,
+        client, address, data.denom, isNativeToken(data.denom),
       )
     }
   },
@@ -98,7 +99,7 @@ export const useTransaction = () => {
       setTxStep(TxStep.Failed);
       if (
         (/insufficient funds/u).test(e?.toString()) ||
-                    (/Overflow: Cannot Sub with/u).test(e?.toString())
+          (/Overflow: Cannot Sub with/u).test(e?.toString())
       ) {
         setError('Insufficient Funds');
         message = 'Insufficient Funds';
@@ -116,7 +117,7 @@ export const useTransaction = () => {
       ) {
         setError(e?.toString());
         message = (
-          <Finder txHash={txInfo?.txhash} chainId={chainId}>
+          <Finder txHash={txInfo?.hash} chainId={MIGALOO_CHAIN_ID}>
             {' '}
           </Finder>
         );
@@ -132,8 +133,6 @@ export const useTransaction = () => {
               return 'Delegation Failed.'
             case ActionType.undelegate:
               return 'Undelegation Failed'
-            case ActionType.claim:
-              return 'Claiming Failed'
             default:
               return '';
           }
@@ -147,24 +146,21 @@ export const useTransaction = () => {
     },
     onSuccess: (data: any) => {
       setTxStep(TxStep.Broadcasting)
-      const txHash = data?.result?.transactionHash ?? data?.result?.result?.txhash
-      setTxHash(txHash)
       setTimeout(() => {
+        setTxHash(data?.transactionHash ?? data?.result?.txhash)
         toast({
           title: (() => {
-            switch (data.actionType) {
+            switch (delegationAction) {
               case ActionType.delegate:
                 return 'Delegation Successful.'
               case ActionType.undelegate:
                 return 'Undelegation Successful.'
-              case ActionType.claim:
-                return 'Claiming Successful.'
               default:
-                return ''
+                return '';
             }
           })(),
           description: (
-            <Finder txHash={txHash} chainId={chainId}>
+            <Finder txHash={data?.transactionHash ?? data?.result?.txhash} chainId={MIGALOO_CHAIN_ID}>
               {' '}
             </Finder>
           ),
@@ -173,15 +169,15 @@ export const useTransaction = () => {
           position: 'top-right',
           isClosable: true,
         })
-      }, 2000)
+      }, 2000);
     },
-  })
+  });
 
   const { data: txInfo } = useQuery(
     ['txInfo', txHash],
     async () => {
       if (txHash === null) {
-        return null
+        return
       }
       return await client.getTx(txHash);
     },
@@ -197,11 +193,10 @@ export const useTransaction = () => {
     setTxStep(TxStep.Idle);
   };
 
-  const submit = useCallback((
+  const submit = useCallback(async (
     action: ActionType,
-    amount?: number,
-    denom?: string,
-    stakedDenoms?: string[],
+    amount: number | null,
+    denom: string | null,
   ) => {
     setDelegationAction(action)
 
@@ -210,8 +205,7 @@ export const useTransaction = () => {
       action,
       denom,
       amount,
-      stakedDenoms,
-    })
+    });
   },
   [fee, mutate, client]);
 
@@ -223,7 +217,7 @@ export const useTransaction = () => {
         setTxStep(TxStep.Successful);
       }
     }
-  }, [txInfo, txHash, error])
+  }, [txInfo, txHash, error]);
 
   useEffect(() => {
     if (error) {
@@ -231,9 +225,10 @@ export const useTransaction = () => {
     }
 
     if (txStep !== TxStep.Idle) {
-      setTxStep(TxStep.Idle)
+      setTxStep(TxStep.Idle);
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // DebouncedMsgs
 
   return useMemo(() => ({
     fee,
@@ -245,6 +240,6 @@ export const useTransaction = () => {
     error,
     reset,
   }), [fee, buttonLabel, submit, txStep, txInfo, txHash, error]);
-}
+};
 
 export default useTransaction

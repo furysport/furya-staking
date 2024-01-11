@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { HStack, Image, Text, VStack } from '@chakra-ui/react'
+import { useChain } from '@cosmos-kit/react-lite';
 import { useCalculateAllianceAprs } from 'components/Pages/Alliance/hooks/useCalculateAllianceAprs';
 import { Token } from 'components/Pages/AssetOverview';
 import AssetTable, { DashboardData } from 'components/Pages/Dashboard/AssetTable';
@@ -12,11 +13,12 @@ import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
 import useValidators from 'hooks/useValidators';
 import tokens from 'public/mainnet/tokens.json';
 import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
+import { chainState } from 'state/chainState';
 
 const dashboardTokenSymbols = [Token.WHALE, Token.mUSDC, Token.ampLUNA, Token.bLUNA, Token.ASH, Token['USDC-WHALE-LP']]
 export const DashboardTab = ({ priceList }) => {
-  const { address } = useRecoilValue(walletState)
+  const { walletChainName } = useRecoilValue(chainState)
+  const { address } = useChain(walletChainName)
   const [dashboardData, setDashboardData] = useState<DashboardData[]>([])
   const { lpTokenPrice } = useGetLPTokenPrice()
   const [initialized, setInitialized] = useState<boolean>(false)

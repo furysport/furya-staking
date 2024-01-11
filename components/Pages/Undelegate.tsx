@@ -4,14 +4,14 @@ import { Controller, useForm } from 'react-hook-form';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import {
   HStack, IconButton,
-  Text, useDisclosure, VStack,
+  Text, VStack,
 } from '@chakra-ui/react';
+import { useChain } from '@cosmos-kit/react-lite';
 import AssetInput from 'components/AssetInput/index';
 import CustomButton from 'components/CustomButton';
 import { TokenBalance } from 'components/Pages/Alliance/Delegate';
 import { Token } from 'components/Pages/AssetOverview';
 import { ActionType } from 'components/Pages/Dashboard';
-import WalletModal from 'components/Wallet/Modal/WalletModal';
 import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
 import usePrices from 'hooks/usePrices';
 import { useQueryStakedBalances } from 'hooks/useQueryStakedBalances';
@@ -21,16 +21,16 @@ import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import whiteListedEcosystemTokens from 'public/mainnet/white_listed_ecosystem_token_info.json'
 import whiteListedLiquidityTokens from 'public/mainnet/white_listed_liquidity_token_info.json'
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { chainState } from 'state/chainState';
 import { delegationState, DelegationState } from 'state/delegationState';
 import { tabState, TabType } from 'state/tabState';
-import { walletState, WalletStatusType } from 'state/walletState';
 import { TxStep } from 'types/blockchain';
 
 export const Undelegate = ({ tokenSymbol }) => {
   const [currentDelegationState, setCurrentDelegationState] =
         useRecoilState<DelegationState>(delegationState)
-  const { status, chainId } = useRecoilValue(walletState)
-  const isWalletConnected: boolean = status === WalletStatusType.connected
+  const { walletChainName } = useRecoilValue(chainState)
+  const { isWalletConnected, openView } = useChain(walletChainName)
   const router = useRouter()
   const { control } = useForm({
     mode: 'onChange',
@@ -39,11 +39,7 @@ export const Undelegate = ({ tokenSymbol }) => {
     },
   })
   const { submit, txStep } = useTransaction()
-  const {
-    isOpen: isOpenModal,
-    onOpen: onOpenModal,
-    onClose: onCloseModal,
-  } = useDisclosure()
+
   const tabFromUrl = router.pathname.split('/')?.[1].split('/')?.[0]
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   const [_, setTabType] = useRecoilState(tabState)
@@ -193,10 +189,9 @@ export const Undelegate = ({ tokenSymbol }) => {
                 ActionType.undelegate,
                 currentDelegationState.amount,
                 currentDelegationState.denom,
-                null,
               )
             } else {
-              onOpenModal()
+              openView()
             }
           }}
           disabled={
@@ -214,11 +209,6 @@ export const Undelegate = ({ tokenSymbol }) => {
           width="600px"
         />
       </VStack>
-      <WalletModal
-        isOpenModal={isOpenModal}
-        onCloseModal={onCloseModal}
-        chainId={chainId}
-      />
     </VStack>
   )
 }

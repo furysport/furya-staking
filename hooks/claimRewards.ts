@@ -1,26 +1,24 @@
-import { ActionType } from 'components/Pages/Dashboard';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient';
 import file from 'public/mainnet/contract_addresses.json'
-import { isNativeToken } from 'util/isNative';
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 
 export const claimRewards = async (
-  client: TerraStationWallet,
+  client: SigningCosmWasmClient,
   address: string,
-  stakedDenoms: string[],
+  denom: string,
+  isNative: boolean,
 ) => {
-  const msgs = stakedDenoms.map((denom) => (isNativeToken(denom) ? {
+  const nativeMsg = {
     claim_rewards: {
       native: denom,
     },
-  } : {
+  }
+  const nonNativeMsg = {
     claim_rewards: {
       cw20: denom,
     },
-  }))
-  const result = await client.execute(
-    address, file.alliance_contract, msgs, null,
+  }
+
+  return await client.execute(
+    address, file.alliance_contract, isNative ? nativeMsg : nonNativeMsg, 'auto',
   )
-  const actionType = ActionType.claim
-  return { result,
-    actionType }
 }

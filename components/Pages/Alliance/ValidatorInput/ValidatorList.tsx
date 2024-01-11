@@ -31,7 +31,6 @@ const ValidatorList: FC<ValidatorListProps> = ({
     if (!validators?.length) {
       return [];
     }
-    console.log({ validators })
     return validators?.
       map((validator) => ({
         ...validator,

@@ -12,7 +12,7 @@ type Props = {
 const getUrl = (chainId, txHash) => {
   switch (chainId) {
     case 'migaloo-1':
-      return `https://explorer.silknodes.io/migaloo/tx/${txHash}`;
+      return `https://explorer.kjnodes.com/migaloo/tx/${txHash}`;
     case 'narwhal-1':
     default:
       return null;
