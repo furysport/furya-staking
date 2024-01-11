@@ -39,12 +39,12 @@ export const WalletConnectButton = ({ onCloseModal, connect, walletType }: Props
   const setWallet = useCallback(async () => {
     let err = false
     if (walletType === WalletType.keplrExtension && window.keplr) {
-      const connected = (await window.keplr?.getChainInfosWithoutEndpoints()).map((elem) => elem.chainId)
+      const connected = ((await window.keplr?.getChainInfosWithoutEndpoints()) ?? []).map((elem) => elem.chainId)
       const keplrChains: any[] = await getKeplrChains(['migaloo-1'])
       for (const chain of keplrChains) {
         if (!connected?.includes(chain.chainId)) {
           // eslint-disable-next-line no-await-in-loop
-          await window.keplr.experimentalSuggestChain(chain)
+          await window.keplr?.experimentalSuggestChain(chain)
         }
       }
     }

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Text, VStack } from '@chakra-ui/react';
+import { useChain } from '@cosmos-kit/react-lite';
 import AssetInput from 'components/AssetInput/index';
 import ValidatorInput from 'components/Pages/Alliance/ValidatorInput/ValidatorInput';
 import { Token } from 'components/Pages/AssetOverview';
@@ -11,9 +12,8 @@ import useValidators from 'hooks/useValidators';
 import { useRouter } from 'next/router';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { delegationState, DelegationState } from 'state/delegationState';
 import { chainState } from 'state/chainState';
-import { useChain } from '@cosmos-kit/react-lite';
+import { delegationState, DelegationState } from 'state/delegationState';
 
 const Redelegate = ({
   validatorDestAddress,

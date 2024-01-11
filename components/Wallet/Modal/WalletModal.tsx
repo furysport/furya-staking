@@ -51,6 +51,7 @@ export const WalletModal = ({ isOpen, setOpen, walletRepo }) => {
     if (!inApp && !isMobile && wallet.isModeExtension) {
       return true;
     }
+    return false
   }
 
   return (

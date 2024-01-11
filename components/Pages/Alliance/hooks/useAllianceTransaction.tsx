@@ -10,7 +10,7 @@ import { allianceUndelegate } from 'components/Pages/Alliance/hooks/allianceUnde
 // Native staking
 import { claimAllRewards } from 'components/Pages/Alliance/hooks/claimAllRewards';
 import { nativeDelegate } from 'components/Pages/Alliance/hooks/nativeDelegate';
-import { nativeRedelegate } from 'components/Pages/Alliance/hooks/nativeRedelegate';
+// Import { nativeRedelegate } from 'components/Pages/Alliance/hooks/nativeRedelegate';
 import { nativeUndelegate } from 'components/Pages/Alliance/hooks/nativeUndelegate';
 import { ActionType } from 'components/Pages/Dashboard';
 import { updateRewards } from 'hooks/updateRewards';
@@ -131,16 +131,18 @@ export const useAllianceTransaction = () => {
           data.denom,
         )
     } else if (data.action === ActionType.redelegate) {
-      return data.denom === 'uwhale'
-        ? nativeRedelegate(
-          client,
-          'migaloo-1',
-          data.validatorSrcAddress,
-          data.validatorDestAddress,
-          address,
-          adjustedAmount,
-          data.denom,
-        )
+      return data.denom === 'uwhale' ? () => 0
+        /*
+         * ? nativeRedelegate(
+         *   client,
+         *   'migaloo-1',
+         *   data.validatorSrcAddress,
+         *   data.validatorDestAddress,
+         *   address,
+         *   adjustedAmount,
+         *   data.denom,
+         * )
+         */
         : allianceRedelegate(
           client,
           'migaloo-1',
