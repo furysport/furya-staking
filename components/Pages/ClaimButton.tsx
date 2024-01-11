@@ -36,9 +36,9 @@ const ClaimButton = ({ isWalletConnected, onOpenModal, totalRewards, rewardDenom
   }, [totalRewards, isWalletConnected]);
 
   const isLoading =
-        txStep === TxStep.Estimating ||
-        txStep === TxStep.Posting ||
-        txStep === TxStep.Broadcasting
+    txStep === TxStep.Estimating ||
+    txStep === TxStep.Posting ||
+    txStep === TxStep.Broadcasting
   return (
     <CustomButton
       buttonLabel={buttonLabel}
@@ -46,7 +46,7 @@ const ClaimButton = ({ isWalletConnected, onOpenModal, totalRewards, rewardDenom
       onClick={
         (isWalletConnected && Number(totalRewards) > 0) ? onClaim : onOpenModal
       }
-      disabled={(isWalletConnected && Number(totalRewards) === 0) || isLoading}
+      disabled={(isWalletConnected && Number(totalRewards) === 0) || isLoading || tabType === TabType.alliance}
       loading={isLoading}
       height="50px"
       width="250px"
