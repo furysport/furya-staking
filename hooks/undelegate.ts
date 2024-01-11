@@ -26,7 +26,8 @@ export const undelegate = async (
     },
   }
 
+
   return await client.execute(
-    address, file.alliance_contract, isNative ? nativeMsg : nonNativeMsg, null,
+    address, file.alliance_contract, isNative ? nativeMsg : nonNativeMsg, 'auto', null
   )
 }
