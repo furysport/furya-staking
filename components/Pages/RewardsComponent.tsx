@@ -74,11 +74,8 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                 : '$0'}
             </Text>
             <HStack gap={1}>
-              {currentTabState !== TabType.alliance &&
-                <UpdateRewardsButton
-                  isWalletConnected={isWalletConnected}
-                  onOpenModal={openView}
-                />}
+              {(currentTabState !== TabType.alliance && isWalletConnected) &&
+                <UpdateRewardsButton/>}
               <ClaimButton
                 isWalletConnected={isWalletConnected}
                 onOpenModal={openView}

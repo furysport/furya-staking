@@ -46,7 +46,7 @@ export const useQueryStakedBalances = () => {
     ),
     refetchInterval: 60000,
     refetchIntervalInBackground: true,
-    enabled: Boolean(file.alliance_contract) && Boolean(client),
+    enabled: Boolean(file.alliance_contract) && Boolean(client) && Boolean(address),
   })
   return { data,
     isLoading }
