@@ -8,7 +8,7 @@ import { useRecoilValue } from 'recoil'
 import { tabState, TabType } from 'state/tabState'
 import { TxStep } from 'types/blockchain'
 
-const ClaimButton = ({ isWalletConnected, onOpenModal, totalRewards, stakedDenoms = null }) => {
+const ClaimButton = ({ isWalletConnected, onOpenModal, totalRewards, rewardDenoms = null }) => {
   const { submit: allianceSubmit, txStep: allianceTxStep } = useAllianceTransaction()
   const { submit, txStep: contractTxStep } = useTransaction()
   const tabType = useRecoilValue(tabState)
@@ -18,10 +18,10 @@ const ClaimButton = ({ isWalletConnected, onOpenModal, totalRewards, stakedDenom
     if (tabType === TabType.alliance) {
       allianceSubmit(
         ActionType.claim, null, null, null, null,
-      );
+      )
     } else {
       submit(
-        ActionType.claim, null, null, stakedDenoms,
+        ActionType.claim, null, rewardDenoms[0],
       )
     }
   };

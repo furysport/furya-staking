@@ -12,7 +12,8 @@ import { useRouter } from 'next/router';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { delegationState, DelegationState } from 'state/delegationState';
-import { walletState } from 'state/walletState';
+import { chainState } from 'state/chainState';
+import { useChain } from '@cosmos-kit/react-lite';
 
 const Redelegate = ({
   validatorDestAddress,
@@ -20,7 +21,8 @@ const Redelegate = ({
   delegations,
   tokenSymbol,
 }) => {
-  const { address } = useRecoilValue(walletState);
+  const { walletChainName } = useRecoilValue(chainState)
+  const { address } = useChain(walletChainName)
   const [currentDelegationState, setCurrentDelegationState] =
     useRecoilState<DelegationState>(delegationState);
 

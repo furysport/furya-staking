@@ -1,11 +1,11 @@
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient';
 import {
   MsgWithdrawDelegatorReward,
   MsgClaimDelegationRewards,
 } from '@terra-money/feather.js';
 import { ActionType } from 'components/Pages/Dashboard';
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 
-export const claimAllRewards = async (wallet: TerraStationWallet,
+export const claimAllRewards = async (wallet: SigningCosmWasmClient,
   delegations: any) => {
   const msgs = delegations.map(({ delegation }) => {
     if (delegation.denom === 'uwhale') {

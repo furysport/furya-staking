@@ -1,16 +1,12 @@
-import { ActionType } from 'components/Pages/Dashboard';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient'
 import file from 'public/mainnet/contract_addresses.json'
-import { Wallet } from 'util/wallet-adapters/index'
 
-export const updateRewards = async (client: Wallet,
+export const updateRewards = async (client: SigningCosmWasmClient,
   address: string) => {
   const msg = {
     update_rewards: {},
   }
-  const result = await client.execute(
-    address, file.alliance_contract, [msg], null,
+  return await client.execute(
+    address, file.alliance_contract, msg, 'auto',
   )
-  const actionType = ActionType.updateRewards
-  return { result,
-    actionType }
 }

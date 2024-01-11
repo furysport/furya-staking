@@ -2,14 +2,14 @@ import React from 'react';
 
 import { IconButton } from '@chakra-ui/react';
 import LogoutIcon from 'components/icons/LogoutIcon';
-import ConnectedWallet from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/ConnectedWallet';
+import { ConnectedWallet } from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/ConnectedWallet';
 
-export const ConnectedWalletWithDisconnect = ({ connected, onDisconnect }) => (
+export const ConnectedWalletWithDisconnect = ({ onDisconnect }) => (
   <>
-    <ConnectedWallet connected={connected} />
+    <ConnectedWallet/>
     <IconButton
       aria-label="Logout"
-      icon={<LogoutIcon />}
+      icon={<LogoutIcon/>}
       variant="unstyled"
       size="xs"
       _focus={{

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { LCDClient } from '@terra-money/feather.js';
-const useClient = () => useMemo(() => new LCDClient({
+const useLCDClient = () => useMemo(() => new LCDClient({
   'migaloo-1': {
     lcd: 'https://migaloo-api.polkachu.com',
     chainID: 'migaloo-1',
@@ -11,4 +11,4 @@ const useClient = () => useMemo(() => new LCDClient({
   },
 }), []);
 
-export default useClient;
+export default useLCDClient;

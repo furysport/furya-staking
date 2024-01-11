@@ -1,7 +1,7 @@
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient';
 import { Coin, MsgBeginRedelegate } from '@terra-money/feather.js';
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
 export const nativeRedelegate = async (
-  wallet: TerraStationWallet,
+  client: SigningCosmWasmClient,
   destBlockchain: string,
   validatorSrcAddress: string,
   validatorDstAddress: string,
@@ -9,6 +9,7 @@ export const nativeRedelegate = async (
   amount: number,
   allianceDenom: string,
 ) => {
+  // Wrong sig valDest => valSrc valSrc => valDest
   const handleMsg = new MsgBeginRedelegate(
     address,
     validatorSrcAddress,

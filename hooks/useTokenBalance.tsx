@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+import { useChain } from '@cosmos-kit/react-lite';
 import { useAllTokenList } from 'hooks/useAllTokenList';
+import { useClients } from 'hooks/useClients';
 import { useRecoilValue } from 'recoil';
 import { CW20 } from 'services/cw20';
-import { walletState, WalletStatusType } from 'state/walletState';
+import { chainState } from 'state/chainState';
 import { DEFAULT_TOKEN_BALANCE_REFETCH_INTERVAL } from 'util/constants';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
-import { Wallet } from '../util/wallet-adapters';
 import { getTokenInfoFromTokenList } from './useTokenInfo';
 
 const fetchTokenBalance = async ({
@@ -16,7 +18,7 @@ const fetchTokenBalance = async ({
   token = {},
   address,
 }: {
-    client: Wallet;
+    client: CosmWasmClient
     token: any;
     address: string;
 }) => {
@@ -49,7 +51,7 @@ const fetchTokenBalances = async ({
   address,
   tokens,
 }: {
-    client: Wallet;
+    client: CosmWasmClient
     tokenSymbols: Array<string>
     address: string;
     tokens: any
@@ -64,14 +66,15 @@ const fetchTokenBalances = async ({
 }))
 
 export const useMultipleTokenBalance = (tokenSymbols?: Array<string>) => {
-  const { address, status, client } =
-        useRecoilValue(walletState)
+  const { walletChainName } = useRecoilValue(chainState)
+  const { isWalletConnected, address } = useChain(walletChainName)
+  const { cosmWasmClient: client } = useClients()
   const { tokens } = useAllTokenList()
   const queryKey = useMemo(() => `multipleTokenBalances/${tokenSymbols?.join('+')}`,
     [tokenSymbols])
 
   const { data, isLoading } = useQuery(
-    [queryKey, address, status],
+    [queryKey, address, isWalletConnected],
     async () => await fetchTokenBalances({
       client,
       tokenSymbols,
@@ -79,10 +82,10 @@ export const useMultipleTokenBalance = (tokenSymbols?: Array<string>) => {
       tokens,
     }),
     {
-      enabled: Boolean(status === WalletStatusType.connected &&
+      enabled: Boolean(isWalletConnected &&
                 tokenSymbols &&
                 tokens &&
-                address),
+                address && client),
 
       refetchOnMount: 'always',
       refetchInterval: DEFAULT_TOKEN_BALANCE_REFETCH_INTERVAL,

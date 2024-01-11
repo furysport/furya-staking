@@ -1,11 +1,12 @@
 import { useQuery } from 'react-query';
 
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+import { useChain } from '@cosmos-kit/react-lite';
+import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { useClients } from 'hooks/useClients';
 import file from 'public/mainnet/contract_addresses.json'
 import tokens from 'public/mainnet/tokens.json'
-import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
 import { convertMicroDenomToDenom } from 'util/conversion';
-import { Wallet } from 'util/wallet-adapters/index'
 
 export interface EnhancedStakeInfo {
     denom: string
@@ -15,7 +16,7 @@ export interface EnhancedStakeInfo {
     isNative: boolean
 }
 const getStakedBalances = async (
-  contractAddress: string, address: string, client: Wallet,
+  contractAddress: string, address: string, client: CosmWasmClient,
 ): Promise<EnhancedStakeInfo[]> => {
   const msg = {
     all_staked_balances: {
@@ -36,7 +37,8 @@ const getStakedBalances = async (
   })
 }
 export const useQueryStakedBalances = () => {
-  const { client, address } = useRecoilValue(walletState)
+  const { address } = useChain(MIGALOO_CHAIN_NAME)
+  const { cosmWasmClient: client } = useClients()
   const { data, isLoading } = useQuery({
     queryKey: ['balances', file.alliance_contract, address],
     queryFn: () => getStakedBalances(

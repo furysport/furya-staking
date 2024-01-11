@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 
 import { useToast } from '@chakra-ui/react';
+import { useChain } from '@cosmos-kit/react-lite';
 import Finder from 'components/Finder';
 import { allianceDelegate } from 'components/Pages/Alliance/hooks/allianceDelegate';
 import { allianceRedelegate } from 'components/Pages/Alliance/hooks/allianceRedelegate';
@@ -13,22 +14,23 @@ import { nativeRedelegate } from 'components/Pages/Alliance/hooks/nativeRedelega
 import { nativeUndelegate } from 'components/Pages/Alliance/hooks/nativeUndelegate';
 import { ActionType } from 'components/Pages/Dashboard';
 import { updateRewards } from 'hooks/updateRewards';
+import { useClients } from 'hooks/useClients';
 import useDelegations from 'hooks/useDelegations';
-import useClient from 'hooks/useTerraStationClient';
 import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
+import { chainState } from 'state/chainState';
 import { TxStep } from 'types/blockchain';
 import { convertDenomToMicroDenom } from 'util/conversion';
 
 export const useAllianceTransaction = () => {
   const toast = useToast()
-  const { chainId, address } = useRecoilValue(walletState)
+  const { chainId, walletChainName } = useRecoilValue(chainState)
+  const { address } = useChain(walletChainName)
   const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle)
   const [delegationAction, setDelegationAction] = useState<ActionType>(null)
   const [txHash, setTxHash] = useState<string>(null)
   const [error, setError] = useState(null)
   const [buttonLabel, setButtonLabel] = useState<string>(null)
-  const client = useClient()
+  const { signingClient: client } = useClients()
   const { data: { delegations = [] } = {} } = useDelegations({ address })
 
   const { data: fee } = useQuery(
@@ -94,12 +96,11 @@ export const useAllianceTransaction = () => {
     },
   )
   const { mutate } = useMutation((data: any) => {
-    const adjustedAmount = convertDenomToMicroDenom(data.amount, 6);
+    const adjustedAmount = convertDenomToMicroDenom(data?.amount, 6);
     if (data.action === ActionType.delegate) {
       return data.denom === 'uwhale'
         ? nativeDelegate(
           client,
-          'migaloo-1',
           data.validatorDestAddress,
           address,
           adjustedAmount,
@@ -107,7 +108,6 @@ export const useAllianceTransaction = () => {
         )
         : allianceDelegate(
           client,
-          'migaloo-1',
           data.validatorDestAddress,
           address,
           adjustedAmount,
@@ -117,7 +117,6 @@ export const useAllianceTransaction = () => {
       return data.denom === 'uwhale'
         ? nativeUndelegate(
           client,
-          'migaloo-1',
           data.validatorSrcAddress,
           address,
           adjustedAmount,
@@ -184,7 +183,7 @@ export const useAllianceTransaction = () => {
       ) {
         setError(e?.toString());
         message = (
-          <Finder txHash={txInfo?.txhash} chainId={chainId}>
+          <Finder txHash={txInfo?.hash} chainId={chainId}>
             {' '}
           </Finder>
         )

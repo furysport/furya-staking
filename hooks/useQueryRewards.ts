@@ -1,12 +1,13 @@
 import { useQuery } from 'react-query';
 
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+import { useChain } from '@cosmos-kit/react-lite';
+import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { useClients } from 'hooks/useClients';
 import file from 'public/mainnet/contract_addresses.json'
 import tokens from 'public/mainnet/tokens.json';
-import { useRecoilValue } from 'recoil';
 import { TabType } from 'state/tabState';
-import { walletState } from 'state/walletState';
 import { convertMicroDenomToDenom } from 'util/conversion';
-import { Wallet } from 'util/wallet-adapters/index'
 
 interface Asset {
     native: string
@@ -28,7 +29,7 @@ export interface RewardInfo {
     stakedDenom: string
 }
 const getRewards = async (
-  contractAddress: string, address: string, client: Wallet,
+  contractAddress: string, address: string, client: CosmWasmClient,
 ): Promise<RewardInfo[]> => {
   const msg = {
     all_pending_rewards: {
@@ -51,7 +52,8 @@ const getRewards = async (
   })
 }
 export const useQueryRewards = () => {
-  const { client, address } = useRecoilValue(walletState)
+  const { address } = useChain(MIGALOO_CHAIN_NAME)
+  const { cosmWasmClient: client } = useClients()
   const { data, isLoading } = useQuery({
     queryKey: ['rewards', file.alliance_contract, address],
     queryFn: () => getRewards(

@@ -7,23 +7,22 @@ import {
   HStack,
   IconButton,
   Text,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { useChain } from '@cosmos-kit/react-lite';
 import CustomButton from 'components/CustomButton';
 import Delegate, { TokenBalance } from 'components/Pages/Alliance/Delegate';
 import useAllianceTransaction from 'components/Pages/Alliance/hooks/useAllianceTransaction';
 import Redelegate from 'components/Pages/Alliance/Redelegate';
 import Undelegate from 'components/Pages/Alliance/Undelegate';
 import { ActionType } from 'components/Pages/Dashboard';
-import WalletModal from 'components/Wallet/Modal/WalletModal';
 import useDelegations from 'hooks/useDelegations';
 import { useMultipleTokenBalance } from 'hooks/useTokenBalance';
 import { useRouter } from 'next/router';
 import whiteListedTokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { chainState } from 'state/chainState';
 import { delegationState, DelegationState } from 'state/delegationState';
-import { walletState, WalletStatusType } from 'state/walletState';
 import { TxStep } from 'types/blockchain';
 
 const ActionsComponent = ({
@@ -32,13 +31,8 @@ const ActionsComponent = ({
   validatorSrcAddress,
   tokenSymbol = 'ampLUNA',
 }) => {
-  const { chainId, status, address } = useRecoilValue(walletState)
-  const isWalletConnected: boolean = status === WalletStatusType.connected
-  const {
-    isOpen: isOpenModal,
-    onOpen: onOpenModal,
-    onClose: onCloseModal,
-  } = useDisclosure()
+  const { walletChainName } = useRecoilValue(chainState)
+  const { address, isWalletConnected, openView } = useChain(walletChainName)
 
   const router = useRouter()
 
@@ -236,7 +230,7 @@ const ActionsComponent = ({
                 currentDelegationState.denom,
               );
             } else {
-              onOpenModal();
+              openView()
             }
           }}
           disabled={
@@ -257,11 +251,6 @@ const ActionsComponent = ({
           }
           height="57px"
           width="563px"
-        />
-        <WalletModal
-          isOpenModal={isOpenModal}
-          onCloseModal={onCloseModal}
-          chainId={chainId}
         />
       </VStack>
       )

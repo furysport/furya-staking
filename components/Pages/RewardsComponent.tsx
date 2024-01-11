@@ -1,20 +1,20 @@
 import { FC, useMemo } from 'react';
 
-import { Box, Divider, HStack, Image, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Divider, Image, HStack, Text, VStack } from '@chakra-ui/react';
+import { useChain } from '@cosmos-kit/react-lite';
 import Loader from 'components/Loader';
-import ClaimButton from 'components/Pages/ClaimButton'
-import UpdateRewardsButton from 'components/Pages/UpdateRewardsButton'
-import WalletModal from 'components/Wallet/Modal/WalletModal'
+import ClaimButton from 'components/Pages/ClaimButton';
+import UpdateRewardsButton from 'components/Pages/UpdateRewardsButton';
+import { MIGALOO_CHAIN_NAME } from 'constants/common';
 import tokens from 'public/mainnet/tokens.json'
-import { useRecoilValue } from 'recoil';
-import { tabState, TabType } from 'state/tabState'
-import { walletState } from 'state/walletState';
+import { useRecoilValue } from 'recoil'
+import { tabState, TabType } from 'state/tabState';
 
 interface UndelegationsProps {
-    isWalletConnected: boolean;
-    isLoading: boolean;
-    address: string;
-    data: any;
+  isWalletConnected: boolean;
+  isLoading: boolean;
+  address: string;
+  data: any;
 }
 
 const RewardsComponent: FC<UndelegationsProps> = ({
@@ -22,18 +22,13 @@ const RewardsComponent: FC<UndelegationsProps> = ({
   isLoading,
   data,
 }) => {
-  const { chainId } = useRecoilValue(walletState)
   const currentTabState = useRecoilValue(tabState)
-  const {
-    isOpen: isOpenModal,
-    onOpen: onOpenModal,
-    onClose: onCloseModal,
-  } = useDisclosure();
+  const { openView } = useChain(MIGALOO_CHAIN_NAME)
 
   const claimableRewards = useMemo(() => data?.reduce((acc, e) => acc + (Number(e?.dollarValue) ?? 0), 0),
     [data]) || 0
 
-  const stakedDenoms = useMemo(() => data?.map((r: { stakedDenom: string }) => r.stakedDenom), [data])
+  const rewardDenoms = useMemo(() => data?.map((r: { stakedDenom: string }) => r.stakedDenom), [data])
   const showRewards = useMemo(() => (data?.length > 0 && isWalletConnected), [data, isWalletConnected])
   return (
     <VStack
@@ -80,21 +75,17 @@ const RewardsComponent: FC<UndelegationsProps> = ({
             </Text>
             <HStack gap={1}>
               {currentTabState !== TabType.alliance &&
-                             <UpdateRewardsButton
-                               isWalletConnected={isWalletConnected}
-                             />}
+                <UpdateRewardsButton
+                  isWalletConnected={isWalletConnected}
+                  onOpenModal={openView}
+                />}
               <ClaimButton
                 isWalletConnected={isWalletConnected}
-                onOpenModal={onOpenModal}
+                onOpenModal={openView}
                 totalRewards={claimableRewards}
-                stakedDenoms={stakedDenoms}
+                rewardDenoms={rewardDenoms}
               />
             </HStack>
-            <WalletModal
-              isOpenModal={isOpenModal}
-              onCloseModal={onCloseModal}
-              chainId={chainId}
-            />
           </HStack>
           <Box
             overflowY="scroll"

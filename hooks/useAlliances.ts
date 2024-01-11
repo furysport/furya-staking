@@ -2,7 +2,8 @@ import { useQuery } from 'react-query';
 
 import { LCDClient } from '@terra-money/feather.js';
 import { AllianceAsset } from '@terra-money/feather.js/dist/client/lcd/api/AllianceAPI';
-import useClient from 'hooks/useClient';
+import { MIGALOO_CHAIN_ID } from 'constants/common';
+import useLCDClient from 'hooks/useLCDClient';
 import usePrices from 'hooks/usePrices';
 import whiteListedTokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { convertMicroDenomToDenom } from 'util/conversion';
@@ -15,13 +16,26 @@ export interface Alliance {
 
   takeRate: number;
 }
+export const useAlliances = () => {
+  const client = useLCDClient();
+  const [priceList] = usePrices() || [];
+
+  const { data: alliances } = useQuery({
+    queryKey: ['alliances', priceList],
+    queryFn: () => fetchAlliances(client, priceList),
+    enabled: Boolean(client) && Boolean(priceList),
+    refetchOnMount: true,
+  });
+  return { alliances };
+};
 
 const fetchAlliances = async (client: LCDClient, priceList) => {
+  // @ts-ignore
   const allianceAssets: AllianceAsset[] = (
-    await client.alliance.alliances('migaloo-1')
+    await client.alliance.alliances(MIGALOO_CHAIN_ID)
   ).alliances;
 
-  const alliances: Alliance[] = whiteListedTokens?.map((token) => {
+  const alliances: Alliance[] = whiteListedTokens.map((token) => {
     const alliance = allianceAssets?.find((asset) => asset.denom === token.denom);
 
     return {
@@ -33,20 +47,8 @@ const fetchAlliances = async (client: LCDClient, priceList) => {
       totalTokens: convertMicroDenomToDenom(alliance?.total_tokens,
         token.decimals),
       takeRate: Number(alliance?.take_rate),
-    }
-  })
-  return { alliances };
-}
-
-export const useAlliances = () => {
-  const client = useClient();
-  const [priceList] = usePrices() || [];
-
-  const { data: alliances } = useQuery({
-    queryKey: ['alliances', priceList],
-    queryFn: () => fetchAlliances(client, priceList),
-    enabled: Boolean(client) && Boolean(priceList),
-    refetchOnMount: true,
+    };
   });
-  return { alliances };
+
+  return { alliances }
 }

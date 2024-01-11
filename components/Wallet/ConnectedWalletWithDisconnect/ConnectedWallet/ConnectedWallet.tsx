@@ -1,16 +1,14 @@
 import React from 'react';
 
 import { Button, HStack, useToast } from '@chakra-ui/react';
-import {
-  ConnectedWalletIcon,
-} from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/ConnectedWalletIcon';
+import { useChain } from '@cosmos-kit/react-lite';
+import { ConnectedWalletIcon } from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/ConnectedWalletIcon';
 import TruncatedAddress from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/TruncatedAddress';
-import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
+import { MIGALOO_CHAIN_NAME } from 'constants/common';
 
-export const ConnectedWallet = ({ connected }) => {
+export const ConnectedWallet = () => {
   const toast = useToast();
-  const { address } = useRecoilValue(walletState);
+  const { address } = useChain(MIGALOO_CHAIN_NAME)
   const copyToClipboard = () => {
     try {
       navigator.clipboard.writeText(address);
@@ -33,10 +31,8 @@ export const ConnectedWallet = ({ connected }) => {
       onClick={copyToClipboard}
       width="full"
     >
-      <ConnectedWalletIcon />
-      <TruncatedAddress connected={connected} />
+      <ConnectedWalletIcon/>
+      <TruncatedAddress/>
     </HStack>
   );
 }
-
-export default ConnectedWallet;

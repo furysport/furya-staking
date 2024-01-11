@@ -1,33 +1,16 @@
 import React from 'react';
 
-import { Box, Flex, HStack, useDisclosure } from '@chakra-ui/react';
-import { useWallet } from '@terra-money/wallet-provider';
-import { useRecoilState } from 'recoil';
-import { walletState, WalletStatusType } from 'state/walletState';
+import { Box, Flex, HStack } from '@chakra-ui/react';
+import { useChain } from '@cosmos-kit/react-lite';
+import { MIGALOO_CHAIN_NAME } from 'constants/common';
 
 import Wallet from '../Wallet/Wallet';
 
 const Header = () => {
-  const { disconnect } = useWallet()
-  const [{ key, status, chainId, network }, setWalletState] =
-    useRecoilState(walletState)
-  const isWalletConnected = status === WalletStatusType.connected
-  const {
-    isOpen: isOpenModal,
-    onOpen: onOpenModal,
-    onClose: onCloseModal,
-  } = useDisclosure();
+  const { disconnect, isWalletConnected } = useChain(MIGALOO_CHAIN_NAME)
 
-  const resetWalletConnection = () => {
-    setWalletState({
-      status: WalletStatusType.idle,
-      address: '',
-      client: null,
-      network,
-      chainId,
-      activeWallet: null,
-    })
-    disconnect()
+  const resetWalletConnection = async () => {
+    await disconnect()
   };
 
   return (
@@ -45,13 +28,7 @@ const Header = () => {
         <HStack flex="1" spacing="6" justify="flex-end">
           <Wallet
             connected={isWalletConnected}
-            walletName={key?.name}
             onDisconnect={resetWalletConnection}
-            disconnect={disconnect}
-            isOpenModal={isOpenModal}
-            onOpenModal={onOpenModal}
-            onCloseModal={onCloseModal}
-            onPrimaryButton={true}
           />
         </HStack>
       </Flex>

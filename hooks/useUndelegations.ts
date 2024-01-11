@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 
 import { LCDClient } from '@terra-money/feather.js';
-import useClient from 'hooks/useClient';
+import useLCDClient from 'hooks/useLCDClient';
 import usePrices from 'hooks/usePrices';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import { convertMicroDenomToDenom } from 'util/conversion';
@@ -132,7 +132,7 @@ const getUndelegations = async (
 }
 
 const useUndelegations = ({ address }) => {
-  const client = useClient();
+  const client = useLCDClient();
   const [priceList] = usePrices() || [];
 
   return useQuery({

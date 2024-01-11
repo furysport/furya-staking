@@ -2,13 +2,13 @@ import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { HStack, IconButton, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { HStack, IconButton, Text, VStack } from '@chakra-ui/react';
+import { useChain } from '@cosmos-kit/react-lite';
 import AssetInput from 'components/AssetInput/index';
 import CustomButton from 'components/CustomButton';
 import { TokenBalance } from 'components/Pages/Alliance/Delegate';
 import { Token } from 'components/Pages/AssetOverview';
 import { ActionType } from 'components/Pages/Dashboard';
-import WalletModal from 'components/Wallet/Modal/WalletModal';
 import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
 import usePrices from 'hooks/usePrices';
 import { useMultipleTokenBalance } from 'hooks/useTokenBalance';
@@ -18,9 +18,9 @@ import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
 import whiteListedEcosystemTokens from 'public/mainnet/white_listed_ecosystem_token_info.json';
 import whiteListedLiquidityTokens from 'public/mainnet/white_listed_liquidity_token_info.json';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { chainState } from 'state/chainState';
 import { delegationState, DelegationState } from 'state/delegationState';
 import { tabState, TabType } from 'state/tabState';
-import { walletState, WalletStatusType } from 'state/walletState';
 import { TxStep } from 'types/blockchain';
 
 export const Delegate = ({ tokenSymbol }) => {
@@ -28,8 +28,8 @@ export const Delegate = ({ tokenSymbol }) => {
         useRecoilState<DelegationState>(delegationState)
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   const [_, setTabType] = useRecoilState(tabState)
-  const { status, chainId } = useRecoilValue(walletState)
-  const isWalletConnected: boolean = status === WalletStatusType.connected
+  const { walletChainName } = useRecoilValue(chainState)
+  const { isWalletConnected, openView } = useChain(walletChainName)
   const { submit, txStep } = useTransaction()
   const router = useRouter()
   const tabFromUrl = router.pathname.split('/')?.[1].split('/')?.[0]
@@ -39,11 +39,6 @@ export const Delegate = ({ tokenSymbol }) => {
       currentDelegationState,
     },
   })
-  const {
-    isOpen: isOpenModal,
-    onOpen: onOpenModal,
-    onClose: onCloseModal,
-  } = useDisclosure()
 
   const whiteListedTokens = useMemo(() => {
     if (tabFromUrl === TabType.ecosystem) {
@@ -110,7 +105,7 @@ export const Delegate = ({ tokenSymbol }) => {
       return 'Connect Wallet'
     }
     return 'Delegate'
-  }, [status])
+  }, [isWalletConnected])
 
   return (<VStack
     width={{ base: '100%',
@@ -197,10 +192,9 @@ export const Delegate = ({ tokenSymbol }) => {
               ActionType.delegate,
               currentDelegationState.amount,
               currentDelegationState.denom,
-              null,
             )
           } else {
-            onOpenModal()
+            openView()
           }
         }}
         disabled={
@@ -218,11 +212,6 @@ export const Delegate = ({ tokenSymbol }) => {
         width="600px"
       />
     </VStack>
-    <WalletModal
-      isOpenModal={isOpenModal}
-      onCloseModal={onCloseModal}
-      chainId={chainId}
-    />
   </VStack>
   )
 }

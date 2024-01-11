@@ -2,10 +2,10 @@ import { useQuery } from 'react-query';
 
 import { TokenInfo } from 'hooks/useTokenInfo';
 import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
+import { chainState } from 'state/chainState';
 
 export const useAllTokenList = () => {
-  const { chainId, network } = useRecoilValue(walletState)
+  const { chainId, network } = useRecoilValue(chainState)
 
   const { data, isLoading } = useQuery<TokenInfo[]>(
     ['tokenInfo-alliance', chainId, network],

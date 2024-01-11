@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 
 import { LCDClient } from '@terra-money/feather.js/dist/client/lcd/LCDClient';
-import useClient from 'hooks/useClient';
+import useLCDClient from 'hooks/useLCDClient';
 import usePrices from 'hooks/usePrices';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
@@ -36,7 +36,7 @@ export const fetchTotalPoolSupply = async (client: LCDClient, whalePrice: number
   return totalDollarAmount / convertMicroDenomToDenom(poolInfo.total_share, 6)
 }
 export const useGetLPTokenPrice = () => {
-  const client = useClient()
+  const client = useLCDClient()
   const [priceList] = usePrices() || []
   const whalePrice = priceList?.Whale
   const { data: lpTokenPrice, isLoading } = useQuery(

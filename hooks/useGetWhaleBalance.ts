@@ -1,7 +1,8 @@
 import { useQuery } from 'react-query';
 
-import { useRecoilValue } from 'recoil';
-import { walletState } from 'state/walletState';
+import { useChain } from '@cosmos-kit/react-lite';
+import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { useClients } from 'hooks/useClients';
 import { DEFAULT_TOKEN_BALANCE_REFETCH_INTERVAL } from 'util/constants';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
@@ -11,7 +12,8 @@ const fetchWhaleBalance = async ({ client, address }) => {
   return convertMicroDenomToDenom(amount, 6)
 }
 export const useGetWhaleBalance = () => {
-  const { address, client } = useRecoilValue(walletState);
+  const { address } = useChain(MIGALOO_CHAIN_NAME)
+  const { cosmWasmClient: client } = useClients()
 
   const {
     data: balance = 0,

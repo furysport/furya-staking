@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
 
 import { LCDClient } from '@terra-money/feather.js/dist/client/lcd/LCDClient';
-import useClient from 'hooks/useClient';
+import useLCDClient from 'hooks/useLCDClient';
 import file from 'public/mainnet/contract_addresses.json'
 import tokens from 'public/mainnet/tokens.json'
 
@@ -40,7 +40,7 @@ export const fetchVTRewardShares = async (client: LCDClient) => {
 }
 
 export const useGetVTRewardShares = () => {
-  const client = useClient()
+  const client = useLCDClient()
   const { data, isLoading } = useQuery(
     ['vtRewardShares'],
     async () => await fetchVTRewardShares(client),
