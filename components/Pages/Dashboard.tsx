@@ -15,7 +15,7 @@ import { calculateLiquidityData } from 'components/Pages/Liquidity/calculateLiqu
 import { LiquidityTab } from 'components/Pages/Liquidity/LiquidityTab'
 import { MIGALOO_CHAIN_NAME } from 'constants/common';
 import useDelegations from 'hooks/useDelegations'
-import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice'
+import { useGetLPTokenPrices } from 'hooks/useGetLPTokenPrices'
 import usePrices from 'hooks/usePrices'
 import { useQueryRewards } from 'hooks/useQueryRewards'
 import { useQueryStakedBalances } from 'hooks/useQueryStakedBalances'
@@ -207,12 +207,12 @@ const Dashboard = () => {
     )
   }, [ecosystemBalances, stakedBalances, rewards, rawEcosystemTokenData, priceList])
 
-  const { lpTokenPrice } = useGetLPTokenPrice()
+  const lpTokenPrices = useGetLPTokenPrices()
   useEffect(() => {
     calculateLiquidityData(
-      rawLiquidityTokenData, priceList, lpTokenPrice, liquidityBalances, stakedBalances, rewards, setLiquidityData,
+      rawLiquidityTokenData, priceList, lpTokenPrices, liquidityBalances, stakedBalances, rewards, setLiquidityData,
     )
-  }, [stakedBalances, rewards, liquidityBalances, rawLiquidityTokenData, priceList, lpTokenPrice])
+  }, [stakedBalances, rewards, liquidityBalances, rawLiquidityTokenData, priceList, lpTokenPrices])
 
   useEffect(() => {
     setLoading(updatedAllianceData === null ||

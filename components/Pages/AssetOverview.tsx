@@ -9,6 +9,7 @@ export enum Token {
   mUSDC = 'mUSDC',
   ASH = 'ASH',
   'USDC-WHALE-LP'= 'USDC-WHALE-LP',
+  'WHALE-wBTC-LP' = 'WHALE-wBTC-LP',
 }
 
 export enum TokenType {

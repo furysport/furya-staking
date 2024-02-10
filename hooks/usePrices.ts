@@ -8,9 +8,9 @@ const usePrices = () => {
     queryKey: ['priceList'],
     queryFn: getTokenPrice,
     refetchInterval: 10000,
-  });
+  })
 
-  return useMemo(() => priceList, [priceList]);
-};
+  return useMemo(() => priceList, [priceList])
+}
 
 export default usePrices

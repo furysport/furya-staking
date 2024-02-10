@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
+import { useGetLPTokenPrices } from 'hooks/useGetLPTokenPrices';
 import { useGetTotalStakedBalances } from 'hooks/useGetTotalStakedBalances';
 import { useGetVTRewardShares } from 'hooks/useGetVTRewardShares';
 import usePrices from 'hooks/usePrices';
@@ -19,23 +19,23 @@ export const useCalculateAprs = () => {
   const { totalYearlyWhaleEmission } = useTotalYearlyWhaleEmission()
   const vtEmission = useMemo(() => 0.05 / 1.1 * totalYearlyWhaleEmission, [totalYearlyWhaleEmission])
   const [priceList] = usePrices() || []
-  const { lpTokenPrice } = useGetLPTokenPrice()
+  const lpTokenPrices = useGetLPTokenPrices()
 
   useEffect(() => {
-    if (!totalStakedBalances || !vtRewardShares || !vtEmission || !priceList || !lpTokenPrice) {
+    if (!totalStakedBalances || !vtRewardShares || !vtEmission || !priceList || !lpTokenPrices) {
       return
     }
     setAprs(vtRewardShares?.map((info) => {
       const stakedBalance = totalStakedBalances?.find((balance) => balance.denom === info.denom)
       const stakedTokenPrice = getTokenPrice(
-        stakedBalance, priceList, lpTokenPrice,
+        stakedBalance, priceList, lpTokenPrices,
       )
       return {
         name: info.tokenSymbol,
         apr: (info.distribution * vtEmission * priceList.Whale / ((stakedBalance?.totalAmount || 0) * stakedTokenPrice)) * 100,
       } as Apr
     }))
-  }, [vtEmission, totalStakedBalances, vtRewardShares, priceList, lpTokenPrice])
+  }, [vtEmission, totalStakedBalances, vtRewardShares, priceList, lpTokenPrices])
 
   return aprs
 }

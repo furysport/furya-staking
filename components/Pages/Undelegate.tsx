@@ -12,7 +12,7 @@ import CustomButton from 'components/CustomButton';
 import { TokenBalance } from 'components/Pages/Alliance/Delegate';
 import { Token } from 'components/Pages/AssetOverview';
 import { ActionType } from 'components/Pages/Dashboard';
-import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
+import { useGetLPTokenPrices } from 'hooks/useGetLPTokenPrices';
 import usePrices from 'hooks/usePrices';
 import { useQueryStakedBalances } from 'hooks/useQueryStakedBalances';
 import useTransaction from 'hooks/useTransaction';
@@ -69,14 +69,14 @@ export const Undelegate = ({ tokenSymbol }) => {
   }))?.find((e) => e.tokenSymbol === currentDelegationState.tokenSymbol), [stakedInfos, currentDelegationState.tokenSymbol])
 
   const [priceList] = usePrices() || []
-  const { lpTokenPrice } = useGetLPTokenPrice()
+  const lpTokenPrices = useGetLPTokenPrices()
 
-  const price = useMemo(() => (currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
+  const price = useMemo(() => (currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol?.includes('-LP') ? lpTokenPrices?.[currentDelegationState.tokenSymbol] :
     priceList?.[
       tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.
         name
     ]),
-  [priceList, currentDelegationState.tokenSymbol, lpTokenPrice])
+  [priceList, currentDelegationState.tokenSymbol, lpTokenPrices])
 
   useEffect(() => {
     if (tokenSymbol) {
@@ -154,7 +154,7 @@ export const Undelegate = ({ tokenSymbol }) => {
           render={({ field }) => (
             <AssetInput
               hideToken={currentDelegationState.tokenSymbol}
-              hideLogo={currentDelegationState.tokenSymbol === 'USDC-WHALE-LP'}
+              hideLogo={currentDelegationState.tokenSymbol?.includes('-LP')}
               {...field}
               token={currentDelegationState}
               tokenPrice={price}
