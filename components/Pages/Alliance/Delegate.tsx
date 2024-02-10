@@ -6,7 +6,7 @@ import { useChain } from '@cosmos-kit/react-lite';
 import AssetInput from 'components/AssetInput/index';
 import ValidatorInput from 'components/Pages/Alliance/ValidatorInput/ValidatorInput';
 import { Token } from 'components/Pages/AssetOverview';
-import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
+import { useGetLPTokenPrices } from 'hooks/useGetLPTokenPrices';
 import usePrices from 'hooks/usePrices';
 import useValidators from 'hooks/useValidators';
 import { useRouter } from 'next/router';
@@ -65,14 +65,14 @@ const Delegate: FC<ActionProps> = ({
   });
   const currentTokenBalance: TokenBalance = balance?.find((e) => e.tokenSymbol === currentDelegationState.tokenSymbol)
   const [priceList] = usePrices() || [];
-  const { lpTokenPrice } = useGetLPTokenPrice()
+  const lpTokenPrices = useGetLPTokenPrices()
 
-  const price = useMemo(() => (currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
+  const price = useMemo(() => (currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : (currentDelegationState.tokenSymbol?.includes('-LP')) ? lpTokenPrices?.[currentDelegationState.tokenSymbol] :
     priceList?.[
       tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.
         name
     ]),
-  [priceList, currentDelegationState.tokenSymbol, lpTokenPrice]);
+  [priceList, currentDelegationState.tokenSymbol, lpTokenPrices]);
   return (
     <VStack px={7} width="full" alignItems="flex-start" marginBottom={5}>
       <Text>To</Text>

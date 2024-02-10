@@ -1,13 +1,12 @@
-import { Token } from 'components/Pages/AssetOverview';
 import { RewardInfo } from 'hooks/useQueryRewards';
 import { EnhancedStakeInfo } from 'hooks/useQueryStakedBalances';
 import { TabType } from 'state/tabState';
 
 export const calculateLiquidityData = (
-  rawLiquidityTokenData, priceList, lpTokenPrice, liquidityBalances, stakedBalances: EnhancedStakeInfo[], rewards, setLiquidityData,
+  rawLiquidityTokenData, priceList, lpTokenPrices, liquidityBalances, stakedBalances: EnhancedStakeInfo[], rewards, setLiquidityData,
 ) => {
   // Calculate data when dependencies change
-  if (!lpTokenPrice || !liquidityBalances || !rewards || !stakedBalances) {
+  if (!lpTokenPrices || !liquidityBalances || !rewards || !stakedBalances) {
     return
   }
 
@@ -15,13 +14,13 @@ export const calculateLiquidityData = (
     const balance = liquidityBalances?.[index] ? liquidityBalances?.[index] : 0
     return {
       ...token,
-      dollarValue: lpTokenPrice * balance,
+      dollarValue: lpTokenPrices?.[token.name] * balance,
       value: balance,
     }
   })
   const calculateDelegationData = (tokenData: any) => {
     const allDelegations = stakedBalances.filter((d) => d.tokenSymbol === tokenData.tokenSymbol)
-    const aggregatedDollarValue = allDelegations.reduce((acc, e) => acc + (Number(e?.amount ?? 0) * Number(lpTokenPrice ?? 0)),
+    const aggregatedDollarValue = allDelegations.reduce((acc, e) => acc + (Number(e?.amount ?? 0) * Number(lpTokenPrices?.[e.name] ?? 0)),
       0)
     const aggregatedAmount = allDelegations.reduce((acc, e) => acc + Number(e?.amount ?? 0),
       0)
@@ -39,7 +38,7 @@ export const calculateLiquidityData = (
     return rewards.filter((reward: RewardInfo) => reward.tabType === TabType.liquidity && reward.amount > 0).map((reward) => ({
       symbol: reward.tokenSymbol,
       amount: reward.amount,
-      dollarValue: reward.tokenSymbol === Token['USDC-WHALE-LP'] ? lpTokenPrice : (Number(reward.amount) * Number(priceList?.[reward.name] || 0)),
+      dollarValue: reward.tokenSymbol.includes('-LP') ? lpTokenPrices?.[reward.tokenSymbol] : (Number(reward.amount) * Number(priceList?.[reward.name] || 0)),
       denom: reward.denom,
       stakedDenom: reward.stakedDenom,
     }))

@@ -9,7 +9,7 @@ import CustomButton from 'components/CustomButton';
 import { TokenBalance } from 'components/Pages/Alliance/Delegate';
 import { Token } from 'components/Pages/AssetOverview';
 import { ActionType } from 'components/Pages/Dashboard';
-import { useGetLPTokenPrice } from 'hooks/useGetLPTokenPrice';
+import { useGetLPTokenPrices } from 'hooks/useGetLPTokenPrices';
 import usePrices from 'hooks/usePrices';
 import { useMultipleTokenBalance } from 'hooks/useTokenBalance';
 import useTransaction from 'hooks/useTransaction';
@@ -65,7 +65,7 @@ export const Delegate = ({ tokenSymbol }) => {
         })) ?? []
   const currentTokenBalance: TokenBalance = liquidTokenPriceBalances?.find((e) => e.tokenSymbol === currentDelegationState.tokenSymbol)
   const [priceList] = usePrices() || []
-  const { lpTokenPrice } = useGetLPTokenPrice()
+  const lpTokenPrices = useGetLPTokenPrices()
 
   useEffect(() => {
     if (tokenSymbol) {
@@ -93,13 +93,12 @@ export const Delegate = ({ tokenSymbol }) => {
   useEffect(() => {
     router.push(`/${tabFromUrl}/delegate?tokenSymbol=${currentDelegationState.tokenSymbol}`)
   }, [tabFromUrl, currentDelegationState])
-
-  const price = useMemo(() => (currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol === 'USDC-WHALE-LP' ? lpTokenPrice :
+  const price = useMemo(() => (currentDelegationState.tokenSymbol === Token.mUSDC ? 1 : currentDelegationState.tokenSymbol?.includes('-LP') ? lpTokenPrices?.[currentDelegationState.tokenSymbol] :
     priceList?.[
       tokens?.find((e) => e.symbol === currentDelegationState.tokenSymbol)?.
         name
     ]),
-  [priceList, currentDelegationState.tokenSymbol, lpTokenPrice])
+  [priceList, currentDelegationState.tokenSymbol, lpTokenPrices])
   const buttonLabel = useMemo(() => {
     if (!isWalletConnected) {
       return 'Connect Wallet'
@@ -157,7 +156,7 @@ export const Delegate = ({ tokenSymbol }) => {
         render={({ field }) => (
           <AssetInput
             hideToken={currentDelegationState.tokenSymbol}
-            hideLogo={currentDelegationState.tokenSymbol === 'USDC-WHALE-LP'}
+            hideLogo={currentDelegationState.tokenSymbol?.includes('-LP')}
             {...field}
             token={currentDelegationState}
             tokenPrice={price}

@@ -22,18 +22,18 @@ const TokenBox = ({ symbol, color }) => (
 )
 
 export const DashboardPieChart = ({ dashboardData }) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([])
 
   useEffect(() => {
-    const totalValue = dashboardData.reduce((acc, data) => acc + data.totalValueStaked, 0);
+    const totalValue = dashboardData.reduce((acc, data) => acc + data.totalValueStaked, 0)
     const adjustedData = dashboardData.map((data) => ({
       tokenSymbol: data.symbol,
       value: data.totalValueStaked,
       color: getColorByTokenSymbol(data.symbol),
       percentage: `${((data.totalValueStaked / totalValue) * 100).toFixed(2)}%`,
-    }));
-    setData(adjustedData);
-  }, [dashboardData]);
+    }))
+    setData(adjustedData)
+  }, [dashboardData])
 
   return (
     <HStack
