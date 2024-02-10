@@ -66,7 +66,7 @@ export const DashboardTab = ({ priceList }) => {
         symbol,
         category: asset.tabType,
         totalStaked: totalAmount,
-        totalValueStaked: (symbol?.includes('-LP') ? lpTokenPrices?.[symbol] : symbol === Token.mUSDC ? 1 : priceList[asset.name]) * totalAmount,
+        totalValueStaked: (symbol?.includes('-LP') ? lpTokenPrices?.[symbol] || 0 : symbol === Token.mUSDC ? 1 : priceList[asset.name]) * totalAmount,
         rewardWeight: (apr?.weight || 0) * 100,
         apr: apr?.apr || 0,
       }

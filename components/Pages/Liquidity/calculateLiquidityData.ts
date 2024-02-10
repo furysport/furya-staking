@@ -14,7 +14,7 @@ export const calculateLiquidityData = (
     const balance = liquidityBalances?.[index] ? liquidityBalances?.[index] : 0
     return {
       ...token,
-      dollarValue: lpTokenPrices?.[token.name] * balance,
+      dollarValue: (lpTokenPrices?.[token.name] || 0) * balance,
       value: balance,
     }
   })
@@ -38,7 +38,7 @@ export const calculateLiquidityData = (
     return rewards.filter((reward: RewardInfo) => reward.tabType === TabType.liquidity && reward.amount > 0).map((reward) => ({
       symbol: reward.tokenSymbol,
       amount: reward.amount,
-      dollarValue: reward.tokenSymbol.includes('-LP') ? lpTokenPrices?.[reward.tokenSymbol] : (Number(reward.amount) * Number(priceList?.[reward.name] || 0)),
+      dollarValue: reward.tokenSymbol.includes('-LP') ? lpTokenPrices?.[reward.tokenSymbol] || 0 : (Number(reward.amount) * Number(priceList?.[reward.name] || 0)),
       denom: reward.denom,
       stakedDenom: reward.stakedDenom,
     }))

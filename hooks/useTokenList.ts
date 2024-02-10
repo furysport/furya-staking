@@ -33,9 +33,8 @@ export const useTokenList = () => {
   )
   let changedTokenList = tokenInfoList
   if (tabType === TabType.alliance && tokenInfoList) {
-    changedTokenList = tokenInfoList.filter((token:any)=> token.denom == 'uwhale')
+    changedTokenList = tokenInfoList.filter((token:any) => token.denom == 'uwhale')
   }
-  
 
   return { tokens: changedTokenList,
     isLoading }
