@@ -108,7 +108,7 @@ const ActionsComponent = ({
           },
         }}
         color={globalAction === action ? 'white' : 'grey'}
-        backgroundColor="rgba(0, 0, 0, 0.5)"
+        backgroundColor="rgba(0, 0, 0, 1)"
         fontSize={20}
         px={5}
         transform="translate(0%, -55%)"

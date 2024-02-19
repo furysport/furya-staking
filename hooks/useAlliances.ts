@@ -16,25 +16,12 @@ export interface Alliance {
 
   takeRate: number;
 }
-export const useAlliances = () => {
-  const client = useLCDClient();
-  const [priceList] = usePrices() || [];
-
-  const { data: alliances } = useQuery({
-    queryKey: ['alliances', priceList],
-    queryFn: () => fetchAlliances(client, priceList),
-    enabled: Boolean(client) && Boolean(priceList),
-    refetchOnMount: true,
-  });
-  return { alliances };
-};
 
 const fetchAlliances = async (client: LCDClient, priceList) => {
-  // @ts-ignore
+
   const allianceAssets: AllianceAsset[] = (
     await client.alliance.alliances(MIGALOO_CHAIN_ID)
   ).alliances;
-
   const alliances: Alliance[] = whiteListedTokens.map((token) => {
     const alliance = allianceAssets?.find((asset) => asset.denom === token.denom);
 
@@ -50,5 +37,18 @@ const fetchAlliances = async (client: LCDClient, priceList) => {
     };
   });
 
+  return { alliances }
+}
+
+export const useAlliances = () => {
+  const client = useLCDClient();
+  const [priceList] = usePrices() || []
+
+  const { data: alliances } = useQuery({
+    queryKey: ['alliances', priceList],
+    queryFn: () => fetchAlliances(client, priceList),
+    enabled: Boolean(client) && Boolean(priceList),
+    refetchOnMount: true,
+  });
   return { alliances }
 }

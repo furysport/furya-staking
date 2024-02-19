@@ -82,7 +82,7 @@ const columns: ColumnDef<DashboardData, any>[] = [
         minW="150px"
         fontSize="sm"
       >
-                Total Value Staked
+        Total Value Staked
       </Text>
     ),
     cell: (info) => `$${info.getValue()?.toLocaleString('en-US', {
@@ -98,7 +98,7 @@ const columns: ColumnDef<DashboardData, any>[] = [
         color="brand.50"
         flex={1}
         fontSize="sm">
-                Reward Weight
+        Reward Weight
       </Text>
     ),
     cell: (info) => `${info.getValue()?.toLocaleString('en-US', {

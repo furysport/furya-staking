@@ -34,7 +34,7 @@ export const useAllianceTransaction = () => {
   const { data: { delegations = [] } = {} } = useDelegations({ address })
 
   const { data: fee } = useQuery(
-    ['fee', error],
+    ['fee'],
     () => {
       setError(null)
       setTxStep(TxStep.Estimating)
@@ -298,7 +298,7 @@ export const useAllianceTransaction = () => {
       setError(null);
     }
 
-    if (txStep !== TxStep.Idle) {
+    if (txStep !== TxStep.Idle && txStep !== TxStep.Ready) {
       setTxStep(TxStep.Idle);
     }
   }, [txStep, error])
@@ -312,7 +312,7 @@ export const useAllianceTransaction = () => {
     txHash,
     error,
     reset,
-  }), [fee, buttonLabel, submit, txStep, txInfo, txHash, error])
+  }), [fee, buttonLabel, submit, txStep, txInfo, txHash])
 }
 
 export default useAllianceTransaction
