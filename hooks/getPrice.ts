@@ -64,14 +64,14 @@ const getPriceFromPool = ({ denom, decimals, contract, base, basedOn }: PoolInfo
         }
 
         if (isAB) {
-          return num(asset1.amount / (10 ** token1.decimals)).
-            div(asset2.amount / (10 ** token2.decimals)).
+          return num(asset1.amount / (10 ** (token1?.decimals || 6))).
+            div(asset2.amount / (10 ** (token2?.decimals || 6))).
             times(basePrice[basedOn]).
-            dp(token2.decimals).
+            dp((token2?.decimals || 6)).
             toNumber()
         } else {
-          return num(asset2.amount / (10 ** token2.decimals)).
-            div(asset1.amount / (10 ** token1.decimals)).
+          return num(asset2.amount / (10 ** (token2?.decimals || 6))).
+            div(asset1.amount / (10 ** (token1?.decimals || 6))).
             times(basePrice[basedOn]).
             dp(decimals).
             toNumber()
