@@ -25,12 +25,19 @@ import { chainState } from 'state/chainState';
 import { delegationState, DelegationState } from 'state/delegationState';
 import { TxStep } from 'types/blockchain';
 
+interface ActionsComponentProps {
+    globalAction: ActionType;
+    validatorDestAddress?: string;
+    validatorSrcAddress?: string;
+    tokenSymbol?: string;
+}
+
 const ActionsComponent = ({
   globalAction,
   validatorDestAddress = null,
   validatorSrcAddress,
   tokenSymbol = 'ampLUNA',
-}) => {
+}: ActionsComponentProps) => {
   const { walletChainName } = useRecoilValue(chainState)
   const { address, isWalletConnected, openView } = useChain(walletChainName)
 
@@ -108,7 +115,7 @@ const ActionsComponent = ({
           },
         }}
         color={globalAction === action ? 'white' : 'grey'}
-        backgroundColor="rgba(0, 0, 0, 0.5)"
+        backgroundColor="rgba(0, 0, 0, 1)"
         fontSize={20}
         px={5}
         transform="translate(0%, -55%)"
@@ -228,6 +235,7 @@ const ActionsComponent = ({
                 currentDelegationState.validatorSrcAddress,
                 currentDelegationState.amount,
                 currentDelegationState.denom,
+                currentDelegationState.decimals,
               );
             } else {
               openView()

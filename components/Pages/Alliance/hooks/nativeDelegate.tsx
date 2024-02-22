@@ -1,5 +1,5 @@
-import { coin } from '@cosmjs/amino';
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient'
+import { coin } from '@cosmjs/stargate'
 
 export const nativeDelegate = async (
   client: SigningCosmWasmClient,

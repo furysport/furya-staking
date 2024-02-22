@@ -30,11 +30,11 @@ export const useAllianceTransaction = () => {
   const [txHash, setTxHash] = useState<string>(null)
   const [error, setError] = useState(null)
   const [buttonLabel, setButtonLabel] = useState<string>(null)
-  const { signingClient: client } = useClients()
+  const { signingClient: client, allianceSigningClient } = useClients()
   const { data: { delegations = [] } = {} } = useDelegations({ address })
 
   const { data: fee } = useQuery(
-    ['fee', error],
+    ['fee'],
     () => {
       setError(null)
       setTxStep(TxStep.Estimating)
@@ -96,9 +96,10 @@ export const useAllianceTransaction = () => {
     },
   )
   const { mutate } = useMutation((data: any) => {
-    const adjustedAmount = convertDenomToMicroDenom(data?.amount, 6);
+    const adjustedAmount = convertDenomToMicroDenom(data?.amount, data?.decimals).toString()
+    const isNative = data.denom === 'uwhale'
     if (data.action === ActionType.delegate) {
-      return data.denom === 'uwhale'
+      return isNative
         ? nativeDelegate(
           client,
           data.validatorDestAddress,
@@ -107,14 +108,14 @@ export const useAllianceTransaction = () => {
           data.denom,
         )
         : allianceDelegate(
-          client,
+          allianceSigningClient,
           data.validatorDestAddress,
           address,
           adjustedAmount,
           data.denom,
         )
     } else if (data.action === ActionType.undelegate) {
-      return data.denom === 'uwhale'
+      return isNative
         ? nativeUndelegate(
           client,
           data.validatorSrcAddress,
@@ -123,15 +124,14 @@ export const useAllianceTransaction = () => {
           data.denom,
         )
         : allianceUndelegate(
-          client,
-          'migaloo-1',
+          allianceSigningClient,
           data.validatorSrcAddress,
           address,
           adjustedAmount,
           data.denom,
         )
     } else if (data.action === ActionType.redelegate) {
-      return data.denom === 'uwhale' ? () => 0
+      return isNative ? () => 0
         /*
          * ? nativeRedelegate(
          *   client,
@@ -144,8 +144,7 @@ export const useAllianceTransaction = () => {
          * )
          */
         : allianceRedelegate(
-          client,
-          'migaloo-1',
+          allianceSigningClient,
           data.validatorSrcAddress,
           data.validatorDestAddress,
           address,
@@ -153,7 +152,9 @@ export const useAllianceTransaction = () => {
           data.denom,
         )
     } else if (data.action === ActionType.claim) {
-      return claimAllRewards(client, delegations)
+      return claimAllRewards(
+        allianceSigningClient, delegations, address,
+      )
     } else {
       return updateRewards(client, address)
     }
@@ -221,11 +222,11 @@ export const useAllianceTransaction = () => {
     onSuccess: (data: any) => {
       setTxStep(TxStep.Broadcasting)
       setTimeout(() => {
-        const hash = data?.result?.result?.txhash ?? data?.result?.transactionHash
+        const hash = data?.result?.result?.txhash ?? data?.result?.transactionHash ?? data?.transactionHash
         setTxHash(hash)
         toast({
           title: (() => {
-            switch (data.actionType) {
+            switch (delegationAction) {
               case ActionType.delegate:
                 return 'Delegation Successful.'
               case ActionType.undelegate:
@@ -266,6 +267,7 @@ export const useAllianceTransaction = () => {
     validatorSrcAddress: string | null,
     amount: number | null,
     denom: string | null,
+    decimals: number | null,
   ) => {
     if (fee) {
       return null
@@ -279,6 +281,7 @@ export const useAllianceTransaction = () => {
       validatorSrcAddress,
       denom,
       amount,
+      decimals,
     })
   },
   [fee, mutate])
@@ -298,7 +301,7 @@ export const useAllianceTransaction = () => {
       setError(null);
     }
 
-    if (txStep !== TxStep.Idle) {
+    if (txStep !== TxStep.Idle && txStep !== TxStep.Ready) {
       setTxStep(TxStep.Idle);
     }
   }, [txStep, error])
@@ -312,7 +315,7 @@ export const useAllianceTransaction = () => {
     txHash,
     error,
     reset,
-  }), [fee, buttonLabel, submit, txStep, txInfo, txHash, error])
+  }), [fee, buttonLabel, submit, txStep, txInfo, txHash])
 }
 
 export default useAllianceTransaction

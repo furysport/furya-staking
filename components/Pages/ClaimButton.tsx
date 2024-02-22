@@ -17,7 +17,7 @@ const ClaimButton = ({ isWalletConnected, onOpenModal, totalRewards, rewardDenom
   const onClaim = () => {
     if (tabType === TabType.alliance) {
       allianceSubmit(
-        ActionType.claim, null, null, null, null,
+        ActionType.claim, null, null, null, null, null,
       )
     } else {
       submit(
@@ -46,7 +46,7 @@ const ClaimButton = ({ isWalletConnected, onOpenModal, totalRewards, rewardDenom
       onClick={
         (isWalletConnected && Number(totalRewards) > 0) ? onClaim : onOpenModal
       }
-      disabled={(isWalletConnected && Number(totalRewards) === 0) || isLoading || tabType === TabType.alliance}
+      disabled={(isWalletConnected && Number(totalRewards) === 0) || isLoading}
       loading={isLoading}
       height="50px"
       width="250px"

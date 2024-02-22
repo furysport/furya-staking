@@ -49,11 +49,9 @@ export const calculateEcosystemData = (
 
   const total = delegatedData.map((tokenData, index) => {
     const liquidTokenData = liquidData[index];
-    const rewardsTokenData = rewardsData[index]
     const totalDollarValue =
       (tokenData?.dollarValue ?? 0) +
-      (liquidTokenData?.dollarValue ?? 0) +
-      (rewardsTokenData?.dollarValue ?? 0)
+      (liquidTokenData?.dollarValue ?? 0)
     const totalValue =
       tokenData.value + liquidTokenData.value;
     return {

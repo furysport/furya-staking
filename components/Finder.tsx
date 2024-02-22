@@ -12,7 +12,7 @@ type Props = {
 const getUrl = (chainId, txHash) => {
   switch (chainId) {
     case 'migaloo-1':
-      return `https://explorer.kjnodes.com/migaloo/tx/${txHash}`;
+      return `https://inbloc.org/migaloo/transactions/${txHash}`;
     case 'narwhal-1':
     default:
       return null;

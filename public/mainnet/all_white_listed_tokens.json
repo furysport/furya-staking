@@ -82,5 +82,17 @@
     "denom": "factory/migaloo1axtz4y7jyvdkkrflknv9dcut94xr5k8m6wete4rdrw4fuptk896su44x2z/uLP",
     "native": true,
     "color": "red"
+  },
+  {
+    "chainId": "migaloo-1",
+    "token_address": "ibc/6E5BF71FE1BEBBD648C8A7CB7A790AEF0081120B2E5746E6563FC95764716D61",
+    "symbol": "wBTC",
+    "name": "wBTC",
+    "decimals": 8,
+    "logoURI": "/logos/wbtc.svg",
+    "tags": ["native"],
+    "denom": "ibc/6E5BF71FE1BEBBD648C8A7CB7A790AEF0081120B2E5746E6563FC95764716D61",
+    "native": true,
+    "color": "orange"
   }
 ]

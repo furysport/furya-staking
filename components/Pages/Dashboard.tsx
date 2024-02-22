@@ -237,7 +237,7 @@ const Dashboard = () => {
             justifyContent="flex-start"
             borderRadius={30}
             backgroundColor="rgba(0, 0, 0, 0.5)"
-            h={'48px'}>
+            mt={0}>
             <Tab>Dashboard</Tab>
             <Tab>Alliance</Tab>
             <Tab>Ecosystem</Tab>

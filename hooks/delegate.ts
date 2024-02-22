@@ -1,9 +1,10 @@
-import { coin } from '@cosmjs/amino';
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate/build/signingcosmwasmclient'
+import { coin } from '@cosmjs/stargate'
 import file from 'public/mainnet/contract_addresses.json'
-import { createExecuteMessage } from 'util/createExecutionMessage';
-import { isNativeToken } from 'util/isNative';
-import { toBase64 } from 'util/toBase64';
+import { createExecuteMessage } from 'util/createExecutionMessage'
+import { isNativeToken } from 'util/isNative'
+import { toBase64 } from 'util/toBase64'
+
 export const delegate = async (
   client: SigningCosmWasmClient,
   address: string,

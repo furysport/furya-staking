@@ -76,20 +76,18 @@ export const calculateAllianceData = (
   const total = delegatedData.map((tokenData, index) => {
     const undelegatedTokenData = undelegatedData[index];
     const liquidTokenData = liquidData[index];
-    const rewardsTokenData = rewardsData[index];
     const totalDollarValue =
       (tokenData?.dollarValue ?? 0) +
       (undelegatedTokenData?.dollarValue ?? 0) +
-      (liquidTokenData?.dollarValue ?? 0) +
-      (rewardsTokenData?.dollarValue ?? 0)
+      (liquidTokenData?.dollarValue ?? 0)
     const totalValue =
       tokenData.value + undelegatedTokenData.value + (liquidTokenData?.value ?? 0)
     return {
       ...tokenData,
       dollarValue: totalDollarValue,
       value: totalValue,
-    };
-  });
+    }
+  })
 
   const delegationData: DelegationData = {
     delegated: delegatedData,
@@ -98,6 +96,5 @@ export const calculateAllianceData = (
     rewards: rewardsData,
     total,
   }
-
-  setAllianceData(delegationData);
+  setAllianceData(delegationData)
 }

@@ -3,6 +3,7 @@ import { useQuery } from 'react-query';
 import { LCDClient, Validator } from '@terra-money/feather.js';
 import { Pagination } from '@terra-money/feather.js/dist/client/lcd/APIRequester';
 import { ValidatorInfo } from 'components/Pages/Alliance/ValidatorInput/ValidatorList';
+import { Token } from 'components/Pages/AssetOverview';
 import useLCDClient from 'hooks/useLCDClient';
 import { num } from 'libs/num';
 import allianceTokens from 'public/mainnet/white_listed_alliance_token_info.json'
@@ -65,17 +66,16 @@ const getValidators = ({
     catch((error) => {
       console.log({ error });
       return [[], {}];
-    });
+    })
 };
-const getStakedWhale = async ({ client }) => {
-  let sum = 0;
-  await client?.staking.validators('migaloo-1').then((data) => {
-    data[0].forEach((validator) => {
-      sum += Number(validator.tokens.toString());
-    });
-  });
-  return convertMicroDenomToDenom(sum, 6);
-};
+const getStakedWhale = async ({ validatorData }) => {
+  let sum = 0
+  validatorData.validators.forEach((validator) => {
+    sum += Number(validator.tokens.toString());
+  })
+  return convertMicroDenomToDenom(sum, 6)
+}
+
 type UseValidatorsResult = {
   data: {
     validators: ValidatorInfo[]
@@ -83,16 +83,25 @@ type UseValidatorsResult = {
     stakedWhale: number
     stakedAmpLuna: number
     stakedBLuna: number
+    stakedWBtc: number
   }
   isFetching: boolean
-};
-const getStakedLSTLunaAmounts = async ({ client }) => {
-  const { validators } = await client.alliance.alliancesByValidators('migaloo-1')
+}
+const getStakedWBtc = async ({ validatorData }) => {
+  const wBTC = allianceTokens.find((token) => token.symbol === Token.wBTC)
+  let totalWBtcAmount = 0
+  validatorData.validators.forEach((v) => {
+    const wBTCAmount = v.total_staked.find((token) => token.denom === wBTC.denom)?.amount || 0
+    totalWBtcAmount += convertMicroDenomToDenom(wBTCAmount, wBTC.decimals)
+  })
+  return { totalWBtcAmount }
+}
+const getStakedLSTLunaAmounts = async ({ validatorData }) => {
   const bLunaDenom = allianceTokens.find((token) => token.symbol === 'bLUNA').denom
   const ampLunaDenom = allianceTokens.find((token) => token.symbol === 'ampLUNA').denom
   let totalAmpLunaAmount = 0
   let totalBLunaAmount = 0
-  validators.map((v) => {
+  validatorData.validators.map((v) => {
     const bLuna = v.total_staked.find((token) => token.denom === bLunaDenom)?.amount || 0
     const ampLuna = v.total_staked.find((token) => token.denom === ampLunaDenom)?.amount || 0
     totalAmpLunaAmount += convertMicroDenomToDenom(ampLuna, 6)
@@ -107,38 +116,47 @@ const useValidators = ({ address }): UseValidatorsResult => {
 
   const { data: { delegations = [] } = {}, isFetched } = useDelegations({
     address,
-  });
+  })
 
   const { data: validatorInfo } = useQuery({
     queryKey: ['validatorInfo'],
-    queryFn: () => client?.staking.validators('migaloo-1'),
+    queryFn: async () => await client?.staking.validators('migaloo-1'),
     enabled: Boolean(client),
-  });
-  const { data, isFetching } = useQuery({
+  })
+
+  const { data: validatorData, isFetching } = useQuery({
     queryKey: ['validators', isFetched],
     queryFn: () => getValidators({ client,
       validatorInfo,
       delegations }),
     enabled: Boolean(client) && Boolean(validatorInfo) && Boolean(delegations),
-  });
+  })
+
   const { data: stakedWhale } = useQuery({
     queryKey: ['stakedWhale'],
-    queryFn: () => getStakedWhale({ client }),
-    enabled: Boolean(client),
+    queryFn: () => getStakedWhale({ validatorData }),
+    enabled: Boolean(validatorData),
   })
   const { data: lunaLSTData } = useQuery({
     queryKey: ['stakedLSTs'],
-    queryFn: () => getStakedLSTLunaAmounts({ client }),
-    enabled: Boolean(client),
+    queryFn: () => getStakedLSTLunaAmounts({ validatorData }),
+    enabled: Boolean(validatorData),
+  })
+
+  const { data: stakedWBtc } = useQuery({
+    queryKey: ['stakedWBtc'],
+    queryFn: () => getStakedWBtc({ validatorData }),
+    enabled: Boolean(validatorData),
   })
 
   return {
     data: {
-      validators: data?.validators || [],
-      pagination: data?.pagination || {},
+      validators: validatorData?.validators || [],
+      pagination: validatorData?.pagination || {},
       stakedWhale: stakedWhale || 0,
       stakedAmpLuna: lunaLSTData?.totalAmpLunaAmount || 0,
       stakedBLuna: lunaLSTData?.totalBLunaAmount || 0,
+      stakedWBtc: stakedWBtc?.totalWBtcAmount || 0,
     },
     isFetching,
   }

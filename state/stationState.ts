@@ -34,7 +34,7 @@ const createWalletState = ({
   dangerouslyAllowMutability: true,
 })
 
-export const chainState = createWalletState({
+export const stationState = createWalletState({
   key: 'internal-wallet',
   default: {
     key: null,

@@ -60,7 +60,7 @@ const Redelegate = ({
       tokenSymbol: token.symbol,
       validatorSrcAddress: chosenSrcValidator?.operator_address,
       validatorSrcName: chosenSrcValidator?.description.moniker,
-      decimals: 6,
+      decimals: token.decimals,
     });
   }, [chosenDestValidator, chosenSrcValidator]);
 
@@ -171,15 +171,16 @@ const Redelegate = ({
               onInputChange(value, 0);
               field.onChange(value);
               if (isTokenChange) {
-                const { denom } = tokens.find((t) => t.symbol === value.tokenSymbol);
+                const { denom, decimals } = tokens.find((t) => t.symbol === value.tokenSymbol);
                 setCurrentDelegationState({
                   ...currentDelegationState,
                   tokenSymbol: value.tokenSymbol,
                   amount: value.amount === '' ? 0 : value.amount,
                   denom,
-                });
+                  decimals,
+                })
                 await router.push({
-                  pathname: '/redelegate',
+                  pathname: '/alliance/redelegate',
                   query: {
                     validatorSrcAddress:
                       currentDelegationState.validatorSrcAddress,
@@ -192,7 +193,7 @@ const Redelegate = ({
                 setCurrentDelegationState({
                   ...currentDelegationState,
                   amount: value.amount === '' ? 0 : value.amount,
-                });
+                })
               }
             }}
           />

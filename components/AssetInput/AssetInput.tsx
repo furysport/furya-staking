@@ -41,13 +41,13 @@ const AssetInput = forwardRef((props: AssetInputProps, ref) => {
   const onMaxClick = () => {
     onChange({
       ...token,
-      amount: num(balance === 0 ? 0 : balance).toFixed(6),
+      amount: num(balance === 0 ? 0 : balance).toFixed(token?.decimals || 6),
     })
   }
   const onHalfClick = () => {
     onChange({
       ...token,
-      amount: num(balance === 0 ? 0 : balance / 2).toFixed(6),
+      amount: num(balance === 0 ? 0 : balance / 2).toFixed(token?.decimals || 6),
     })
   }
 
