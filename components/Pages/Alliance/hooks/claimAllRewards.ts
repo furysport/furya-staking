@@ -1,6 +1,6 @@
 import { SigningStargateClient } from '@cosmjs/stargate'
-import { MsgClaimDelegationRewards } from 'components/Pages/Alliance/MsgClaimDelegationRewards'
-import { MsgWithdrawDelegatorReward } from 'components/Pages/Alliance/MsgWithdrawDelegatorReward'
+import { MsgClaimDelegationRewards } from 'components/Pages/Alliance/types/MsgClaimDelegationRewards'
+import { MsgWithdrawDelegatorReward } from 'components/Pages/Alliance/types/MsgWithdrawDelegatorReward'
 import { ActionType } from 'components/Pages/Dashboard'
 
 export const claimAllRewards = async (

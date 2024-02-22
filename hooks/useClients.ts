@@ -2,8 +2,8 @@ import { useQueries } from 'react-query'
 
 import { GasPrice, SigningStargateClient } from '@cosmjs/stargate';
 import { useChain } from '@cosmos-kit/react-lite'
-import { MsgClaimDelegationRewards } from 'components/Pages/Alliance/MsgClaimDelegationRewards';
-import { MsgWithdrawDelegatorReward } from 'components/Pages/Alliance/MsgWithdrawDelegatorReward';
+import { MsgClaimDelegationRewards } from 'components/Pages/Alliance/types/MsgClaimDelegationRewards';
+import { MsgWithdrawDelegatorReward } from 'components/Pages/Alliance/types/MsgWithdrawDelegatorReward';
 import { MIGALOO_CHAIN_NAME } from 'constants/common';
 import { MsgDelegate, MsgUndelegate, MsgBeginRedelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
