@@ -27,14 +27,13 @@ export class MsgClaimDelegationRewards {
     return writer;
   }
 
-  // Dummy implementation of decode
-  // Adjusted decode method
   static decode(input: Reader | Uint8Array): MsgClaimDelegationRewardsInterface {
     const reader = input instanceof Reader ? input : new Reader(input);
-    let end = reader.len;
+    const end = reader.len;
     const message: Partial<MsgClaimDelegationRewardsInterface> = {};
     while (reader.pos < end) {
       const tag = reader.uint32();
+      // eslint-disable-next-line no-bitwise
       switch (tag >>> 3) {
         // Example decoding a string property
         case 1:
@@ -47,6 +46,7 @@ export class MsgClaimDelegationRewards {
           message.denom = reader.string();
           break;
         default:
+          // eslint-disable-next-line no-bitwise
           reader.skipType(tag & 7);
           break;
       }

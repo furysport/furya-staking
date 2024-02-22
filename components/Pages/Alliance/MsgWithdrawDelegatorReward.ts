@@ -38,6 +38,7 @@ export class MsgWithdrawDelegatorReward {
     const message = new MsgWithdrawDelegatorReward('', '');
     while (reader.pos < end) {
       const tag = reader.uint32();
+      // eslint-disable-next-line no-bitwise
       switch (tag >>> 3) {
         case 1:
           message.delegatorAddress = reader.string();
@@ -46,6 +47,7 @@ export class MsgWithdrawDelegatorReward {
           message.validatorAddress = reader.string();
           break;
         default:
+          // eslint-disable-next-line no-bitwise
           reader.skipType(tag & 7);
           break;
       }
