@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { Box, HStack, Text, VStack } from '@chakra-ui/react';
+import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
+import { Box, HStack, Text, VStack } from '@chakra-ui/react'
 import {
   ColumnDef,
   createColumnHelper, flexRender,
@@ -10,9 +10,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import Loader from 'components/Loader';
-import { Token } from 'components/Pages/AssetOverview';
+} from '@tanstack/react-table'
+import Loader from 'components/Loader'
+import { Token } from 'components/Pages/AssetOverview'
 
 export type DashboardData = {
     logo: any
@@ -132,7 +132,7 @@ const columns: ColumnDef<DashboardData, any>[] = [
 const AssetTable = ({ dashboardData, initialized }) => {
   const [sorting, setSorting] = useState<any>([
     {
-      desc: false,
+      desc: true,
       id: 'symbol',
     },
   ])
@@ -155,7 +155,7 @@ const AssetTable = ({ dashboardData, initialized }) => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-  });
+  })
 
   return (
     <VStack width="full" minW="1270px" borderRadius={'30px'} pr={5} pb={5}>
@@ -228,7 +228,7 @@ const AssetTable = ({ dashboardData, initialized }) => {
         </Text>
       )}
     </VStack>
-  );
-};
+  )
+}
 
 export default AssetTable

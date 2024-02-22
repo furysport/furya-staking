@@ -91,6 +91,7 @@ export const DashboardTab = ({ priceList }) => {
     setDashboardData(dashboardData)
     setInitialized(true)
   }, [vtRewardShares, totalStakedBalances, stakedAmpLuna, stakedBLuna, stakedWhale, stakedWBtc, priceList, lpTokenPrices, aprs])
+
   return <VStack
     pt={12}
     alignItems={'flex-start'}

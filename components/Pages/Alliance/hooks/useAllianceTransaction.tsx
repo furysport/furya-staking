@@ -10,7 +10,6 @@ import { allianceUndelegate } from 'components/Pages/Alliance/hooks/allianceUnde
 // Native staking
 import { claimAllRewards } from 'components/Pages/Alliance/hooks/claimAllRewards';
 import { nativeDelegate } from 'components/Pages/Alliance/hooks/nativeDelegate';
-// Import { nativeRedelegate } from 'components/Pages/Alliance/hooks/nativeRedelegate';
 import { nativeUndelegate } from 'components/Pages/Alliance/hooks/nativeUndelegate';
 import { ActionType } from 'components/Pages/Dashboard';
 import { updateRewards } from 'hooks/updateRewards';
