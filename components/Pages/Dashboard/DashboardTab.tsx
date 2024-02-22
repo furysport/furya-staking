@@ -16,7 +16,7 @@ import tokens from 'public/mainnet/tokens.json';
 import { useRecoilValue } from 'recoil';
 import { chainState } from 'state/chainState';
 
-const dashboardTokenSymbols = [Token.WHALE, Token.mUSDC, Token.ampLUNA, Token.bLUNA, Token.ASH, Token['USDC-WHALE-LP'], Token['WHALE-wBTC-LP']]
+const dashboardTokenSymbols = [Token.WHALE, Token.mUSDC, Token.ampLUNA, Token.bLUNA, Token.ASH, Token['USDC-WHALE-LP'], Token['WHALE-wBTC-LP'], Token.wBTC]
 export const DashboardTab = ({ priceList }) => {
   const { walletChainName } = useRecoilValue(chainState)
   const { address } = useChain(walletChainName)
@@ -26,7 +26,7 @@ export const DashboardTab = ({ priceList }) => {
 
   const { vtRewardShares, totalStakedBalances } = useAssetsData()
 
-  const { data: { stakedAmpLuna, stakedBLuna, stakedWhale } } = useValidators({ address })
+  const { data: { stakedAmpLuna, stakedBLuna, stakedWhale, stakedWBtc } } = useValidators({ address })
   const [aprs, setAprs] = useState<Apr[]>([])
   const allianceAPRs = useCalculateAllianceAprs({ address })
   const otherAprs = useCalculateAprs()
@@ -46,13 +46,30 @@ export const DashboardTab = ({ priceList }) => {
   }, [vtRewardShares, allianceAPRs, otherAprs])
 
   useEffect(() => {
-    if (!totalStakedBalances || !stakedAmpLuna || !stakedBLuna || !stakedWhale || !priceList || !lpTokenPrices || aprs.length === 0) {
+    if (!totalStakedBalances || !stakedAmpLuna || !stakedBLuna || !stakedWhale || !stakedWBtc || !priceList || !lpTokenPrices || aprs.length === 0) {
       return
     }
     const dashboardData = dashboardTokenSymbols.map((symbol) => {
       const asset = tokens.find((token) => token.symbol === symbol)
       const totalStakedBalance = totalStakedBalances.find((balance) => balance.tokenSymbol === symbol)
-      const totalAmount = asset.symbol === Token.bLUNA ? stakedBLuna : asset.symbol === Token.ampLUNA ? stakedAmpLuna : asset.symbol === Token.WHALE ? stakedWhale : totalStakedBalance?.totalAmount || 0
+      let totalAmount = 0
+      switch (asset.symbol) {
+        case Token.bLUNA:
+          totalAmount = stakedBLuna
+          break
+        case Token.ampLUNA:
+          totalAmount = stakedAmpLuna
+          break
+        case Token.WHALE:
+          totalAmount = stakedWhale;
+          break
+        case Token.wBTC:
+          totalAmount = stakedWBtc
+          break
+        default:
+          totalAmount = totalStakedBalance?.totalAmount || 0
+          break
+      }
       const apr = aprs?.find((apr) => apr.name === symbol)
       return {
         logo: symbol === 'USDC-WHALE-LP' ? <USDCWhaleLogo/> : symbol === 'WHALE-wBTC-LP' ? <WhaleBtcLogo/> :
@@ -73,7 +90,7 @@ export const DashboardTab = ({ priceList }) => {
     })
     setDashboardData(dashboardData)
     setInitialized(true)
-  }, [vtRewardShares, totalStakedBalances, stakedAmpLuna, stakedBLuna, stakedWhale, priceList, lpTokenPrices, aprs])
+  }, [vtRewardShares, totalStakedBalances, stakedAmpLuna, stakedBLuna, stakedWhale, stakedWBtc, priceList, lpTokenPrices, aprs])
   return <VStack
     pt={12}
     alignItems={'flex-start'}

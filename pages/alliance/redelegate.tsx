@@ -4,16 +4,16 @@ import { useRouter } from 'next/router';
 
 const RedelegatePage = () => {
   const router = useRouter();
-  const { validatorDestAddress } = router.query;
-  const { validatorSrcAddress } = router.query;
-  const { tokenSymbol } = router.query;
+  const { validatorDestAddress } = router.query
+  const { validatorSrcAddress } = router.query
+  const { tokenSymbol } = router.query
 
   return (
     <ActionsComponent
       globalAction={ActionType.redelegate}
-      validatorDestAddress={validatorDestAddress}
-      validatorSrcAddress={validatorSrcAddress}
-      tokenSymbol={tokenSymbol.toString()}
+      validatorDestAddress={validatorDestAddress as string}
+      validatorSrcAddress={validatorSrcAddress as string}
+      tokenSymbol={tokenSymbol as string}
     />
   );
 };

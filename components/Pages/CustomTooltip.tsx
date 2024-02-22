@@ -23,7 +23,7 @@ export const CustomTooltip = ({
         {Token[tokenType]}
       </Text>
       <Text fontSize={14}>
-        {isWalletConnected ? `${value.toLocaleString()}` : '$0'}
+        {isWalletConnected ? `${value.toFixed(6)}` : '$0'}
       </Text>
     </HStack>
   );

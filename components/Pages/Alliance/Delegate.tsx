@@ -49,7 +49,7 @@ const Delegate: FC<ActionProps> = ({
       ...currentDelegationState,
       tokenSymbol: token.symbol,
       amount: 0,
-      decimals: 6,
+      decimals: token.decimals,
       validatorSrcAddress: null,
       validatorDestAddress,
       validatorDestName: chosenValidator?.description.moniker,
@@ -85,7 +85,7 @@ const Delegate: FC<ActionProps> = ({
             delegatedOnly={false}
             validatorName={currentDelegationState.validatorDestName}
             onChange={async (validator) => {
-              field.onChange(validator);
+              field.onChange(validator)
               setCurrentDelegationState({
                 ...currentDelegationState,
                 validatorDestAddress: validator.operator_address,
@@ -120,13 +120,14 @@ const Delegate: FC<ActionProps> = ({
             onChange={async (value, isTokenChange) => {
               field.onChange(value);
               if (isTokenChange) {
-                const { denom } = tokens.find((t) => t.symbol === value.tokenSymbol);
+                const { denom, decimals } = tokens.find((t) => t.symbol === value.tokenSymbol);
                 setCurrentDelegationState({
                   ...currentDelegationState,
                   tokenSymbol: value.tokenSymbol,
                   amount: value.amount === '' ? 0 : Number(value.amount),
                   denom,
-                });
+                  decimals,
+                })
                 await router.push({
                   pathname: '/alliance/delegate',
                   query: {

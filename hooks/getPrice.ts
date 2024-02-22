@@ -36,7 +36,6 @@ const getLCDClient = () => new LCDClient({
 const getPriceFromPool = ({ denom, decimals, contract, base, basedOn }: PoolInfo,
   basePrice?: TokenPrice): Promise<number> => {
   const client = getLCDClient()
-
   return client.wasm.
     contractQuery(contract, { pool: {} }).
     then((response: any) => {

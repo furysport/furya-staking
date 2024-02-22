@@ -97,28 +97,26 @@ const RewardsComponent: FC<UndelegationsProps> = ({
             justifyContent={showRewards ? null : 'center'}
             flexDirection={showRewards ? null : 'column'}>
             {showRewards ? data?.map((reward, index) => {
-              const logoURI = tokens.find((token) => token.symbol === reward.symbol)?.logoURI
+              const token = tokens.find((token) => token.symbol === reward.symbol)
               return (<Box key={index} marginY={3}>
                 <HStack justifyContent="space-between" width="100%" pr={3}>
                   <HStack>
-                    {logoURI && <Image
-                      src={logoURI}
+                    {token?.logoURI && <Image
+                      src={token?.logoURI}
                       width={5}
                       height={5}
                       marginRight={2}/>}
                     <Text>{reward.symbol}</Text>
                   </HStack>
                   <Text>
-                    {isWalletConnected
-                      ? `${reward.amount === 0 ? 0 : reward.amount?.toFixed(6)}`
-                      : '$0'}
+                    {`${reward.amount === 0 ? 0 : reward.amount?.toFixed(token?.decimals || 6)}`}
                   </Text>
                 </HStack>
                 <HStack justifyContent="flex-end" pr={3}>
                   <Text
                     marginBottom={1}
                     fontSize={11}
-                    color={isWalletConnected ? 'white' : 'transparent'}
+                    color={'white'}
                   >{`≈$${reward.dollarValue?.toFixed(2).toString()}`}</Text>
                 </HStack>
                 {(index < (data?.length || 0) - 1) && <Divider/>}

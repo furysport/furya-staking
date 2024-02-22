@@ -70,13 +70,12 @@ const AssetOverview = ({
         <HStack
           alignItems="center"
           justifyContent="space-between"
-          pl={8}
-          pt={3}
+          pl={5}
+          py={5}
           spacing={35}
         >
-          <Box maxHeight={290} minW={100} overflowY="auto" backgroundColor="#1C1C1C"
-            mb="4"
-            borderRadius="10px">
+          <Box height={290} minW={100} overflowY="auto" backgroundColor="#1C1C1C"
+            borderRadius="20px">
             <Table variant="simple">
               <Thead>
                 <Tr>
@@ -113,7 +112,7 @@ const AssetOverview = ({
                   : [{ value: 1 }]
               }
               cx="42%"
-              cy="45%"
+              cy="50%"
               innerRadius={95}
               outerRadius={120}
               dataKey="value"

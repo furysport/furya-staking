@@ -43,7 +43,7 @@ const Undelegate = ({ delegations, validatorSrcAddress, tokenSymbol }) => {
       validatorDestAddress: null,
       tokenSymbol: token.symbol,
       amount: 0,
-      decimals: 6,
+      decimals: token.decimals,
       validatorSrcAddress: chosenSrcValidator?.operator_address,
       validatorSrcName: chosenSrcValidator?.description.moniker,
       denom: token.denom,
@@ -125,12 +125,13 @@ const Undelegate = ({ delegations, validatorSrcAddress, tokenSymbol }) => {
               onInputChange(value, 0);
               field.onChange(value);
               if (isTokenChange) {
-                const { denom } = tokens.find((t) => t.symbol === value.tokenSymbol);
+                const { denom, decimals } = tokens.find((t) => t.symbol === value.tokenSymbol);
                 setCurrentDelegationState({
                   ...currentDelegationState,
                   tokenSymbol: value.tokenSymbol,
                   amount: value.amount === '' ? 0 : value.amount,
                   denom,
+                  decimals,
                 });
                 await router.push({
                   pathname: '/alliance/undelegate',

@@ -12,6 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import Loader from 'components/Loader';
+import { Token } from 'components/Pages/AssetOverview';
 
 export type DashboardData = {
     logo: any
@@ -68,10 +69,13 @@ const columns: ColumnDef<DashboardData, any>[] = [
                 Total Staked
       </Text>
     ),
-    cell: (info) => info.getValue()?.toLocaleString('en-US', {
+    cell: (info) => (info.row.original.symbol === Token.wBTC ? info.getValue()?.toLocaleString('en-US', {
+      minimumFractionDigits: 8,
+      maximumFractionDigits: 8,
+    }) : info.getValue()?.toLocaleString('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }),
+    })),
   }),
   columnHelper.accessor('totalValueStaked', {
     enableSorting: true,

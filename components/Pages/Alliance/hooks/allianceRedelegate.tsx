@@ -1,26 +1,21 @@
-import { Coin, MsgAllianceRedelegate } from '@terra-money/feather.js';
-import { ActionType } from 'components/Pages/Dashboard';
-import { TerraStationWallet } from 'util/wallet-adapters/terraStationWallet';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { Coin } from '@terra-money/feather.js';
+import { MsgBeginRedelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 export const allianceRedelegate = async (
-  wallet: TerraStationWallet,
-  destBlockchain: string,
+  client: SigningStargateClient,
   validatorSrcAddress: string,
   validatorDstAddress: string,
   address: string,
-  amount: number,
+  amount: string,
   allianceDenom: string,
-) => {
-  const handleMsg = new MsgAllianceRedelegate(
-    address,
-    validatorSrcAddress,
-    validatorDstAddress,
-    new Coin(allianceDenom, amount),
-  );
-  const result = await wallet.client.post({
-    chainID: destBlockchain,
-    msgs: [handleMsg],
-  })
-  const actionType = ActionType.redelegate
-  return { result,
-    actionType }
-}
+) => await client.signAndBroadcast(
+  address, [({
+    typeUrl: '/alliance.alliance.MsgRedelegate',
+    value: MsgBeginRedelegate.fromJSON({
+      delegatorAddress: address,
+      validatorSrcAddress,
+      validatorDstAddress,
+      amount: new Coin(allianceDenom, amount),
+    }),
+  })], 'auto',
+)

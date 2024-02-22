@@ -10,8 +10,8 @@ const UndelegatePage = () => {
   return (
     <ActionsComponent
       globalAction={ActionType.undelegate}
-      validatorSrcAddress={validatorSrcAddress}
-      tokenSymbol={tokenSymbol.toString()}
+      validatorSrcAddress={validatorSrcAddress as string}
+      tokenSymbol={tokenSymbol as string}
     />
   );
 };

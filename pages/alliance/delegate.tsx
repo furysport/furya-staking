@@ -10,8 +10,8 @@ const DelegatePage = () => {
   return (
     <ActionsComponent
       globalAction={ActionType.delegate}
-      validatorDestAddress={validatorDestAddress}
-      tokenSymbol={tokenSymbol}
+      validatorDestAddress={validatorDestAddress as string}
+      tokenSymbol={tokenSymbol as string}
     />
   );
 };
