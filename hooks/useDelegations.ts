@@ -18,12 +18,12 @@ export const getDelegation = async (
 
   // This needs to be reworked such that if denom is whale we use client.distribution.rewards instead
   const getRewards = (delegations: any) => Promise.all(delegations?.map(async (item: any) => {
-    const { delegator_address, validator_address, denom } = item.delegation;
+    const { delegator_address: delegatorAddress, validator_address: validatorAddress, denom } = item.delegation;
 
     return item.type === 'native'
       ? await client?.distribution.
         getReqFromAddress(delegatorAddress).
-        get<{ rewards?: any }>(`/cosmos/distribution/v1beta1/delegators/${delegator_address}/rewards/${validator_address}`,
+        get<{ rewards?: any }>(`/cosmos/distribution/v1beta1/delegators/${delegatorAddress}/rewards/${validatorAddress}`,
           {}).
         then(({ rewards }) => ({
           ...item,
@@ -35,7 +35,7 @@ export const getDelegation = async (
         }))
       : await client?.alliance.
         getReqFromAddress(delegatorAddress).
-        get<{ rewards?: Coins }>(`/terra/alliances/rewards/${delegator_address}/${validator_address}/${denom}`,
+        get<{ rewards?: Coins }>(`/terra/alliances/rewards/${delegatorAddress}/${validatorAddress}/${denom}`,
           {}).
         then(({ rewards }) => ({
           ...item,
