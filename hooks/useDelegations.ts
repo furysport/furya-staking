@@ -5,6 +5,7 @@ import useLCDClient from 'hooks/useLCDClient';
 import usePrices from 'hooks/usePrices';
 import { num } from 'libs/num';
 import tokens from 'public/mainnet/white_listed_alliance_token_info.json';
+import { TabType } from 'state/tabState'
 
 export const getDelegation = async (
   client: LCDClient | null,
@@ -24,28 +25,10 @@ export const getDelegation = async (
         getReqFromAddress(delegatorAddress).
         get<{ rewards?: any }>(`/cosmos/distribution/v1beta1/delegators/${delegator_address}/rewards/${validator_address}`,
           {}).
-        then(({ rewards }) =>
-        /*
-         * Rewards result must look like this
-         * [
-         *     {
-         *         "denom": "ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A",
-         *         "amount": "144"
-         *     },
-         *     {
-         *         "denom": "ibc/40C29143BF4153B365089E40E437B7AA819672646C45BB0A5F1E10915A0B6708",
-         *         "amount": "108"
-         *     },
-         *     {
-         *         "denom": "uwhale",
-         *         "amount": "5384038"
-         *     }
-         * ]
-         */
-          ({
-            ...item,
-            rewards,
-          })).
+        then(({ rewards }) => ({
+          ...item,
+          rewards,
+        })).
         catch(() => ({
           ...item,
           rewards: null,
@@ -84,8 +67,8 @@ export const getDelegation = async (
         amount: `${String(item.balance.amount)}` || 0,
       },
     })),
-    ...allianceStakeResponse?.map((item: any) => ({
-      type: 'alliance',
+    ...allianceStakeResponse.map((item: any) => ({
+      type: TabType.alliance,
       delegation: item.delegation,
       balance: item.balance,
     })),
@@ -121,7 +104,6 @@ export const getDelegation = async (
       const rewards = rewardTokens.map((rt) => {
         const amount = num(rt.amount).
           div(10 ** rt.decimals).
-          dp(rt.decimals).
           toNumber();
         return {
           amount,

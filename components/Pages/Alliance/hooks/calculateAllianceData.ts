@@ -48,7 +48,7 @@ export const calculateAllianceData = (
     }
   };
   const calculateRewardData = () => {
-    const allRewards = delegations?.map((d) => d.rewards);
+    const allRewards = delegations?.map((d) => d.rewards)
     const concatenatedRewards: Reward[] = allRewards.reduce((acc: Reward[], currList: Reward[]) => acc.concat(currList),
       [])
 

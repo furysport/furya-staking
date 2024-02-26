@@ -1,14 +1,15 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo } from 'react'
 
-import { Box, Divider, Image, HStack, Text, VStack } from '@chakra-ui/react';
-import { useChain } from '@cosmos-kit/react-lite';
-import Loader from 'components/Loader';
-import ClaimButton from 'components/Pages/ClaimButton';
+import { Box, Divider, Image, HStack, Text, VStack } from '@chakra-ui/react'
+import { useChain } from '@cosmos-kit/react-lite'
+import Loader from 'components/Loader'
+import { Token } from 'components/Pages/AssetOverview'
+import ClaimButton from 'components/Pages/ClaimButton'
 import UpdateRewardsButton from 'components/Pages/UpdateRewardsButton';
-import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { MIGALOO_CHAIN_NAME } from 'constants/common'
 import tokens from 'public/mainnet/tokens.json'
 import { useRecoilValue } from 'recoil'
-import { tabState, TabType } from 'state/tabState';
+import { tabState, TabType } from 'state/tabState'
 
 interface UndelegationsProps {
   isWalletConnected: boolean;
@@ -109,7 +110,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
                     <Text>{reward.symbol}</Text>
                   </HStack>
                   <Text>
-                    {`${reward.amount === 0 ? 0 : reward.amount?.toFixed(token?.decimals || 6)}`}
+                    {`${reward.amount === 0 ? 0 : reward.amount?.toFixed(token.symbol === Token.wBTC ? 10 : token?.decimals || 6)}`}
                   </Text>
                 </HStack>
                 <HStack justifyContent="flex-end" pr={3}>
