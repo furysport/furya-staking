@@ -1,18 +1,18 @@
 import { useQuery } from 'react-query';
 
 import { useChain } from '@cosmos-kit/react-lite';
-import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { FURYA_CHAIN_NAME } from 'constants/common';
 import { useClients } from 'hooks/useClients';
 import { DEFAULT_TOKEN_BALANCE_REFETCH_INTERVAL } from 'util/constants';
 import { convertMicroDenomToDenom } from 'util/conversion';
 
-const fetchWhaleBalance = async ({ client, address }) => {
-  const coin = await client.getBalance(address, 'uwhale')
+const fetchFuryBalance = async ({ client, address }) => {
+  const coin = await client.getBalance(address, 'ufury')
   const amount = coin ? Number(coin.amount) : 0
   return convertMicroDenomToDenom(amount, 6)
 }
-export const useGetWhaleBalance = () => {
-  const { address } = useChain(MIGALOO_CHAIN_NAME)
+export const useGetFuryBalance = () => {
+  const { address } = useChain(FURYA_CHAIN_NAME)
   const { cosmWasmClient: client } = useClients()
 
   const {
@@ -21,7 +21,7 @@ export const useGetWhaleBalance = () => {
     refetch,
   } = useQuery(
     ['tokenBalance', address],
-    async () => await fetchWhaleBalance({
+    async () => await fetchFuryBalance({
       client,
       address,
     }),

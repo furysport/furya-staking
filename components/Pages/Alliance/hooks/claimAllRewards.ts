@@ -8,7 +8,7 @@ export const claimAllRewards = async (
   delegations: any, address: string,
 ) => {
   const msgs = delegations.map(({ delegation }) => {
-    if (delegation.denom === 'uwhale') {
+    if (delegation.denom === 'ufury') {
       return ({
         typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
         value: MsgWithdrawDelegatorReward.fromJSON({

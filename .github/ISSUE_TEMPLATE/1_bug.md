@@ -1,24 +1,24 @@
 ---
 name: Bug on alliance-staking application
-about: You are interacting with White Whale's Alliance frontend, and you are getting an unexpected behavior, an exception, or something looks wrong.
+about: You are interacting with White Fury's Alliance frontend, and you are getting an unexpected behavior, an exception, or something looks wrong.
 title: ''
 labels: 'bug'
 assignees: ''
 ---
 
-<!-- Thank you for using White Whale Migaloo!
+<!-- Thank you for using White Fury Furya!
 
      If you are looking for support, please check out our documentation
      or consider asking a question on Discord's smart contract channel or the general contributors channel:
-      * https://whitewhale.money/
-      * https://white-whale-defi-platform.github.io/docs/
+      * https://whitefury.money/
+      * https://fanfury-defi-platform.github.io/docs/
       * https://discordapp.com/channels/908044702794801233/987301947440767006
 
      If you have found a bug or if our documentation doesn't have an answer
      to what you're looking for, then fill out the template below.
 -->
 
-If you want to report a security issue, please follow our security policy: `https://github.com/White-Whale-Defi-Platform/alliance-staking/blob/main/docs/SECURITY.md`
+If you want to report a security issue, please follow our security policy: `https://github.com/White-Fury-Defi-Platform/alliance-staking/blob/main/docs/SECURITY.md`
 
 ---
 

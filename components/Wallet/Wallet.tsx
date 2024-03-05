@@ -8,11 +8,11 @@ import { ChainSelectWithBalance } from 'components/Wallet/ChainSelectWithBalance
 import {
   ConnectedWalletWithDisconnect,
 } from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWalletWithDisconnect';
-import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { FURYA_CHAIN_NAME } from 'constants/common';
 import { queryClient } from 'services/queryClient';
 
 const Wallet: any = () => {
-  const { openView, disconnect, isWalletConnected } = useChain(MIGALOO_CHAIN_NAME);
+  const { openView, disconnect, isWalletConnected } = useChain(FURYA_CHAIN_NAME);
 
   const resetWallet = async () => {
     await disconnect()

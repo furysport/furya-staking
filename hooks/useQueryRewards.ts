@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { useChain } from '@cosmos-kit/react-lite';
-import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { FURYA_CHAIN_NAME } from 'constants/common';
 import { useClients } from 'hooks/useClients';
 import file from 'public/mainnet/contract_addresses.json'
 import tokens from 'public/mainnet/tokens.json';
@@ -52,7 +52,7 @@ const getRewards = async (
   })
 }
 export const useQueryRewards = () => {
-  const { address } = useChain(MIGALOO_CHAIN_NAME)
+  const { address } = useChain(FURYA_CHAIN_NAME)
   const { cosmWasmClient: client } = useClients()
   const { data, isLoading } = useQuery({
     queryKey: ['rewards', file.alliance_contract, address],

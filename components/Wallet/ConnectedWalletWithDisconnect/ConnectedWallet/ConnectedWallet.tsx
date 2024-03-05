@@ -4,11 +4,11 @@ import { Button, HStack, useToast } from '@chakra-ui/react';
 import { useChain } from '@cosmos-kit/react-lite';
 import { ConnectedWalletIcon } from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/ConnectedWalletIcon';
 import TruncatedAddress from 'components/Wallet/ConnectedWalletWithDisconnect/ConnectedWallet/TruncatedAddress';
-import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { FURYA_CHAIN_NAME } from 'constants/common';
 
 export const ConnectedWallet = () => {
   const toast = useToast();
-  const { address } = useChain(MIGALOO_CHAIN_NAME)
+  const { address } = useChain(FURYA_CHAIN_NAME)
   const copyToClipboard = () => {
     try {
       navigator.clipboard.writeText(address);

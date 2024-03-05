@@ -1,17 +1,17 @@
 ---
 name: New Chain deployment request or pool deployment
-about: Suggest a new chain for White Whale to deploy its contracts on and to have an associated frontend integration for. Alternatively suggest new pools for an existing chain
+about: Suggest a new chain for White Fury to deploy its contracts on and to have an associated frontend integration for. Alternatively suggest new pools for an existing chain
 title: ''
 labels: 'enhancement'
 assignees: ''
 ---
 
-<!-- Thank you for using White Whale Migaloo!
+<!-- Thank you for using White Fury Furya!
 
      If you are looking for support, please check out our documentation
      or consider asking a question on Discord's smart contract or contributors channel:
-      * https://whitewhale.money/
-      * https://white-whale-defi-platform.github.io/docs/
+      * https://whitefury.money/
+      * https://fanfury-defi-platform.github.io/docs/
       * https://discordapp.com/channels/908044702794801233/987301947440767006
 
      If you have found a bug or if our documentation doesn't have an answer
@@ -30,7 +30,7 @@ Currently the frontend supports or in the past has been able to support 6 and th
 If your desired token has a different number of decimals there may need to be an additional change needed. For the most part this should be fine.
 
 <!--
-     Please detail what you want to be added to the Migaloo frontend.
+     Please detail what you want to be added to the Furya frontend.
      Is it an entirely new chain configuration with a number of pools?
      Is it simply 1 or 2 pools on an existing chain?
 
@@ -149,7 +149,7 @@ My second ibc token
 ## Proposal
 
 <!--
-     Briefly but precisely describe what you would like Migaloo to be able to do.
+     Briefly but precisely describe what you would like Furya to be able to do.
 
      Consider attaching something showing what you are imagining:
       * images
@@ -157,7 +157,7 @@ My second ibc token
       * code samples
       * figma designs
 
-     Does this have to be provided by White Whale directly, or can it be provided
+     Does this have to be provided by White Fury directly, or can it be provided
      by a third-party contract? If so, maybe consider implementing and
      share it with the community rather than filing a bug.
 -->

@@ -4,7 +4,7 @@ import { GasPrice, SigningStargateClient } from '@cosmjs/stargate';
 import { useChain } from '@cosmos-kit/react-lite'
 import { MsgClaimDelegationRewards } from 'components/Pages/Alliance/types/MsgClaimDelegationRewards';
 import { MsgWithdrawDelegatorReward } from 'components/Pages/Alliance/types/MsgWithdrawDelegatorReward';
-import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { FURYA_CHAIN_NAME } from 'constants/common';
 import { MsgDelegate, MsgUndelegate, MsgBeginRedelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 
 export const useClients = () => {
@@ -15,7 +15,7 @@ export const useClients = () => {
     isWalletConnected,
     setDefaultSignOptions,
     wallet,
-  } = useChain(MIGALOO_CHAIN_NAME)
+  } = useChain(FURYA_CHAIN_NAME)
   if (isWalletConnected && !wallet.name.includes('station')) {
     try {
       setDefaultSignOptions({
@@ -42,7 +42,7 @@ export const useClients = () => {
       queryFn: async () => {
         const offlineSigner = getOfflineSignerDirect()
         const stargateClient = await SigningStargateClient.connectWithSigner(
-          'https://migaloo-rpc.polkachu.com:443', offlineSigner, { gasPrice: GasPrice.fromString('2uwhale') },
+          'https://rpc.furya.xyz', offlineSigner, { gasPrice: GasPrice.fromString('2ufury') },
         )
         stargateClient.registry.register('/alliance.alliance.MsgDelegate', MsgDelegate)
         stargateClient.registry.register('/alliance.alliance.MsgUndelegate', MsgUndelegate)

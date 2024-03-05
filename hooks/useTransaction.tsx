@@ -5,7 +5,7 @@ import { useToast } from '@chakra-ui/react';
 import { useChain } from '@cosmos-kit/react-lite';
 import Finder from 'components/Finder';
 import { ActionType } from 'components/Pages/Dashboard';
-import { MIGALOO_CHAIN_ID, MIGALOO_CHAIN_NAME } from 'constants/common';
+import { FURYA_CHAIN_ID, FURYA_CHAIN_NAME } from 'constants/common';
 import { claimRewards } from 'hooks/claimRewards';
 import { delegate } from 'hooks/delegate';
 import { undelegate } from 'hooks/undelegate';
@@ -16,7 +16,7 @@ import { isNativeToken } from 'util/isNative';
 
 export const useTransaction = () => {
   const toast = useToast();
-  const { address } = useChain(MIGALOO_CHAIN_NAME)
+  const { address } = useChain(FURYA_CHAIN_NAME)
   const { signingClient: client } = useClients()
   const [txStep, setTxStep] = useState<TxStep>(TxStep.Idle);
   const [delegationAction, setDelegationAction] = useState<ActionType>(ActionType.delegate)
@@ -117,7 +117,7 @@ export const useTransaction = () => {
       ) {
         setError(e?.toString());
         message = (
-          <Finder txHash={txInfo?.hash} chainId={MIGALOO_CHAIN_ID}>
+          <Finder txHash={txInfo?.hash} chainId={FURYA_CHAIN_ID}>
             {' '}
           </Finder>
         );
@@ -160,7 +160,7 @@ export const useTransaction = () => {
             }
           })(),
           description: (
-            <Finder txHash={data?.transactionHash ?? data?.result?.txhash} chainId={MIGALOO_CHAIN_ID}>
+            <Finder txHash={data?.transactionHash ?? data?.result?.txhash} chainId={FURYA_CHAIN_ID}>
               {' '}
             </Finder>
           ),

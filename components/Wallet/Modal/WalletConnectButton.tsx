@@ -8,7 +8,7 @@ import { ShellWalletIcon } from 'components/icons/ShellWalletIcon';
 import { TerraStationWalletIcon } from 'components/icons/TerraStationWalletIcon';
 import { WalletConnectIcon } from 'components/icons/WalletConnectIcon';
 import { WalletType } from 'components/Wallet/Modal/WalletModal'
-import { MIGALOO_CHAIN_ID } from 'constants/common';
+import { FURYA_CHAIN_ID } from 'constants/common';
 
 interface Props {
   onCloseModal: () => void
@@ -40,7 +40,7 @@ export const WalletConnectButton = ({ onCloseModal, connect, walletType }: Props
     let err = false
     if (walletType === WalletType.keplrExtension && window.keplr) {
       const connected = ((await window.keplr?.getChainInfosWithoutEndpoints()) ?? []).map((elem) => elem.chainId)
-      const keplrChains: any[] = await getKeplrChains(['migaloo-1'])
+      const keplrChains: any[] = await getKeplrChains(['furya-1'])
       for (const chain of keplrChains) {
         if (!connected?.includes(chain.chainId)) {
           // eslint-disable-next-line no-await-in-loop
@@ -51,11 +51,11 @@ export const WalletConnectButton = ({ onCloseModal, connect, walletType }: Props
     if ((walletType === WalletType.terraExtension || walletType === WalletType.keplrExtension)) {
       const windowConnection = walletType === WalletType.terraExtension ? (window.station?.keplr) : (window?.keplr)
       try {
-        await (windowConnection.getKey(MIGALOO_CHAIN_ID))
+        await (windowConnection.getKey(FURYA_CHAIN_ID))
       } catch (e) {
         err = true
-        console.error(`${MIGALOO_CHAIN_ID} not activated`)
-        handleChainActivationError('migaloo', toast);
+        console.error(`${FURYA_CHAIN_ID} not activated`)
+        handleChainActivationError('furya', toast);
       }
     }
     if (!err) {

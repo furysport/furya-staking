@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { Spinner, Text } from '@chakra-ui/react'
-import { useGetWhaleBalance } from 'hooks/useGetWhaleBalance'
+import { useGetFuryBalance } from 'hooks/useGetFuryBalance'
 
 const DisplayBalance = () => {
-  const { balance, isLoading } = useGetWhaleBalance()
+  const { balance, isLoading } = useGetFuryBalance()
 
   return (
     <>

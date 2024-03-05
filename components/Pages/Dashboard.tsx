@@ -13,7 +13,7 @@ import { calculateEcosystemData } from 'components/Pages/Ecosystem/calculateEcos
 import { EcosystemTab } from 'components/Pages/Ecosystem/EcosystemTab'
 import { calculateLiquidityData } from 'components/Pages/Liquidity/calculateLiquidityData'
 import { LiquidityTab } from 'components/Pages/Liquidity/LiquidityTab'
-import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { FURYA_CHAIN_NAME } from 'constants/common';
 import useDelegations from 'hooks/useDelegations'
 import { useGetLPTokenPrices } from 'hooks/useGetLPTokenPrices'
 import usePrices from 'hooks/usePrices'
@@ -58,7 +58,7 @@ export interface DelegationData {
 }
 
 const Dashboard = () => {
-  const { address, isWalletConnected } = useChain(MIGALOO_CHAIN_NAME)
+  const { address, isWalletConnected } = useChain(FURYA_CHAIN_NAME)
 
   const rawAllianceTokenData = useMemo(() => whiteListedAllianceTokens.map((t) => ({
     token: Token[t.symbol],

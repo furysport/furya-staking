@@ -2,7 +2,7 @@ import { Token } from 'components/Pages/AssetOverview';
 
 export const getColorByTokenSymbol = (symbol: string) : string => {
   switch (symbol) {
-    case Token.WHALE:
+    case Token.FURY:
       return '#13B55A'
     case Token.ASH:
       return 'lightgreen'
@@ -10,11 +10,11 @@ export const getColorByTokenSymbol = (symbol: string) : string => {
       return '#ADD8FD'
     case Token.bLUNA:
       return 'orange'
-    case Token.mUSDC:
+    case Token.USK:
       return '#189AE9'
-    case Token['USDC-WHALE-LP']:
+    case Token['USK-FURY-LP']:
       return 'yellow'
-    case Token['WHALE-wBTC-LP']:
+    case Token['FURY-wBTC-LP']:
       return 'red'
     case Token.wBTC:
       return 'darkorange'

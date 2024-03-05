@@ -28,7 +28,7 @@ const getValidators = ({
   };
 
   return client?.alliance.
-    alliancesByValidators('migaloo-1').
+    alliancesByValidators('furya-1').
     then((data) => {
       const [validators = [], pagination] = validatorInfo || [];
 
@@ -68,7 +68,7 @@ const getValidators = ({
       return [[], {}];
     })
 };
-const getStakedWhale = async ({ validatorData }) => {
+const getStakedFury = async ({ validatorData }) => {
   let sum = 0
   validatorData.validators.forEach((validator) => {
     sum += Number(validator.tokens.toString());
@@ -80,7 +80,7 @@ type UseValidatorsResult = {
   data: {
     validators: ValidatorInfo[]
     pagination: any;
-    stakedWhale: number
+    stakedFury: number
     stakedAmpLuna: number
     stakedBLuna: number
     stakedWBtc: number
@@ -120,7 +120,7 @@ const useValidators = ({ address }): UseValidatorsResult => {
 
   const { data: validatorInfo } = useQuery({
     queryKey: ['validatorInfo'],
-    queryFn: async () => await client?.staking.validators('migaloo-1'),
+    queryFn: async () => await client?.staking.validators('furya-1'),
     enabled: Boolean(client),
   })
 
@@ -132,9 +132,9 @@ const useValidators = ({ address }): UseValidatorsResult => {
     enabled: Boolean(client) && Boolean(validatorInfo) && Boolean(delegations),
   })
 
-  const { data: stakedWhale } = useQuery({
-    queryKey: ['stakedWhale'],
-    queryFn: () => getStakedWhale({ validatorData }),
+  const { data: stakedFury } = useQuery({
+    queryKey: ['stakedFury'],
+    queryFn: () => getStakedFury({ validatorData }),
     enabled: Boolean(validatorData),
   })
   const { data: lunaLSTData } = useQuery({
@@ -153,7 +153,7 @@ const useValidators = ({ address }): UseValidatorsResult => {
     data: {
       validators: validatorData?.validators || [],
       pagination: validatorData?.pagination || {},
-      stakedWhale: stakedWhale || 0,
+      stakedFury: stakedFury || 0,
       stakedAmpLuna: lunaLSTData?.totalAmpLunaAmount || 0,
       stakedBLuna: lunaLSTData?.totalBLunaAmount || 0,
       stakedWBtc: stakedWBtc?.totalWBtcAmount || 0,

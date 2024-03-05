@@ -11,7 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { WalletConnectButton } from 'components/Wallet/Modal/WalletConnectButton';
-import { MIGALOO_CHAIN_ID } from 'constants/common';
+import { FURYA_CHAIN_ID } from 'constants/common';
 import { useChains } from 'hooks/useChainInfo';
 
 export enum WalletType {
@@ -28,7 +28,7 @@ export enum WalletType {
 
 export const WalletModal = ({ isOpen, setOpen, walletRepo }) => {
   const chainInfos: any = useChains();
-  const snap = Boolean(chainInfos.find((elem: { chainId: string; coinType: number; }) => elem.chainId === MIGALOO_CHAIN_ID && elem.coinType === 118))
+  const snap = Boolean(chainInfos.find((elem: { chainId: string; coinType: number; }) => elem.chainId === FURYA_CHAIN_ID && elem.coinType === 118))
 
   const onCloseModal = () => {
     if (isOpen) {

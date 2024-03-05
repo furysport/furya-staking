@@ -13,8 +13,8 @@ export const LiquidityTab = ({
   updatedData,
 }) => {
   const router = useRouter()
-  const openDelegate = async () => await router.push('/liquidity/delegate?tokenSymbol=USDC-WHALE-LP')
-  const openUndelegate = async () => await router.push('/liquidity/undelegate?tokenSymbol=USDC-WHALE-LP')
+  const openDelegate = async () => await router.push('/liquidity/delegate?tokenSymbol=USK-FURY-LP')
+  const openUndelegate = async () => await router.push('/liquidity/undelegate?tokenSymbol=USK-FURY-LP')
 
   const aprs = useCalculateAprs()
 

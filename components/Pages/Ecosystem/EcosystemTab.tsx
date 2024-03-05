@@ -13,8 +13,8 @@ export const EcosystemTab = ({
   updatedData,
 }) => {
   const router = useRouter()
-  const openDelegate = async () => await router.push('/ecosystem/delegate?tokenSymbol=mUSDC')
-  const openUndelegate = async () => await router.push('/ecosystem/undelegate?tokenSymbol=mUSDC')
+  const openDelegate = async () => await router.push('/ecosystem/delegate?tokenSymbol=USK')
+  const openUndelegate = async () => await router.push('/ecosystem/undelegate?tokenSymbol=USK')
 
   const aprs = useCalculateAprs()
   return <VStack

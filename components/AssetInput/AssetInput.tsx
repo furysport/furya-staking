@@ -4,7 +4,7 @@ import { VStack, forwardRef } from '@chakra-ui/react';
 import { num } from 'libs/num';
 
 import BalanceWithMaxNHalf from './BalanceWithMax';
-import WhaleInput from './WhaleInput';
+import FuryInput from './FuryInput';
 
 interface AssetInputProps {
   image?: boolean;
@@ -65,7 +65,7 @@ const AssetInput = forwardRef((props: AssetInputProps, ref) => {
 
   return (
     <VStack width="full">
-      <WhaleInput {...props} />
+      <FuryInput {...props} />
       <BalanceWithMaxNHalf
         balance={balanceWithDecimals}
         hideDollarValue={hideDollarValue}

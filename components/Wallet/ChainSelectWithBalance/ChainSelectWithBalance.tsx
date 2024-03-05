@@ -6,6 +6,6 @@ import DisplayBalance from 'components/Wallet/ChainSelectWithBalance/DisplayBala
 export const ChainSelectWithBalance = () => (
   <HStack spacing="3">
     <DisplayBalance />
-    <Text fontWeight={'bold'}>WHALE</Text>
+    <Text fontWeight={'bold'}>FURY</Text>
   </HStack>
 )

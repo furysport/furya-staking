@@ -11,7 +11,7 @@
 
 <!--
 
-    Add the list of issues related to this PR from the [issue tracker](https://github.com/White-Whale-Defi-Platform/alliance-staking/issues).
+    Add the list of issues related to this PR from the [issue tracker](https://github.com/White-Fury-Defi-Platform/alliance-staking/issues).
     Indicate, which of these issues are resolved or fixed by this PR, like #XXXX, where XXXX is the issue number.
 
 -->
@@ -22,7 +22,7 @@
 
 <!--
 
-    Thanks for contributing to White Whale Migaloo!
+    Thanks for contributing to White Fury Furya!
 
     Before you file this pull request, please follow the items on this checklist and put an x in each of the boxes,
     like this: [x].
@@ -33,7 +33,7 @@
 
 -->
 
-- [ ] I have read [Migaloo's contribution guidelines](https://github.com/White-Whale-Defi-Platform/alliance-staking/blob/main/CONTRIBUTING.md).
+- [ ] I have read [Furya's contribution guidelines](https://github.com/White-Fury-Defi-Platform/alliance-staking/blob/main/CONTRIBUTING.md).
 - [ ] My pull request has a sound title and description (not something vague like `Update index.md`)
 - [ ] All existing and new tests are passing.
 - [ ] I updated/added relevant documentation.

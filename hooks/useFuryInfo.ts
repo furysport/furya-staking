@@ -1,9 +1,9 @@
 import { useQueries } from 'react-query';
 
-import { fetchTotalSupply } from 'libs/fetchTotalWhaleSupply';
-import { fetchInflation } from 'libs/fetchWhaleInflation';
+import { fetchTotalSupply } from 'libs/fetchTotalFurySupply';
+import { fetchInflation } from 'libs/fetchFuryInflation';
 
-export const useTotalYearlyWhaleEmission = () => {
+export const useTotalYearlyFuryEmission = () => {
   const queries = useQueries([
     {
       queryKey: 'totalSupply',
@@ -18,9 +18,9 @@ export const useTotalYearlyWhaleEmission = () => {
 
   const [totalSupplyData, inflationData] = queries;
   // 10% into community pool
-  const totalYearlyWhaleEmission =
+  const totalYearlyFuryEmission =
     (totalSupplyData?.data ?? 0) * (inflationData?.data ?? 0) * 0.9;
   return {
-    totalYearlyWhaleEmission,
+    totalYearlyFuryEmission,
   };
 };

@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 
 import { LCDClient } from '@terra-money/feather.js';
 import { AllianceAsset } from '@terra-money/feather.js/dist/client/lcd/api/AllianceAPI';
-import { MIGALOO_CHAIN_ID } from 'constants/common';
+import { FURYA_CHAIN_ID } from 'constants/common';
 import useLCDClient from 'hooks/useLCDClient';
 import usePrices from 'hooks/usePrices';
 import whiteListedTokens from 'public/mainnet/white_listed_alliance_token_info.json';
@@ -20,7 +20,7 @@ export interface Alliance {
 const fetchAlliances = async (client: LCDClient, priceList) => {
 
   const allianceAssets: AllianceAsset[] = (
-    await client.alliance.alliances(MIGALOO_CHAIN_ID)
+    await client.alliance.alliances(FURYA_CHAIN_ID)
   ).alliances;
   const alliances: Alliance[] = whiteListedTokens.map((token) => {
     const alliance = allianceAssets?.find((asset) => asset.denom === token.denom);

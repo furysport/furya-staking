@@ -14,14 +14,14 @@ import Loader from 'components/Loader'
 import { Cell, Pie, PieChart } from 'recharts'
 
 export enum Token {
-  WHALE = 'WHALE',
+  FURY = 'FURY',
   ampLUNA = 'ampLUNA',
   bLUNA = 'bLUNA',
-  mUSDC = 'mUSDC',
+  USK = 'USK',
   ASH = 'ASH',
   wBTC = 'wBTC',
-  'USDC-WHALE-LP' = 'USDC-WHALE-LP',
-  'WHALE-wBTC-LP' = 'WHALE-wBTC-LP',
+  'USK-FURY-LP' = 'USK-FURY-LP',
+  'FURY-wBTC-LP' = 'FURY-wBTC-LP',
 }
 
 export enum TokenType {

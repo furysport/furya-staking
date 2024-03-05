@@ -1,40 +1,40 @@
 {
-  "chainId": "migaloo-1",
-  "chainName": "Migaloo Mainnet",
-  "label": "Migaloo",
-  "icon": "/logos/migaloo.png",
-  "rpc": "https://migaloo-rpc.polkachu.com",
-  "rest": "https://migaloo-api.polkachu.com",
+  "chainId": "furya-1",
+  "chainName": "Furya Mainnet",
+  "label": "Furya",
+  "icon": "/logos/furya.png",
+  "rpc": "https://rpc.furya.xyz",
+  "rest": "https://api.furya.xyz",
   "stakeCurrency": {
-    "coinDenom": "WHALE",
-    "coinMinimalDenom": "uwhale",
+    "coinDenom": "FURY",
+    "coinMinimalDenom": "ufury",
     "coinDecimals": 6
   },
   "bip44": {
     "coinType": 118
   },
   "bech32Config": {
-    "bech32PrefixAccAddr": "migaloo",
-    "bech32PrefixAccPub": "migaloopub",
-    "bech32PrefixValAddr": "migaloovaloper",
-    "bech32PrefixValPub": "migaloovaloperpub",
-    "bech32PrefixConsAddr": "migaloovalcons",
-    "bech32PrefixConsPub": "migaloovalconspub"
+    "bech32PrefixAccAddr": "furya",
+    "bech32PrefixAccPub": "furyapub",
+    "bech32PrefixValAddr": "furyavaloper",
+    "bech32PrefixValPub": "furyavaloperpub",
+    "bech32PrefixConsAddr": "furyavalcons",
+    "bech32PrefixConsPub": "furyavalconspub"
   },
   "currencies": [
     {
-      "coinDenom": "WHALE",
-      "coinMinimalDenom": "uwhale",
+      "coinDenom": "FURY",
+      "coinMinimalDenom": "ufury",
       "coinDecimals": 6,
-      "coinGeckoId": "white-whale"
+      "coinGeckoId": "fanfury"
     }
   ],
   "feeCurrencies": [
     {
-      "coinDenom": "WHALE",
-      "coinMinimalDenom": "uwhale",
+      "coinDenom": "FURY",
+      "coinMinimalDenom": "ufury",
       "coinDecimals": 6,
-      "coinGeckoId": "white-whale"
+      "coinGeckoId": "fanfury"
     }
   ],
   "coinType": 118,

@@ -17,12 +17,12 @@ type TokenPrice = {
 }
 
 const getLCDClient = () => new LCDClient({
-  'migaloo-1': {
-    lcd: 'https://ww-migaloo-rest.polkachu.com/',
-    chainID: 'migaloo-1',
+  'furya-1': {
+    lcd: 'http://api.furya.xyz/',
+    chainID: 'furya-1',
     gasAdjustment: 0.1,
-    gasPrices: { uwhale: 0.05 },
-    prefix: 'migaloo',
+    gasPrices: { ufury: 0.05 },
+    prefix: 'furya',
   },
   'phoenix-1': {
     lcd: 'https://ww-terra-rest.polkachu.com/',
@@ -57,7 +57,7 @@ const getPriceFromPool = ({ denom, decimals, contract, base, basedOn }: PoolInfo
           asset1.info.native_token?.denom || asset1.info.token?.contract_addr
         const token1 = tokens.find((token) => token.denom === (asset1.info.native_token?.denom ?? asset1.info.token?.contract_addr))
         const token2 = tokens.find((token) => token.denom === (asset2.info.native_token?.denom ?? asset2.info.token?.contract_addr))
-        const isAB = asset1Denom === 'uwhale' || asset1Denom === 'uluna'
+        const isAB = asset1Denom === 'ufury' || asset1Denom === 'uluna'
         if (!basePrice || !basedOn) {
           return 0
         }

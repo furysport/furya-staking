@@ -3,17 +3,17 @@ import { useMemo } from 'react';
 import { Token } from 'components/Pages/AssetOverview';
 import { Apr } from 'components/Pages/Ecosystem/hooks/useCalculateAprs';
 import { useAlliances } from 'hooks/useAlliances';
+import { useTotalYearlyFuryEmission } from 'hooks/useFuryInfo';
 import usePrices from 'hooks/usePrices';
 import useValidators from 'hooks/useValidators';
-import { useTotalYearlyWhaleEmission } from 'hooks/useWhaleInfo';
 
 export const useCalculateAllianceAprs = ({ address }) => {
-  const { totalYearlyWhaleEmission } = useTotalYearlyWhaleEmission()
+  const { totalYearlyFuryEmission } = useTotalYearlyFuryEmission()
   const { alliances: allianceData } = useAlliances()
 
   const { data: validatorData } = useValidators({ address });
   const [priceList] = usePrices() || []
-  const whalePrice = priceList?.Whale
+  const furyPrice = priceList?.Fury
 
   const alliances = useMemo(() => allianceData?.alliances || [],
     [allianceData?.alliances])
@@ -24,18 +24,18 @@ export const useCalculateAllianceAprs = ({ address }) => {
   [alliances])
 
   const allianceAPRs : Apr[] = useMemo(() => alliances?.map((alliance) => {
-    if (alliance.name === Token.WHALE) {
-      const apr = Number(((totalYearlyWhaleEmission * (1 - summedAllianceWeights)) /
-                        (validatorData?.stakedWhale || 0)) *
+    if (alliance.name === Token.FURY) {
+      const apr = Number(((totalYearlyFuryEmission * (1 - summedAllianceWeights)) /
+                        (validatorData?.stakedFury || 0)) *
                     100)
       return {
-        name: Token.WHALE,
+        name: Token.FURY,
         apr,
         weight: 1 - summedAllianceWeights || 1,
       };
     } else {
       const apr = !isNaN(alliance.totalDollarAmount)
-        ? ((totalYearlyWhaleEmission * whalePrice * (alliance?.weight || 0)) /
+        ? ((totalYearlyFuryEmission * furyPrice * (alliance?.weight || 0)) /
                         (alliance?.totalDollarAmount || 1)) *
                     100
         : 0;
@@ -45,7 +45,7 @@ export const useCalculateAllianceAprs = ({ address }) => {
         weight: alliance?.weight,
       }
     }
-  }), [alliances, totalYearlyWhaleEmission, whalePrice])
+  }), [alliances, totalYearlyFuryEmission, furyPrice])
 
   return allianceAPRs || []
 }

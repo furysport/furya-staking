@@ -72,7 +72,7 @@ const AssetSelectTrigger = ({ currentTokenSymbol, hideLogo = false }) => {
   );
 };
 
-const WhaleInput: FC<AssetInputProps> = forwardRef(({
+const FuryInput: FC<AssetInputProps> = forwardRef(({
   token,
   onChange,
   value,
@@ -151,4 +151,4 @@ ref) => (
   </Stack>
 ));
 
-export default WhaleInput;
+export default FuryInput;

@@ -2,12 +2,12 @@ import React from 'react';
 
 import { Box, Flex, HStack } from '@chakra-ui/react';
 import { useChain } from '@cosmos-kit/react-lite';
-import { MIGALOO_CHAIN_NAME } from 'constants/common';
+import { FURYA_CHAIN_NAME } from 'constants/common';
 
 import Wallet from '../Wallet/Wallet';
 
 const Header = () => {
-  const { disconnect, isWalletConnected } = useChain(MIGALOO_CHAIN_NAME)
+  const { disconnect, isWalletConnected } = useChain(FURYA_CHAIN_NAME)
 
   const resetWalletConnection = async () => {
     await disconnect()

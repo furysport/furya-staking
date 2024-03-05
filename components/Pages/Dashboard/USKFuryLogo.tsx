@@ -1,13 +1,13 @@
 import { Box, HStack, Image } from '@chakra-ui/react'
 
-export const WhaleBtcLogo = () => <HStack spacing="0" ml={-2} mr={5}>
+export const USKFuryLogo = () => <HStack spacing="0" ml={-2} mr={5}>
   <Box
     boxShadow="lg"
     borderRadius="full"
     position="absolute"
     zIndex={0}>
     <Image
-      src={'/logos/whale.svg'}
+      src={'/logos/USK.png'}
       width="auto"
       maxW="1.6rem"
       maxH="1.6rem"
@@ -21,7 +21,7 @@ export const WhaleBtcLogo = () => <HStack spacing="0" ml={-2} mr={5}>
     pl={'8px'}
     zIndex={1}>
     <Image
-      src={'/logos/wbtc.svg'}
+      src={'/logos/fury.svg'}
       width="auto"
       maxW="1.6rem"
       maxH="1.6rem"

@@ -56,9 +56,9 @@ const MyApp: FC<AppProps> = ({
                       projectId: 'a8510432ebb71e6948cfd6cde54b70f7',
                       relayUrl: 'wss://relay.walletconnect.org',
                       metadata: {
-                        name: 'Migaloo Zone',
+                        name: 'Furya Zone',
                         description: 'test',
-                        url: 'https://app.migaloo.zone/',
+                        url: 'https://app.furya.zone/',
                         icons: [
                           'https://raw.githubusercontent.com/cosmology-tech/cosmos-kit/main/packages/docs/public/favicon-96x96.png',
                         ],

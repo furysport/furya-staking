@@ -18,46 +18,46 @@ interface PoolInfo {
     assets: Asset[]
     total_share: number
 }
-export const fetchTotalPoolSuppliesAndCalculatePrice = async (client: LCDClient, whalePrice: number) => {
+export const fetchTotalPoolSuppliesAndCalculatePrice = async (client: LCDClient, furyPrice: number) => {
   if (!client) {
     return null
   }
-  const whaleUsdcPoolInfo : PoolInfo = await client.wasm.contractQuery('migaloo1xv4ql6t6r8zawlqn2tyxqsrvjpmjfm6kvdfvytaueqe3qvcwyr7shtx0hj', {
+  const furyUsdcPoolInfo : PoolInfo = await client.wasm.contractQuery('furya1xv4ql6t6r8zawlqn2tyxqsrvjpmjfm6kvdfvytaueqe3qvcwyr7shtx0hj', {
     pool: {},
   })
 
-  const whaleBtcPoolInfo : PoolInfo = await client.wasm.contractQuery('migaloo1axtz4y7jyvdkkrflknv9dcut94xr5k8m6wete4rdrw4fuptk896su44x2z', {
+  const furyBtcPoolInfo : PoolInfo = await client.wasm.contractQuery('furya1axtz4y7jyvdkkrflknv9dcut94xr5k8m6wete4rdrw4fuptk896su44x2z', {
     pool: {},
   })
 
-  const totalWhaleUsdcDollarAmount = (whaleUsdcPoolInfo?.assets.map((asset) => {
-    if (asset.info.native_token.denom === 'uwhale') {
-      return convertMicroDenomToDenom(asset.amount, 6) * whalePrice
+  const totalFuryUsdcDollarAmount = (furyUsdcPoolInfo?.assets.map((asset) => {
+    if (asset.info.native_token.denom === 'ufury') {
+      return convertMicroDenomToDenom(asset.amount, 6) * furyPrice
     } else {
       return convertMicroDenomToDenom(asset.amount, 6)
     }
-  }).reduce((a, b) => a + b, 0) || 0) / convertMicroDenomToDenom(whaleUsdcPoolInfo.total_share, 6)
+  }).reduce((a, b) => a + b, 0) || 0) / convertMicroDenomToDenom(furyUsdcPoolInfo.total_share, 6)
 
-  const totalWhaleBtcDollarAmount = (whaleBtcPoolInfo?.assets.map((asset) => {
-    if (asset.info.native_token.denom === 'uwhale') {
-      return convertMicroDenomToDenom(asset.amount, 6) * whalePrice * 2
+  const totalFuryBtcDollarAmount = (furyBtcPoolInfo?.assets.map((asset) => {
+    if (asset.info.native_token.denom === 'ufury') {
+      return convertMicroDenomToDenom(asset.amount, 6) * furyPrice * 2
     }
     return 0
-  }).reduce((a, b) => a + b, 0) || 0) / convertMicroDenomToDenom(whaleBtcPoolInfo.total_share, 6)
+  }).reduce((a, b) => a + b, 0) || 0) / convertMicroDenomToDenom(furyBtcPoolInfo.total_share, 6)
 
   return {
-    'USDC-WHALE-LP': totalWhaleUsdcDollarAmount,
-    'WHALE-wBTC-LP': totalWhaleBtcDollarAmount,
+    'USK-FURY-LP': totalFuryUsdcDollarAmount,
+    'FURY-wBTC-LP': totalFuryBtcDollarAmount,
   }
 }
 
 export const useGetLPTokenPrices = () => {
   const client = useLCDClient()
   const [priceList] = usePrices() || []
-  const whalePrice = priceList?.Whale
+  const furyPrice = priceList?.Fury
   const { data: lpTokenPrices } = useQuery(
-    ['getLPInfo', whalePrice],
-    async () => await fetchTotalPoolSuppliesAndCalculatePrice(client, whalePrice), { enabled: Boolean(client) && Boolean(whalePrice) },
+    ['getLPInfo', furyPrice],
+    async () => await fetchTotalPoolSuppliesAndCalculatePrice(client, furyPrice), { enabled: Boolean(client) && Boolean(furyPrice) },
   )
 
   return lpTokenPrices

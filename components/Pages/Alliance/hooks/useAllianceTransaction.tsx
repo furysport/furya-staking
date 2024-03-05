@@ -96,7 +96,7 @@ export const useAllianceTransaction = () => {
   )
   const { mutate } = useMutation((data: any) => {
     const adjustedAmount = convertDenomToMicroDenom(data?.amount, data?.decimals).toString()
-    const isNative = data.denom === 'uwhale'
+    const isNative = data.denom === 'ufury'
     if (data.action === ActionType.delegate) {
       return isNative
         ? nativeDelegate(
@@ -134,7 +134,7 @@ export const useAllianceTransaction = () => {
         /*
          * ? nativeRedelegate(
          *   client,
-         *   'migaloo-1',
+         *   'furya-1',
          *   data.validatorSrcAddress,
          *   data.validatorDestAddress,
          *   address,

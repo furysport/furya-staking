@@ -6,7 +6,7 @@ import Loader from 'components/Loader'
 import { Token } from 'components/Pages/AssetOverview'
 import ClaimButton from 'components/Pages/ClaimButton'
 import UpdateRewardsButton from 'components/Pages/UpdateRewardsButton';
-import { MIGALOO_CHAIN_NAME } from 'constants/common'
+import { FURYA_CHAIN_NAME } from 'constants/common'
 import tokens from 'public/mainnet/tokens.json'
 import { useRecoilValue } from 'recoil'
 import { tabState, TabType } from 'state/tabState'
@@ -24,7 +24,7 @@ const RewardsComponent: FC<UndelegationsProps> = ({
   data,
 }) => {
   const currentTabState = useRecoilValue(tabState)
-  const { openView } = useChain(MIGALOO_CHAIN_NAME)
+  const { openView } = useChain(FURYA_CHAIN_NAME)
 
   const claimableRewards = useMemo(() => data?.reduce((acc, e) => acc + (Number(e?.dollarValue) ?? 0), 0),
     [data]) || 0

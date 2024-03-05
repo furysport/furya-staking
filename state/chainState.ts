@@ -24,11 +24,11 @@ const createWalletState = ({
 }: CreateWalletStateArgs<NonNullable<unknown>>) => atom<GeneratedWalletState<NonNullable<unknown>>>({
   key,
   default: {
-    chainId: 'migaloo-1',
-    chainName: 'migaloo',
+    chainId: 'furya-1',
+    chainName: 'furya',
     network: NetworkType.mainnet,
     activeWallet: '',
-    walletChainName: 'migaloo',
+    walletChainName: 'furya',
     ...defaultState,
   },
   dangerouslyAllowMutability: true,
