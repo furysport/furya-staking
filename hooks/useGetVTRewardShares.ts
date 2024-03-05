@@ -1,53 +1,34 @@
-import { useQuery } from 'react-query'
+import { useMemo } from 'react';
+import { useQueries } from 'react-query';
 
-import { LCDClient } from '@terra-money/feather.js/dist/client/lcd/LCDClient';
+import { fetchTotalStakedBalances } from 'hooks/useGetTotalStakedBalances';
 import useLCDClient from 'hooks/useLCDClient';
-import file from 'public/mainnet/contract_addresses.json'
-import tokens from 'public/mainnet/tokens.json'
+import { debounce } from 'lodash';
 
-interface AssetDistributionResponse {
-    asset: {
-        cw20?: string;
-        native?: string;
-    }
-    distribution: number
-}
+export const useAssetsData = () => {
+  const client = useLCDClient();
+  const queries = useQueries([{
+    queryKey: 'totalStakeBalances',
+    queryFn: () => fetchTotalStakedBalances(client),
+    enabled: Boolean(client),
+  }]);
 
-export interface AssetDistribution {
-    denom: string
-    tokenSymbol: string
-    distribution: number
-}
-export const fetchVTRewardShares = async (client: LCDClient) => {
-  if (!client) {
-    return null
-  }
-  const msg = {
-    reward_distribution: {},
-  }
-  const res: AssetDistributionResponse[] = await client.wasm.contractQuery(file.alliance_contract, msg)
-  const vtRewardShares = res.map((info) => {
-    const token = tokens.find((token) => token.denom === (info?.asset?.native ?? info?.asset?.cw20))
-    return {
-      denom: token.denom,
-      tokenSymbol: token.symbol,
-      distribution: info.distribution,
-    } as AssetDistribution
-  })
+  const isLoading = useMemo(() => queries.some(query => query.isLoading || !query.data), [queries]);
+  
+  const debouncedRefetch = useMemo(() => debounce((refetchFunc) => refetchFunc(), 500), []);
+  
+  const refetchAll = () => {
+    queries.forEach((query) => {
+      debouncedRefetch(query.refetch);
+    });
+  };
+
+  // Since we're not fetching 'vtRewardShares', it's no longer included in the data memoization
+  const data = useMemo(() => queries[0].data, [queries]);
+
   return {
-    vtRewardShares,
-  }
-}
-
-export const useGetVTRewardShares = () => {
-  const client = useLCDClient()
-  const { data, isLoading } = useQuery(
-    ['vtRewardShares'],
-    async () => await fetchVTRewardShares(client),
-    {
-      enabled: Boolean(client),
-    },
-  )
-  return { ...data,
-    isLoading }
-}
+    ...data,
+    isLoading,
+    refetch: refetchAll,
+  };
+};

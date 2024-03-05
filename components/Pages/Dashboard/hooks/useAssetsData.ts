@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useQueries } from 'react-query';
 
 import { fetchTotalStakedBalances } from 'hooks/useGetTotalStakedBalances';
-import { fetchVTRewardShares } from 'hooks/useGetVTRewardShares';
 import useLCDClient from 'hooks/useLCDClient';
 import { debounce } from 'lodash'
 
@@ -12,11 +11,7 @@ export const useAssetsData = () => {
     queryKey: 'totalStakeBalances',
     queryFn: () => fetchTotalStakedBalances(client),
     enabled: Boolean(client),
-  }, {
-    queryKey: 'vtRewardShares',
-    queryFn: () => fetchVTRewardShares(client),
-    enabled: Boolean(client),
-  }])
+  }]) // Removed the 'vtRewardShares' query
 
   const isLoading = useMemo(() => queries.some((query) => (
     query.isLoading || !query.data
@@ -32,14 +27,15 @@ export const useAssetsData = () => {
 
   const data = useMemo(() => {
     const totalStakedBalances = queries[0].data
-    const rewardShares = queries[1].data
+    // Since we're no longer fetching 'vtRewardShares', we don't merge it here
     return {
-      ...totalStakedBalances,
-      ...rewardShares,
+      ...totalStakedBalances
     }
   }, [queries])
 
-  return { ...data,
+  return { 
+    ...data,
     isLoading,
-    refetch: refetchAll }
+    refetch: refetchAll 
+  }
 }
